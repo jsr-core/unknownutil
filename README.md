@@ -1,8 +1,8 @@
-# unknownutil-deno
+# unknownutil
 
 [![deno land](http://img.shields.io/badge/available%20on-deno.land/x-lightgrey.svg?logo=deno)](https://deno.land/x/unknownutil)
 [![deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/unknownutil/mod.ts)
-[![Test](https://github.com/lambdalisue/unknownutil-deno/workflows/Test/badge.svg)](https://github.com/lambdalisue/unknownutil-deno/actions?query=workflow%3ATest)
+[![Test](https://github.com/lambdalisue/deno-unknownutil/workflows/Test/badge.svg)](https://github.com/lambdalisue/deno-unknownutil/actions?query=workflow%3ATest)
 
 A utility pack for handling `unknown` type.
 
