@@ -3,6 +3,7 @@ import {
   ensure,
   ensureArray,
   ensureFunction,
+  ensureLike,
   ensureNone,
   ensureNull,
   ensureNumber,
@@ -140,4 +141,126 @@ Deno.test("ensureNone throws error on non null nor undefined", () => {
   assertThrows(() => ensureNone([]));
   assertThrows(() => ensureNone({}));
   assertThrows(() => ensureNone(function () {}));
+});
+
+Deno.test("ensureLike does it's job on string", () => {
+  const ref = "";
+  ensureLike(ref, "Hello");
+
+  assertThrows(() => ensureLike(ref, 0));
+  assertThrows(() => ensureLike(ref, []));
+  assertThrows(() => ensureLike(ref, {}));
+  assertThrows(() => ensureLike(ref, function () {}));
+  assertThrows(() => ensureLike(ref, undefined));
+  assertThrows(() => ensureLike(ref, null));
+});
+Deno.test("ensureLike does it's job on number", () => {
+  const ref = 0;
+  ensureLike(ref, 0);
+  ensureLike(ref, 1);
+  ensureLike(ref, 0.1);
+
+  assertThrows(() => ensureLike(ref, "a"));
+  assertThrows(() => ensureLike(ref, []));
+  assertThrows(() => ensureLike(ref, {}));
+  assertThrows(() => ensureLike(ref, function () {}));
+  assertThrows(() => ensureLike(ref, undefined));
+  assertThrows(() => ensureLike(ref, null));
+});
+Deno.test("ensureLike does it's job on array", () => {
+  const ref: unknown[] = [];
+  ensureLike(ref, []);
+  ensureLike(ref, [0, 1, 2]);
+  ensureLike(ref, ["a", "b", "c"]);
+
+  assertThrows(() => ensureLike(ref, "a"));
+  assertThrows(() => ensureLike(ref, 0));
+  assertThrows(() => ensureLike(ref, {}));
+  assertThrows(() => ensureLike(ref, function () {}));
+  assertThrows(() => ensureLike(ref, undefined));
+  assertThrows(() => ensureLike(ref, null));
+});
+Deno.test("ensureLike does it's job on T array", () => {
+  const ref: unknown[] = [];
+  ensureLike(ref, [0, 1, 2], isNumber);
+  ensureLike(ref, ["a", "b", "c"], isString);
+
+  assertThrows(() => ensureLike(ref, [0, 1, 2], isString));
+  assertThrows(() => ensureLike(ref, ["a", "b", "c"], isNumber));
+});
+Deno.test("ensureLike does it's job on tuple", () => {
+  const ref = ["", 0, ""];
+  ensureLike(ref, ["", 0, ""]);
+  ensureLike(ref, ["Hello", 100, "World"]);
+
+  assertThrows(() => ensureLike(ref, ["Hello", 100, "World", "foo"]));
+  assertThrows(() => ensureLike(ref, [0, 0, 0]));
+  assertThrows(() => ensureLike(ref, ["", "", ""]));
+  assertThrows(() => ensureLike(ref, [0, "", 0]));
+});
+Deno.test("ensureLike does it's job on object", () => {
+  const ref = {};
+  ensureLike(ref, {});
+  ensureLike(ref, { a: 0 });
+  ensureLike(ref, { a: "a" });
+
+  assertThrows(() => ensureLike(ref, "a"));
+  assertThrows(() => ensureLike(ref, 0));
+  assertThrows(() => ensureLike(ref, []));
+  assertThrows(() => ensureLike(ref, function () {}));
+  assertThrows(() => ensureLike(ref, undefined));
+  assertThrows(() => ensureLike(ref, null));
+});
+Deno.test("ensureLike does it's job on T object", () => {
+  const ref = {};
+  ensureLike(ref, { a: 0 }, isNumber);
+  ensureLike(ref, { a: "a" }, isString);
+
+  assertThrows(() => ensureLike(ref, { a: 0 }, isString));
+  assertThrows(() => ensureLike(ref, { a: "a" }, isNumber));
+});
+Deno.test("ensureLike does it's job on struct", () => {
+  const ref = { foo: "", bar: 0 };
+  ensureLike(ref, { foo: "", bar: 0 });
+  ensureLike(ref, { foo: "", bar: 0, hoge: "" });
+
+  assertThrows(() => ensureLike(ref, {}));
+  assertThrows(() => ensureLike(ref, { foo: "" }));
+  assertThrows(() => ensureLike(ref, { bar: 0 }));
+});
+Deno.test("ensureLike does it's job on function", () => {
+  const ref = () => {};
+  ensureLike(ref, ensureFunction);
+  ensureLike(ref, function () {});
+  ensureLike(ref, () => {});
+  ensureLike(ref, setTimeout);
+
+  assertThrows(() => ensureLike(ref, "a"));
+  assertThrows(() => ensureLike(ref, 0));
+  assertThrows(() => ensureLike(ref, []));
+  assertThrows(() => ensureLike(ref, {}));
+  assertThrows(() => ensureLike(ref, undefined));
+  assertThrows(() => ensureLike(ref, null));
+});
+Deno.test("ensureLike does it's job on null", () => {
+  const ref = null;
+  ensureLike(ref, null);
+
+  assertThrows(() => ensureLike(ref, "a"));
+  assertThrows(() => ensureLike(ref, 0));
+  assertThrows(() => ensureLike(ref, []));
+  assertThrows(() => ensureLike(ref, {}));
+  assertThrows(() => ensureLike(ref, function () {}));
+  assertThrows(() => ensureLike(ref, undefined));
+});
+Deno.test("ensureLike does it's job on undefined", () => {
+  const ref = undefined;
+  ensureLike(ref, undefined);
+
+  assertThrows(() => ensureLike(ref, "a"));
+  assertThrows(() => ensureLike(ref, 0));
+  assertThrows(() => ensureLike(ref, []));
+  assertThrows(() => ensureLike(ref, {}));
+  assertThrows(() => ensureLike(ref, function () {}));
+  assertThrows(() => ensureLike(ref, null));
 });
