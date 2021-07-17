@@ -81,13 +81,13 @@ Deno.test("isObject<T> returns false on non T object", () => {
   assertEquals(isObject({ a: "a" }, isNumber), false);
 });
 
-Deno.test("isFunction returns true on array", () => {
+Deno.test("isFunction returns true on function", () => {
   assertEquals(isFunction(isFunction), true);
   assertEquals(isFunction(function () {}), true);
   assertEquals(isFunction(() => {}), true);
   assertEquals(isFunction(setTimeout), true);
 });
-Deno.test("isFunction returns false on non array", () => {
+Deno.test("isFunction returns false on non function", () => {
   assertEquals(isFunction(""), false);
   assertEquals(isFunction(0), false);
   assertEquals(isFunction([]), false);
