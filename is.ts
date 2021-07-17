@@ -66,3 +66,39 @@ export function isUndefined(x: unknown): x is undefined {
 export function isNone(x: unknown): x is null | undefined {
   return x == null;
 }
+
+/**
+ * Return true if a type of value is like a type of reference.
+ */
+export function isLike<R, T extends unknown>(
+  ref: R,
+  x: unknown,
+  pred?: Predicate<T>,
+): x is R {
+  if (isString(ref) && isString(x)) {
+    return true;
+  }
+  if (isNumber(ref) && isNumber(x)) {
+    return true;
+  }
+  if (isArray(ref, pred) && isArray(x, pred)) {
+    return ref.length === 0 || (
+      ref.length === x.length &&
+      ref.every((r, i) => isLike(r, x[i]))
+    );
+  }
+  if (isObject(ref, pred) && isObject(x, pred)) {
+    const es = Object.entries(ref);
+    return es.length === 0 || es.every(([k, v]) => isLike(v, x[k]));
+  }
+  if (isFunction(ref) && isFunction(x)) {
+    return true;
+  }
+  if (isNull(ref) && isNull(x)) {
+    return true;
+  }
+  if (isUndefined(ref) && isUndefined(x)) {
+    return true;
+  }
+  return false;
+}

@@ -1,6 +1,7 @@
 import {
   isArray,
   isFunction,
+  isLike,
   isNone,
   isNull,
   isNumber,
@@ -99,4 +100,16 @@ export function ensureUndefined(x: unknown): asserts x is undefined {
  */
 export function ensureNone(x: unknown): asserts x is null | undefined {
   return ensure(x, isNone, "The value must be null or undefined");
+}
+
+/**
+ * Ensure if `x` follows the reference by raising an `EnsureError` when it doesn't.
+ */
+export function ensureLike<R, T extends unknown>(
+  ref: R,
+  x: unknown,
+  ipred?: Predicate<T>,
+): asserts x is R {
+  const pred = (x: unknown): x is T[] => isLike(ref, x, ipred);
+  return ensure(x, pred, "The value must follow the reference");
 }
