@@ -2,6 +2,7 @@ import { assertThrows } from "./deps_test.ts";
 import {
   ensure,
   ensureArray,
+  ensureBoolean,
   ensureFunction,
   ensureLike,
   ensureNone,
@@ -11,7 +12,7 @@ import {
   ensureString,
   ensureUndefined,
 } from "./ensure.ts";
-import { isNumber, isString } from "./is.ts";
+import { isBoolean, isNumber, isString } from "./is.ts";
 
 Deno.test("ensure does nothing when pred return true", () => {
   ensure("a", isString);
@@ -27,6 +28,8 @@ Deno.test("ensureString does nothing on string", () => {
 });
 Deno.test("ensureString throws error on non string", () => {
   assertThrows(() => ensureString(0));
+  assertThrows(() => ensureString(true));
+  assertThrows(() => ensureString(false));
   assertThrows(() => ensureString([]));
   assertThrows(() => ensureString({}));
   assertThrows(() => ensureString(function () {}));
@@ -41,11 +44,27 @@ Deno.test("ensureNumber does nothing on number", () => {
 });
 Deno.test("ensureNumber throws error on non number", () => {
   assertThrows(() => ensureNumber("a"));
+  assertThrows(() => ensureNumber(true));
+  assertThrows(() => ensureNumber(false));
   assertThrows(() => ensureNumber([]));
   assertThrows(() => ensureNumber({}));
   assertThrows(() => ensureNumber(function () {}));
   assertThrows(() => ensureNumber(undefined));
   assertThrows(() => ensureNumber(null));
+});
+
+Deno.test("ensureBoolean does nothing on boolean", () => {
+  ensureBoolean(true);
+  ensureBoolean(false);
+});
+Deno.test("ensureBoolean throws error on non boolean", () => {
+  assertThrows(() => ensureBoolean(0));
+  assertThrows(() => ensureBoolean("a"));
+  assertThrows(() => ensureBoolean([]));
+  assertThrows(() => ensureBoolean({}));
+  assertThrows(() => ensureBoolean(function () {}));
+  assertThrows(() => ensureBoolean(undefined));
+  assertThrows(() => ensureBoolean(null));
 });
 
 Deno.test("ensureArray does nothing on array", () => {
@@ -56,6 +75,8 @@ Deno.test("ensureArray does nothing on array", () => {
 Deno.test("ensureArray throws error on non array", () => {
   assertThrows(() => ensureArray("a"));
   assertThrows(() => ensureArray(0));
+  assertThrows(() => ensureArray(true));
+  assertThrows(() => ensureArray(false));
   assertThrows(() => ensureArray({}));
   assertThrows(() => ensureArray(function () {}));
   assertThrows(() => ensureArray(undefined));
@@ -64,10 +85,12 @@ Deno.test("ensureArray throws error on non array", () => {
 Deno.test("ensureArray<T> does nothing on T array", () => {
   ensureArray([0, 1, 2], isNumber);
   ensureArray(["a", "b", "c"], isString);
+  ensureArray([true, false, true], isBoolean);
 });
 Deno.test("ensureArray<T> throws error on non T array", () => {
   assertThrows(() => ensureArray([0, 1, 2], isString));
   assertThrows(() => ensureArray(["a", "b", "c"], isNumber));
+  assertThrows(() => ensureArray([true, false, true], isString));
 });
 
 Deno.test("ensureObject does nothing on object", () => {
@@ -78,6 +101,8 @@ Deno.test("ensureObject does nothing on object", () => {
 Deno.test("ensureObject throws error on non object", () => {
   assertThrows(() => ensureObject("a"));
   assertThrows(() => ensureObject(0));
+  assertThrows(() => ensureObject(true));
+  assertThrows(() => ensureObject(false));
   assertThrows(() => ensureObject([]));
   assertThrows(() => ensureObject(function () {}));
   assertThrows(() => ensureObject(undefined));
@@ -86,10 +111,12 @@ Deno.test("ensureObject throws error on non object", () => {
 Deno.test("ensureObject<T> does nothing on T object", () => {
   ensureObject({ a: 0 }, isNumber);
   ensureObject({ a: "a" }, isString);
+  ensureObject({ a: true }, isBoolean);
 });
 Deno.test("ensureObject<T> throws error on non T object", () => {
   assertThrows(() => ensureObject({ a: 0 }, isString));
   assertThrows(() => ensureObject({ a: "a" }, isNumber));
+  assertThrows(() => ensureObject({ a: true }, isString));
 });
 
 Deno.test("ensureFunction does nothing on function", () => {
@@ -101,6 +128,8 @@ Deno.test("ensureFunction does nothing on function", () => {
 Deno.test("ensureFunction throws error on non function", () => {
   assertThrows(() => ensureFunction("a"));
   assertThrows(() => ensureFunction(0));
+  assertThrows(() => ensureFunction(true));
+  assertThrows(() => ensureFunction(false));
   assertThrows(() => ensureFunction([]));
   assertThrows(() => ensureFunction({}));
   assertThrows(() => ensureFunction(undefined));
@@ -113,6 +142,8 @@ Deno.test("ensureNull does nothing on null", () => {
 Deno.test("ensureNull throws error on non null", () => {
   assertThrows(() => ensureNull("a"));
   assertThrows(() => ensureNull(0));
+  assertThrows(() => ensureNull(true));
+  assertThrows(() => ensureNull(false));
   assertThrows(() => ensureNull([]));
   assertThrows(() => ensureNull({}));
   assertThrows(() => ensureNull(function () {}));
@@ -125,6 +156,8 @@ Deno.test("ensureUndefined does nothing on undefined", () => {
 Deno.test("ensureUndefined throws error on non undefined", () => {
   assertThrows(() => ensureUndefined("a"));
   assertThrows(() => ensureUndefined(0));
+  assertThrows(() => ensureUndefined(true));
+  assertThrows(() => ensureUndefined(false));
   assertThrows(() => ensureUndefined([]));
   assertThrows(() => ensureUndefined({}));
   assertThrows(() => ensureUndefined(function () {}));
@@ -138,6 +171,8 @@ Deno.test("ensureNone does nothing on null or undefined", () => {
 Deno.test("ensureNone throws error on non null nor undefined", () => {
   assertThrows(() => ensureNone("a"));
   assertThrows(() => ensureNone(0));
+  assertThrows(() => ensureNone(true));
+  assertThrows(() => ensureNone(false));
   assertThrows(() => ensureNone([]));
   assertThrows(() => ensureNone({}));
   assertThrows(() => ensureNone(function () {}));
@@ -148,6 +183,8 @@ Deno.test("ensureLike does it's job on string", () => {
   ensureLike(ref, "Hello");
 
   assertThrows(() => ensureLike(ref, 0));
+  assertThrows(() => ensureLike(ref, true));
+  assertThrows(() => ensureLike(ref, false));
   assertThrows(() => ensureLike(ref, []));
   assertThrows(() => ensureLike(ref, {}));
   assertThrows(() => ensureLike(ref, function () {}));
@@ -161,6 +198,8 @@ Deno.test("ensureLike does it's job on number", () => {
   ensureLike(ref, 0.1);
 
   assertThrows(() => ensureLike(ref, "a"));
+  assertThrows(() => ensureLike(ref, true));
+  assertThrows(() => ensureLike(ref, false));
   assertThrows(() => ensureLike(ref, []));
   assertThrows(() => ensureLike(ref, {}));
   assertThrows(() => ensureLike(ref, function () {}));
@@ -184,9 +223,11 @@ Deno.test("ensureLike does it's job on T array", () => {
   const ref: unknown[] = [];
   ensureLike(ref, [0, 1, 2], isNumber);
   ensureLike(ref, ["a", "b", "c"], isString);
+  ensureLike(ref, [true, false, true], isBoolean);
 
   assertThrows(() => ensureLike(ref, [0, 1, 2], isString));
   assertThrows(() => ensureLike(ref, ["a", "b", "c"], isNumber));
+  assertThrows(() => ensureLike(ref, [true, false, true], isString));
 });
 Deno.test("ensureLike does it's job on tuple", () => {
   const ref = ["", 0, ""];
@@ -206,6 +247,8 @@ Deno.test("ensureLike does it's job on object", () => {
 
   assertThrows(() => ensureLike(ref, "a"));
   assertThrows(() => ensureLike(ref, 0));
+  assertThrows(() => ensureLike(ref, true));
+  assertThrows(() => ensureLike(ref, false));
   assertThrows(() => ensureLike(ref, []));
   assertThrows(() => ensureLike(ref, function () {}));
   assertThrows(() => ensureLike(ref, undefined));
@@ -215,9 +258,11 @@ Deno.test("ensureLike does it's job on T object", () => {
   const ref = {};
   ensureLike(ref, { a: 0 }, isNumber);
   ensureLike(ref, { a: "a" }, isString);
+  ensureLike(ref, { a: true }, isBoolean);
 
   assertThrows(() => ensureLike(ref, { a: 0 }, isString));
   assertThrows(() => ensureLike(ref, { a: "a" }, isNumber));
+  assertThrows(() => ensureLike(ref, { a: true }, isString));
 });
 Deno.test("ensureLike does it's job on struct", () => {
   const ref = { foo: "", bar: 0 };
@@ -237,6 +282,8 @@ Deno.test("ensureLike does it's job on function", () => {
 
   assertThrows(() => ensureLike(ref, "a"));
   assertThrows(() => ensureLike(ref, 0));
+  assertThrows(() => ensureLike(ref, true));
+  assertThrows(() => ensureLike(ref, false));
   assertThrows(() => ensureLike(ref, []));
   assertThrows(() => ensureLike(ref, {}));
   assertThrows(() => ensureLike(ref, undefined));
@@ -248,6 +295,8 @@ Deno.test("ensureLike does it's job on null", () => {
 
   assertThrows(() => ensureLike(ref, "a"));
   assertThrows(() => ensureLike(ref, 0));
+  assertThrows(() => ensureLike(ref, true));
+  assertThrows(() => ensureLike(ref, false));
   assertThrows(() => ensureLike(ref, []));
   assertThrows(() => ensureLike(ref, {}));
   assertThrows(() => ensureLike(ref, function () {}));
@@ -259,6 +308,8 @@ Deno.test("ensureLike does it's job on undefined", () => {
 
   assertThrows(() => ensureLike(ref, "a"));
   assertThrows(() => ensureLike(ref, 0));
+  assertThrows(() => ensureLike(ref, true));
+  assertThrows(() => ensureLike(ref, false));
   assertThrows(() => ensureLike(ref, []));
   assertThrows(() => ensureLike(ref, {}));
   assertThrows(() => ensureLike(ref, function () {}));

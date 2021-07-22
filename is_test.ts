@@ -1,6 +1,7 @@
 import { assertEquals } from "./deps_test.ts";
 import {
   isArray,
+  isBoolean,
   isFunction,
   isLike,
   isNone,
@@ -17,6 +18,8 @@ Deno.test("isString returns true on array", () => {
 });
 Deno.test("isString returns false on non array", () => {
   assertEquals(isString(0), false);
+  assertEquals(isString(true), false);
+  assertEquals(isString(false), false);
   assertEquals(isString([]), false);
   assertEquals(isString({}), false);
   assertEquals(isString(function () {}), false);
@@ -30,11 +33,27 @@ Deno.test("isNumber returns true on array", () => {
 });
 Deno.test("isNumber returns false on non array", () => {
   assertEquals(isNumber(""), false);
+  assertEquals(isNumber(true), false);
+  assertEquals(isNumber(false), false);
   assertEquals(isNumber([]), false);
   assertEquals(isNumber({}), false);
   assertEquals(isNumber(function () {}), false);
   assertEquals(isNumber(null), false);
   assertEquals(isNumber(undefined), false);
+});
+
+Deno.test("isBoolean returns true on boolean", () => {
+  assertEquals(isBoolean(true), true);
+  assertEquals(isBoolean(false), true);
+});
+Deno.test("isBoolean returns false on non boolean", () => {
+  assertEquals(isBoolean(0), false);
+  assertEquals(isBoolean(""), false);
+  assertEquals(isBoolean([]), false);
+  assertEquals(isBoolean({}), false);
+  assertEquals(isBoolean(function () {}), false);
+  assertEquals(isBoolean(null), false);
+  assertEquals(isBoolean(undefined), false);
 });
 
 Deno.test("isArray returns true on array", () => {
@@ -46,6 +65,8 @@ Deno.test("isArray returns true on array", () => {
 Deno.test("isArray returns false on non array", () => {
   assertEquals(isArray(""), false);
   assertEquals(isArray(0), false);
+  assertEquals(isArray(true), false);
+  assertEquals(isArray(false), false);
   assertEquals(isArray({}), false);
   assertEquals(isArray(function () {}), false);
   assertEquals(isArray(null), false);
@@ -54,10 +75,12 @@ Deno.test("isArray returns false on non array", () => {
 Deno.test("isArray<T> returns true on T array", () => {
   assertEquals(isArray([0, 1, 2], isNumber), true);
   assertEquals(isArray(["a", "b", "c"], isString), true);
+  assertEquals(isArray([true, false, true], isBoolean), true);
 });
 Deno.test("isArray<T> returns false on non T array", () => {
   assertEquals(isArray([0, 1, 2], isString), false);
   assertEquals(isArray(["a", "b", "c"], isNumber), false);
+  assertEquals(isArray([true, false, true], isString), false);
 });
 
 Deno.test("isObject returns true on object", () => {
@@ -68,6 +91,8 @@ Deno.test("isObject returns true on object", () => {
 Deno.test("isObject returns false on non object", () => {
   assertEquals(isObject(""), false);
   assertEquals(isObject(0), false);
+  assertEquals(isObject(true), false);
+  assertEquals(isObject(false), false);
   assertEquals(isObject([]), false);
   assertEquals(isObject(function () {}), false);
   assertEquals(isObject(null), false);
@@ -76,10 +101,12 @@ Deno.test("isObject returns false on non object", () => {
 Deno.test("isObject<T> returns true on T object", () => {
   assertEquals(isObject({ a: 0 }, isNumber), true);
   assertEquals(isObject({ a: "a" }, isString), true);
+  assertEquals(isObject({ a: true }, isBoolean), true);
 });
 Deno.test("isObject<T> returns false on non T object", () => {
   assertEquals(isObject({ a: 0 }, isString), false);
   assertEquals(isObject({ a: "a" }, isNumber), false);
+  assertEquals(isObject({ a: true }, isString), false);
 });
 
 Deno.test("isFunction returns true on function", () => {
@@ -91,6 +118,8 @@ Deno.test("isFunction returns true on function", () => {
 Deno.test("isFunction returns false on non function", () => {
   assertEquals(isFunction(""), false);
   assertEquals(isFunction(0), false);
+  assertEquals(isFunction(true), false);
+  assertEquals(isFunction(false), false);
   assertEquals(isFunction([]), false);
   assertEquals(isFunction({}), false);
   assertEquals(isFunction(null), false);
@@ -103,6 +132,8 @@ Deno.test("isNull returns true on null", () => {
 Deno.test("isNull returns false on non null", () => {
   assertEquals(isNull(""), false);
   assertEquals(isNull(0), false);
+  assertEquals(isNull(true), false);
+  assertEquals(isNull(false), false);
   assertEquals(isNull([]), false);
   assertEquals(isNull({}), false);
   assertEquals(isNull(function () {}), false);
@@ -115,6 +146,8 @@ Deno.test("isUndefined returns true on null", () => {
 Deno.test("isUndefined returns false on non null", () => {
   assertEquals(isUndefined(""), false);
   assertEquals(isUndefined(0), false);
+  assertEquals(isUndefined(true), false);
+  assertEquals(isUndefined(false), false);
   assertEquals(isUndefined([]), false);
   assertEquals(isUndefined({}), false);
   assertEquals(isUndefined(function () {}), false);
@@ -128,6 +161,8 @@ Deno.test("isNone returns true on null/undefined", () => {
 Deno.test("isNone returns false on non null/undefined", () => {
   assertEquals(isNone(""), false);
   assertEquals(isNone(0), false);
+  assertEquals(isNone(true), false);
+  assertEquals(isNone(false), false);
   assertEquals(isNone([]), false);
   assertEquals(isNone({}), false);
   assertEquals(isNone(function () {}), false);
@@ -139,6 +174,8 @@ Deno.test("isLike returns true/false on string", () => {
   assertEquals(isLike(ref, "Hello World"), true);
 
   assertEquals(isLike(ref, 0), false);
+  assertEquals(isLike(ref, true), false);
+  assertEquals(isLike(ref, false), false);
   assertEquals(isLike(ref, []), false);
   assertEquals(isLike(ref, {}), false);
   assertEquals(isLike(ref, function () {}), false);
@@ -150,6 +187,21 @@ Deno.test("isLike returns true/false on number", () => {
   assertEquals(isLike(ref, 0), true);
   assertEquals(isLike(ref, 1234567890), true);
 
+  assertEquals(isLike(ref, ""), false);
+  assertEquals(isLike(ref, true), false);
+  assertEquals(isLike(ref, false), false);
+  assertEquals(isLike(ref, []), false);
+  assertEquals(isLike(ref, {}), false);
+  assertEquals(isLike(ref, function () {}), false);
+  assertEquals(isLike(ref, null), false);
+  assertEquals(isLike(ref, undefined), false);
+});
+Deno.test("isLike returns true/false on boolean", () => {
+  const ref = true;
+  assertEquals(isLike(ref, true), true);
+  assertEquals(isLike(ref, false), true);
+
+  assertEquals(isLike(ref, 0), false);
   assertEquals(isLike(ref, ""), false);
   assertEquals(isLike(ref, []), false);
   assertEquals(isLike(ref, {}), false);
@@ -166,6 +218,8 @@ Deno.test("isLike returns true/false on array", () => {
 
   assertEquals(isLike(ref, ""), false);
   assertEquals(isLike(ref, 0), false);
+  assertEquals(isLike(ref, true), false);
+  assertEquals(isLike(ref, false), false);
   assertEquals(isLike(ref, {}), false);
   assertEquals(isLike(ref, function () {}), false);
   assertEquals(isLike(ref, null), false);
@@ -175,9 +229,11 @@ Deno.test("isLike returns true/false on T array", () => {
   const ref: unknown[] = [];
   assertEquals(isLike(ref, [0, 1, 2], isNumber), true);
   assertEquals(isLike(ref, ["a", "b", "c"], isString), true);
+  assertEquals(isLike(ref, [true, false, true], isBoolean), true);
 
   assertEquals(isLike(ref, [0, 1, 2], isString), false);
   assertEquals(isLike(ref, ["a", "b", "c"], isNumber), false);
+  assertEquals(isLike(ref, [true, false, true], isString), false);
 });
 Deno.test("isLike returns true/false on tuple", () => {
   const ref = ["", 0, ""];
@@ -194,9 +250,12 @@ Deno.test("isLike returns true/false on object", () => {
   assertEquals(isLike(ref, {}), true);
   assertEquals(isLike(ref, { a: 0 }), true);
   assertEquals(isLike(ref, { a: "a" }), true);
+  assertEquals(isLike(ref, { a: true }), true);
 
   assertEquals(isLike(ref, ""), false);
   assertEquals(isLike(ref, 0), false);
+  assertEquals(isLike(ref, true), false);
+  assertEquals(isLike(ref, false), false);
   assertEquals(isLike(ref, []), false);
   assertEquals(isLike(ref, function () {}), false);
   assertEquals(isLike(ref, null), false);
@@ -206,9 +265,11 @@ Deno.test("isLike returns true/false on T object", () => {
   const ref = {};
   assertEquals(isLike(ref, { a: 0 }, isNumber), true);
   assertEquals(isLike(ref, { a: "a" }, isString), true);
+  assertEquals(isLike(ref, { a: true }, isBoolean), true);
 
   assertEquals(isLike(ref, { a: 0 }, isString), false);
   assertEquals(isLike(ref, { a: "a" }, isNumber), false);
+  assertEquals(isLike(ref, { a: true }, isString), false);
 });
 Deno.test("isLike returns true/false on struct", () => {
   const ref = { foo: "", bar: 0 };
@@ -232,6 +293,8 @@ Deno.test("isLike returns true/false on function", () => {
 
   assertEquals(isLike(ref, ""), false);
   assertEquals(isLike(ref, 0), false);
+  assertEquals(isLike(ref, true), false);
+  assertEquals(isLike(ref, false), false);
   assertEquals(isLike(ref, []), false);
   assertEquals(isLike(ref, {}), false);
   assertEquals(isLike(ref, null), false);
@@ -243,6 +306,8 @@ Deno.test("isLike returns true/false on null", () => {
 
   assertEquals(isLike(ref, ""), false);
   assertEquals(isLike(ref, 0), false);
+  assertEquals(isLike(ref, true), false);
+  assertEquals(isLike(ref, false), false);
   assertEquals(isLike(ref, []), false);
   assertEquals(isLike(ref, {}), false);
   assertEquals(isLike(ref, function () {}), false);
@@ -254,6 +319,8 @@ Deno.test("isLike returns true/false on undefined", () => {
 
   assertEquals(isLike(ref, ""), false);
   assertEquals(isLike(ref, 0), false);
+  assertEquals(isLike(ref, true), false);
+  assertEquals(isLike(ref, false), false);
   assertEquals(isLike(ref, []), false);
   assertEquals(isLike(ref, {}), false);
   assertEquals(isLike(ref, function () {}), false);
