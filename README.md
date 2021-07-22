@@ -16,6 +16,7 @@ The `unknownutil` provides the following predicate functions
 
 - `isString(x: unknown): x is string`
 - `isNumber(x: unknown): x is number`
+- `isBoolean(x: unknown): x is boolean`
 - `isArray<T extends unknown>(x: unknown, pred?: Predicate<T>): x is T[]`
 - `isObject<T extends unknown>(x: unknown, pred?: Predicate<T>): x is Record<string, T>`
 - `isFunction(x: unknown): x is (...args: unknown[]) => unknown`
@@ -93,6 +94,7 @@ The `unknownutil` provides the following ensure functions which will raise
 
 - `ensureString(x: unknown): assert x is string`
 - `ensureNumber(x: unknown): assert x is string`
+- `ensureBoolean(x: unknown): assert x is boolean`
 - `ensureArray<T extends unknown>(x: unknown, pred?: Predicate<T>): assert x is T[]`
 - `ensureObject<T extends unknown>(x: unknown, pred?: Predicate<T>): x ensure Record<string, T>`
 - `ensureFunction(x: unknown): x ensure (...args: unknown[]) => unknown`

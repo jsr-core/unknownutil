@@ -1,5 +1,6 @@
 import {
   isArray,
+  isBoolean,
   isFunction,
   isLike,
   isNone,
@@ -48,6 +49,13 @@ export function ensureString(x: unknown): asserts x is string {
  */
 export function ensureNumber(x: unknown): asserts x is number {
   return ensure(x, isNumber, "The value must be number");
+}
+
+/**
+ * Ensure if `x` is boolean by raising an `EnsureError` when it's not.
+ */
+export function ensureBoolean(x: unknown): asserts x is boolean {
+  return ensure(x, isBoolean, "The value must be boolean");
 }
 
 /**

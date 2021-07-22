@@ -15,6 +15,13 @@ export function isNumber(x: unknown): x is number {
 }
 
 /**
+ * Return true if the value is boolean
+ */
+export function isBoolean(x: unknown): x is boolean {
+  return typeof x === "boolean";
+}
+
+/**
  * Return true if the value is array
  */
 export function isArray<T extends unknown>(
@@ -79,6 +86,9 @@ export function isLike<R, T extends unknown>(
     return true;
   }
   if (isNumber(ref) && isNumber(x)) {
+    return true;
+  }
+  if (isBoolean(ref) && isBoolean(x)) {
     return true;
   }
   if (isArray(ref, pred) && isArray(x, pred)) {
