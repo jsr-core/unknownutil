@@ -22,7 +22,7 @@ jobs:
         with:
           deno-version: ${{ env.DENO_VERSION }}
       - name: Lint
-        run: deno lint
+        run: make lint
 
   format:
     runs-on: ubuntu-latest
@@ -32,8 +32,7 @@ jobs:
         with:
           deno-version: ${{ env.DENO_VERSION }}
       - name: Format
-        run: |
-          deno fmt --check
+        run: make fmt-check
 
   test:
     runs-on: ubuntu-latest
@@ -43,8 +42,7 @@ jobs:
         with:
           deno-version: ${{ env.DENO_VERSION }}
       - name: Test
-        run: |
-          deno test
+        run: make test
         timeout-minutes: 5
 
   typecheck:
@@ -55,5 +53,4 @@ jobs:
         with:
           deno-version: ${{ env.DENO_VERSION }}
       - name: Type check
-        run: |
-          deno test --unstable --no-run ./*.ts
+        run: make type-check
