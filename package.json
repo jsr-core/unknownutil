@@ -1,6 +1,6 @@
 {
   "name": "unknownutil",
-  "version": "1.1.1",
+  "version": "1.1.4",
   "main": ".node/dist/mod.js",
   "types": ".node/dist/mod.d.ts",
   "files": [
