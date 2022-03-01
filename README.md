@@ -145,6 +145,62 @@ ensureLike({}, b); // Now 'b' is 'Record<string, unknown>'
 ensureLike({ foo: "", bar: 0 }, b); // Now 'b' is '{foo: string, bar: number}'
 ```
 
+### requireXXXXX
+
+The `unknownutil` provides the following require functions which returns a given
+`x` as is or raise `EnsureError` when that is not expected type.
+
+- `requireString(x: unknown): string`
+- `requireNumber(x: unknown): number`
+- `requireBoolean(x: unknown): boolean`
+- `requireArray<T extends unknown>(x: unknown, pred?: Predicate<T>): T[]`
+- `requireObject<T extends unknown>(x: unknown, pred?: Predicate<T>): Record<string, T>`
+- `requireFunction(x: unknown): (...args: unknown[]) => unknown`
+- `requireNull(x: unknown): null`
+- `requireUndefined(x: unknown): undefined`
+- `requireNone(x: unknown): null | undefined`
+
+For example:
+
+```typescript
+import { requireString } from "https://deno.land/x/unknownutil/mod.ts";
+
+const a: unknown = "Hello";
+const a1 = requireString(a); // Now 'a' and 'a1' is 'string'
+
+const b: unknown = 0;
+const b1 = requireString(b); // Raise EnsureError on above while 'b' is not string
+```
+
+Additionally, `requireArray` and `requireObject` supports an inner predicate
+function to predicate `x` more precisely like:
+
+```typescript
+import { isString, requireArray } from "https://deno.land/x/unknownutil/mod.ts";
+
+const a: unknown = ["a", "b", "c"];
+const a1 = requireArray(a); // Now 'a' and 'a1' is 'unknown[]'
+const a2 = requireArray(a, isString); // Now 'a' and 'a2' is 'string[]'
+
+const b: unknown = [0, 1, 2];
+const b1 = requireArray(b); // Now 'b' and 'b1' is 'unknown[]'
+const b2 = requireArray(b, isString); // Raise EnsureError on above while 'b' is not string array
+```
+
+Use `requireLike` if you need some complicated types like tuple or struct like:
+
+```typescript
+import { requireLike } from "https://deno.land/x/unknownutil/mod.ts";
+
+const a: unknown = ["a", "b", "c"];
+const a1 = requireLike([], a); // Now 'a' and 'a1' is 'unknown[]'
+const a2 = requireLike(["", "", ""], a); // Now 'a' and 'a2' is '[string, string, string]'
+
+const b: unknown = { foo: "foo", bar: 0 };
+const b1 = requireLike({}, b); // Now 'b' and 'b1' is 'Record<string, unknown>'
+const b2 = requireLike({ foo: "", bar: 0 }, b); // Now 'b' and 'b2' is '{foo: string, bar: number}'
+```
+
 ## Development
 
 Lint code like:
