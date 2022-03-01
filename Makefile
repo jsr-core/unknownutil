@@ -1,4 +1,4 @@
-TARGETS := $$(find . \( -name '*.ts' -or -name '*.md' \) -not -path './npm/*')
+TARGETS := $$(find . \( -name '*.ts' -or -name '*.md' \) -not -path './npm/*' -not -path './scripts/*')
 VERSION := $$(git describe --tags --always --dirty)
 
 .DEFAULT_GOAL := help
