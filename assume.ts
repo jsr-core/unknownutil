@@ -1,22 +1,22 @@
 import { Predicate } from "./is.ts";
 import {
-  ensureArray,
-  ensureBoolean,
-  ensureFunction,
-  ensureLike,
-  ensureNullish,
-  ensureNull,
-  ensureNumber,
-  ensureObject,
-  ensureString,
-  ensureUndefined,
-} from "./ensure.ts";
+  assertArray,
+  assertBoolean,
+  assertFunction,
+  assertLike,
+  assertNullish,
+  assertNull,
+  assertNumber,
+  assertObject,
+  assertString,
+  assertUndefined,
+} from "./assert.ts";
 
 /**
  * Return `x` as-is if `x` is string or raise an `EnsureError` when it's not.
  */
 export function assumeString(x: unknown): string {
-  ensureString(x);
+  assertString(x);
   return x;
 }
 
@@ -24,7 +24,7 @@ export function assumeString(x: unknown): string {
  * Return `x` as-is if `x` is number or raise an `EnsureError` when it's not.
  */
 export function assumeNumber(x: unknown): number {
-  ensureNumber(x);
+  assertNumber(x);
   return x;
 }
 
@@ -32,7 +32,7 @@ export function assumeNumber(x: unknown): number {
  * Return `x` as-is if `x` is boolean or raise an `EnsureError` when it's not.
  */
 export function assumeBoolean(x: unknown): boolean {
-  ensureBoolean(x);
+  assertBoolean(x);
   return x;
 }
 
@@ -43,7 +43,7 @@ export function assumeArray<T extends unknown>(
   x: unknown,
   ipred?: Predicate<T>,
 ): T[] {
-  ensureArray(x, ipred);
+  assertArray(x, ipred);
   return x;
 }
 
@@ -54,7 +54,7 @@ export function assumeObject<T>(
   x: unknown,
   ipred?: Predicate<T>,
 ): Record<string, T> {
-  ensureObject(x, ipred);
+  assertObject(x, ipred);
   return x;
 }
 
@@ -62,7 +62,7 @@ export function assumeObject<T>(
  * Return `x` as-is if `x` is function or raise an `EnsureError` when it's not.
  */
 export function assumeFunction(x: unknown): (...args: unknown[]) => unknown {
-  ensureFunction(x);
+  assertFunction(x);
   return x;
 }
 
@@ -70,7 +70,7 @@ export function assumeFunction(x: unknown): (...args: unknown[]) => unknown {
  * Return `x` as-is if `x` is null or raise an `EnsureError` when it's not.
  */
 export function assumeNull(x: unknown): null {
-  ensureNull(x);
+  assertNull(x);
   return x;
 }
 
@@ -78,7 +78,7 @@ export function assumeNull(x: unknown): null {
  * Return `x` as-is if `x` is undefined or raise an `EnsureError` when it's not.
  */
 export function assumeUndefined(x: unknown): undefined {
-  ensureUndefined(x);
+  assertUndefined(x);
   return x;
 }
 
@@ -86,7 +86,7 @@ export function assumeUndefined(x: unknown): undefined {
  * Return `x` as-is if `x` is null or undefined or raise an `EnsureError` when it's not.
  */
 export function assumeNullish(x: unknown): null | undefined {
-  ensureNullish(x);
+  assertNullish(x);
   return x;
 }
 
@@ -98,6 +98,6 @@ export function assumeLike<R, T extends unknown>(
   x: unknown,
   ipred?: Predicate<T>,
 ): R {
-  ensureLike(ref, x, ipred);
+  assertLike(ref, x, ipred);
   return x;
 }
