@@ -95,14 +95,14 @@ The `unknownutil` provides the following ensure functions which will raise
 `EnsureError` when a given `x` is not expected type.
 
 - `ensureString(x: unknown): assert x is string`
-- `ensureNumber(x: unknown): assert x is string`
+- `ensureNumber(x: unknown): assert x is number`
 - `ensureBoolean(x: unknown): assert x is boolean`
 - `ensureArray<T extends unknown>(x: unknown, pred?: Predicate<T>): assert x is T[]`
-- `ensureObject<T extends unknown>(x: unknown, pred?: Predicate<T>): x ensure Record<string, T>`
-- `ensureFunction(x: unknown): x ensure (...args: unknown[]) => unknown`
-- `ensureNull(x: unknown): x ensure null`
-- `ensureUndefined(x: unknown): x ensure undefined`
-- `ensureNone(x: unknown): x ensure null | undefined`
+- `ensureObject<T extends unknown>(x: unknown, pred?: Predicate<T>): x is Record<string, T>`
+- `ensureFunction(x: unknown): x is (...args: unknown[]) => unknown`
+- `ensureNull(x: unknown): x is null`
+- `ensureUndefined(x: unknown): x is undefined`
+- `ensureNone(x: unknown): x is null | undefined`
 
 For example:
 
