@@ -1,0 +1,33 @@
+name: npm
+
+env:
+  DENO_VERSION: 1.x
+  NODE_VERSION: 16.x
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: denoland/setup-deno@main
+        with:
+          deno-version: ${{ env.DENO_VERSION }}
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          registry-url: 'https://registry.npmjs.org'
+      - name: Build
+        run: make build-npm
+      - name: Publish
+        run: |
+          cd npm
+          npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
