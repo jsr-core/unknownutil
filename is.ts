@@ -1,28 +1,33 @@
+/**
+ * A type decision function
+ */
 export type Predicate<T> = (x: unknown) => x is T;
 
 /**
- * Return true if the value is string
+ * Return `true` if the type of `x` is `string`.
  */
 export function isString(x: unknown): x is string {
   return typeof x === "string";
 }
 
 /**
- * Return true if the value is number
+ * Return `true` if the type of `x` is `number`.
  */
 export function isNumber(x: unknown): x is number {
   return typeof x === "number";
 }
 
 /**
- * Return true if the value is boolean
+ * Return `true` if the type of `x` is `boolean`.
  */
 export function isBoolean(x: unknown): x is boolean {
   return typeof x === "boolean";
 }
 
 /**
- * Return true if the value is array
+ * Return `true` if the type of `x` is `array`.
+ *
+ * Use `pred` to predicate the type of items.
  */
 export function isArray<T extends unknown>(
   x: unknown,
@@ -32,13 +37,15 @@ export function isArray<T extends unknown>(
 }
 
 /**
- * Return true if the value is object
+ * Return `true` if the type of `x` is `object`.
+ *
+ * Use `pred` to predicate the type of values.
  */
 export function isObject<T extends unknown>(
   x: unknown,
   pred?: Predicate<T>,
 ): x is Record<string, T> {
-  if (isNone(x) || isArray(x)) {
+  if (isNullish(x) || isArray(x)) {
     return false;
   }
   return typeof x === "object" &&
@@ -47,35 +54,35 @@ export function isObject<T extends unknown>(
 }
 
 /**
- * Return true if the value is function
+ * Return `true` if the type of `x` is `function`.
  */
 export function isFunction(x: unknown): x is (...args: unknown[]) => unknown {
   return Object.prototype.toString.call(x) === "[object Function]";
 }
 
 /**
- * Return true if the value is null
+ * Return `true` if the type of `x` is `null`.
  */
 export function isNull(x: unknown): x is null {
   return x === null;
 }
 
 /**
- * Return true if the value is undefined
+ * Return `true` if the type of `x` is `undefined`.
  */
 export function isUndefined(x: unknown): x is undefined {
   return typeof x === "undefined";
 }
 
 /**
- * Return true if the value is null or undefined
+ * Return `true` if the type of `x` is `null` or `undefined`.
  */
-export function isNone(x: unknown): x is null | undefined {
+export function isNullish(x: unknown): x is null | undefined {
   return x == null;
 }
 
 /**
- * Return true if a type of value is like a type of reference.
+ * Return `true` if the type of `x` follows the type of `ref`.
  */
 export function isLike<R, T extends unknown>(
   ref: R,

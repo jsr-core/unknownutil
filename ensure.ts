@@ -1,123 +1,103 @@
+import { Predicate } from "./is.ts";
 import {
-  isArray,
-  isBoolean,
-  isFunction,
-  isLike,
-  isNone,
-  isNull,
-  isNumber,
-  isObject,
-  isString,
-  isUndefined,
-  Predicate,
-} from "./is.ts";
-
-export class EnsureError extends Error {
-  constructor(message?: string) {
-    super(message);
-
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, EnsureError);
-    }
-
-    this.name = "EnsureError";
-  }
-}
+  assertArray,
+  assertBoolean,
+  assertFunction,
+  assertLike,
+  assertNull,
+  assertNullish,
+  assertNumber,
+  assertObject,
+  assertString,
+  assertUndefined,
+} from "./assert.ts";
 
 /**
- * Ensure if `x` is expected type by raising an `EnsureError` when it's not.
+ * Return `x` as-is if `x` is string or raise an `EnsureError` when it's not.
  */
-export function ensure<T>(
-  x: unknown,
-  pred: Predicate<T>,
-  message = "The value is not expected type",
-): asserts x is T {
-  if (!pred(x)) {
-    throw new EnsureError(message);
-  }
+export function ensureString(x: unknown): string {
+  assertString(x);
+  return x;
 }
 
 /**
- * Ensure if `x` is string by raising an `EnsureError` when it's not.
+ * Return `x` as-is if `x` is number or raise an `EnsureError` when it's not.
  */
-export function ensureString(x: unknown): asserts x is string {
-  return ensure(x, isString, "The value must be string");
+export function ensureNumber(x: unknown): number {
+  assertNumber(x);
+  return x;
 }
 
 /**
- * Ensure if `x` is number by raising an `EnsureError` when it's not.
+ * Return `x` as-is if `x` is boolean or raise an `EnsureError` when it's not.
  */
-export function ensureNumber(x: unknown): asserts x is number {
-  return ensure(x, isNumber, "The value must be number");
+export function ensureBoolean(x: unknown): boolean {
+  assertBoolean(x);
+  return x;
 }
 
 /**
- * Ensure if `x` is boolean by raising an `EnsureError` when it's not.
- */
-export function ensureBoolean(x: unknown): asserts x is boolean {
-  return ensure(x, isBoolean, "The value must be boolean");
-}
-
-/**
- * Ensure if `x` is array by raising an `EnsureError` when it's not.
+ * Return `x` as-is if `x` is array or raise an `EnsureError` when it's not.
  */
 export function ensureArray<T extends unknown>(
   x: unknown,
   ipred?: Predicate<T>,
-): asserts x is T[] {
-  const pred = (x: unknown): x is T[] => isArray(x, ipred);
-  return ensure(x, pred, "The value must be array");
+): T[] {
+  assertArray(x, ipred);
+  return x;
 }
 
 /**
- * Ensure if `x` is object by raising an `EnsureError` when it's not.
+ * Return `x` as-is if `x` is object or raise an `EnsureError` when it's not.
  */
 export function ensureObject<T>(
   x: unknown,
   ipred?: Predicate<T>,
-): asserts x is Record<string, T> {
-  const pred = (x: unknown): x is Record<string, T> => isObject(x, ipred);
-  return ensure(x, pred, "The value must be object");
+): Record<string, T> {
+  assertObject(x, ipred);
+  return x;
 }
 
 /**
- * Ensure if `x` is function by raising an `EnsureError` when it's not.
+ * Return `x` as-is if `x` is function or raise an `EnsureError` when it's not.
  */
-export function ensureFunction(
-  x: unknown,
-): asserts x is (...args: unknown[]) => unknown {
-  return ensure(x, isFunction, "The value must be function");
+export function ensureFunction(x: unknown): (...args: unknown[]) => unknown {
+  assertFunction(x);
+  return x;
 }
 
 /**
- * Ensure if `x` is null by raising an `EnsureError` when it's not.
+ * Return `x` as-is if `x` is null or raise an `EnsureError` when it's not.
  */
-export function ensureNull(x: unknown): asserts x is null {
-  return ensure(x, isNull, "The value must be null");
+export function ensureNull(x: unknown): null {
+  assertNull(x);
+  return x;
 }
 
 /**
- * Ensure if `x` is undefined by raising an `EnsureError` when it's not.
+ * Return `x` as-is if `x` is undefined or raise an `EnsureError` when it's not.
  */
-export function ensureUndefined(x: unknown): asserts x is undefined {
-  return ensure(x, isUndefined, "The value must be undefined");
+export function ensureUndefined(x: unknown): undefined {
+  assertUndefined(x);
+  return x;
 }
 
 /**
- * Ensure if `x` is null or undefined by raising an `EnsureError` when it's not.
+ * Return `x` as-is if `x` is null or undefined or raise an `EnsureError` when it's not.
  */
-export function ensureNone(x: unknown): asserts x is null | undefined {
-  return ensure(x, isNone, "The value must be null or undefined");
+export function ensureNullish(x: unknown): null | undefined {
+  assertNullish(x);
+  return x;
 }
 
 /**
- * Ensure if `x` follows the reference by raising an `EnsureError` when it doesn't.
+ * Return `x` as-is if `x` follows the reference or raise an `EnsureError` when it doesn't.
  */
 export function ensureLike<R, T extends unknown>(
   ref: R,
   x: unknown,
   ipred?: Predicate<T>,
-): asserts x is R {
-  const pred = (x: unknown): x is T[] => isLike(ref, x, ipred);
-  return ensure(x, pred, "The value must follow the reference");
+): R {
+  assertLike(ref, x, ipred);
+  return x;
 }
