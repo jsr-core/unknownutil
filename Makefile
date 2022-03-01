@@ -1,4 +1,5 @@
-TARGETS := $$(find . \( -name '*.ts' -or -name '*.md' \) -not -path './.node/*' -not -path './node_modules/*')
+TARGETS := $$(find . \( -name '*.ts' -or -name '*.md' \) -not -path './npm/*')
+VERSION := $$(git describe --tags --always --dirty)
 
 .DEFAULT_GOAL := help
 
@@ -25,5 +26,8 @@ test: FORCE	## Test
 deps: FORCE	## Update dependencies
 	@deno run -A https://deno.land/x/udd@0.7.2/main.ts ${TARGETS}
 	@make fmt
+
+build-npm: FORCE	## Build npm package
+	@deno run -A scripts/build_npm.ts ${VERSION}
 
 FORCE:

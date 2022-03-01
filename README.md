@@ -229,14 +229,6 @@ Run tests like:
 make test
 ```
 
-Publish new version with:
-
-```
-npm version {major/minor/patch}
-npm publish
-git push --tags
-```
-
 ## License
 
 The code follows MIT license written in [LICENSE](./LICENSE). Contributors need
