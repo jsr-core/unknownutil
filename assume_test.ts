@@ -1,6 +1,5 @@
 import { assertEquals, assertThrows } from "./deps_test.ts";
 import {
-  assume,
   assumeArray,
   assumeBoolean,
   assumeFunction,
@@ -13,15 +12,6 @@ import {
   assumeUndefined,
 } from "./assume.ts";
 import { isBoolean, isNumber, isString } from "./is.ts";
-
-Deno.test("assume returns the value when pred return true", () => {
-  assertEquals(assume("a", isString), "a");
-  assertEquals(assume(0, isNumber), 0);
-});
-Deno.test("assume throws error when pred return false", () => {
-  assertThrows(() => assume("a", isNumber));
-  assertThrows(() => assume(0, isString));
-});
 
 Deno.test("assumeString returns the value when the value is string", () => {
   assertEquals(assumeString("Hello"), "Hello");

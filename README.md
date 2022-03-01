@@ -94,7 +94,6 @@ if (isLike({ foo: "", bar: 0 }, e)) {
 The `unknownutil` provides the following ensure functions which will raise
 `EnsureError` when a given `x` is not expected type.
 
-- `ensure<T>(x: unknown, pred: Predicate<T>, message?: string): assert x is T`
 - `ensureString(x: unknown): assert x is string`
 - `ensureNumber(x: unknown): assert x is number`
 - `ensureBoolean(x: unknown): assert x is boolean`
@@ -151,7 +150,6 @@ ensureLike({ foo: "", bar: 0 }, b); // Now 'b' is '{foo: string, bar: number}'
 The `unknownutil` provides the following assume functions which returns a given
 `x` as is or raise `EnsureError` when that is not expected type.
 
-- `assume<T>(x: unknown, pred: Predicate<T>, message?: string): T`
 - `assumeString(x: unknown): string`
 - `assumeNumber(x: unknown): number`
 - `assumeBoolean(x: unknown): boolean`

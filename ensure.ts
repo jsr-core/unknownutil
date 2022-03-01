@@ -24,10 +24,7 @@ export class EnsureError extends Error {
   }
 }
 
-/**
- * Ensure if `x` is expected type by raising an `EnsureError` when it's not.
- */
-export function ensure<T>(
+function ensure<T>(
   x: unknown,
   pred: Predicate<T>,
   message = "The value is not expected type",

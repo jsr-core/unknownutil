@@ -1,6 +1,5 @@
 import { Predicate } from "./is.ts";
 import {
-  ensure,
   ensureArray,
   ensureBoolean,
   ensureFunction,
@@ -12,18 +11,6 @@ import {
   ensureString,
   ensureUndefined,
 } from "./ensure.ts";
-
-/**
- * Return `x` as-is if `x` is expected type or raise an `EnsureError` when it's not.
- */
-export function assume<T>(
-  x: unknown,
-  pred: Predicate<T>,
-  message = "The value is not expected type",
-): T {
-  ensure(x, pred, message);
-  return x;
-}
 
 /**
  * Return `x` as-is if `x` is string or raise an `EnsureError` when it's not.

@@ -1,6 +1,5 @@
 import { assertThrows } from "./deps_test.ts";
 import {
-  ensure,
   ensureArray,
   ensureBoolean,
   ensureFunction,
@@ -13,15 +12,6 @@ import {
   ensureUndefined,
 } from "./ensure.ts";
 import { isBoolean, isNumber, isString } from "./is.ts";
-
-Deno.test("ensure does nothing when pred return true", () => {
-  ensure("a", isString);
-  ensure(0, isNumber);
-});
-Deno.test("ensure throws error when pred return false", () => {
-  assertThrows(() => ensure("a", isNumber));
-  assertThrows(() => ensure(0, isString));
-});
 
 Deno.test("ensureString does nothing on string", () => {
   ensureString("Hello");
