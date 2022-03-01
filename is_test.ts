@@ -4,8 +4,8 @@ import {
   isBoolean,
   isFunction,
   isLike,
-  isNone,
   isNull,
+  isNullish,
   isNumber,
   isObject,
   isString,
@@ -154,18 +154,18 @@ Deno.test("isUndefined returns false on non null", () => {
   assertEquals(isUndefined(null), false);
 });
 
-Deno.test("isNone returns true on null/undefined", () => {
-  assertEquals(isNone(null), true);
-  assertEquals(isNone(undefined), true);
+Deno.test("isNullish returns true on null/undefined", () => {
+  assertEquals(isNullish(null), true);
+  assertEquals(isNullish(undefined), true);
 });
-Deno.test("isNone returns false on non null/undefined", () => {
-  assertEquals(isNone(""), false);
-  assertEquals(isNone(0), false);
-  assertEquals(isNone(true), false);
-  assertEquals(isNone(false), false);
-  assertEquals(isNone([]), false);
-  assertEquals(isNone({}), false);
-  assertEquals(isNone(function () {}), false);
+Deno.test("isNullish returns false on non null/undefined", () => {
+  assertEquals(isNullish(""), false);
+  assertEquals(isNullish(0), false);
+  assertEquals(isNullish(true), false);
+  assertEquals(isNullish(false), false);
+  assertEquals(isNullish([]), false);
+  assertEquals(isNullish({}), false);
+  assertEquals(isNullish(function () {}), false);
 });
 
 Deno.test("isLike returns true/false on string", () => {

@@ -38,7 +38,7 @@ export function isObject<T extends unknown>(
   x: unknown,
   pred?: Predicate<T>,
 ): x is Record<string, T> {
-  if (isNone(x) || isArray(x)) {
+  if (isNullish(x) || isArray(x)) {
     return false;
   }
   return typeof x === "object" &&
@@ -70,7 +70,7 @@ export function isUndefined(x: unknown): x is undefined {
 /**
  * Return true if the value is null or undefined
  */
-export function isNone(x: unknown): x is null | undefined {
+export function isNullish(x: unknown): x is null | undefined {
   return x == null;
 }
 

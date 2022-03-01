@@ -24,7 +24,7 @@ The `unknownutil` provides the following predicate functions
 - `isFunction(x: unknown): x is (...args: unknown[]) => unknown`
 - `isNull(x: unknown): x is null`
 - `isUndefined(x: unknown): x is undefined`
-- `isNone(x: unknown): x is null | undefined`
+- `isNullish(x: unknown): x is null | undefined`
 - `isLike<R, T extends unknown>(ref: R, x: unknown, pred?: Predicate<T>): x is R`
 
 For example:
@@ -103,7 +103,7 @@ The `unknownutil` provides the following ensure functions which will raise
 - `ensureFunction(x: unknown): x is (...args: unknown[]) => unknown`
 - `ensureNull(x: unknown): x is null`
 - `ensureUndefined(x: unknown): x is undefined`
-- `ensureNone(x: unknown): x is null | undefined`
+- `ensureNullish(x: unknown): x is null | undefined`
 
 For example:
 
@@ -160,7 +160,7 @@ The `unknownutil` provides the following assume functions which returns a given
 - `assumeFunction(x: unknown): (...args: unknown[]) => unknown`
 - `assumeNull(x: unknown): null`
 - `assumeUndefined(x: unknown): undefined`
-- `assumeNone(x: unknown): null | undefined`
+- `assumeNullish(x: unknown): null | undefined`
 
 For example:
 

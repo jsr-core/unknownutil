@@ -5,7 +5,7 @@ import {
   ensureBoolean,
   ensureFunction,
   ensureLike,
-  ensureNone,
+  ensureNullish,
   ensureNull,
   ensureNumber,
   ensureObject,
@@ -164,18 +164,18 @@ Deno.test("ensureUndefined throws error on non undefined", () => {
   assertThrows(() => ensureUndefined(null));
 });
 
-Deno.test("ensureNone does nothing on null or undefined", () => {
-  ensureNone(null);
-  ensureNone(undefined);
+Deno.test("ensureNullish does nothing on null or undefined", () => {
+  ensureNullish(null);
+  ensureNullish(undefined);
 });
-Deno.test("ensureNone throws error on non null nor undefined", () => {
-  assertThrows(() => ensureNone("a"));
-  assertThrows(() => ensureNone(0));
-  assertThrows(() => ensureNone(true));
-  assertThrows(() => ensureNone(false));
-  assertThrows(() => ensureNone([]));
-  assertThrows(() => ensureNone({}));
-  assertThrows(() => ensureNone(function () {}));
+Deno.test("ensureNullish throws error on non null nor undefined", () => {
+  assertThrows(() => ensureNullish("a"));
+  assertThrows(() => ensureNullish(0));
+  assertThrows(() => ensureNullish(true));
+  assertThrows(() => ensureNullish(false));
+  assertThrows(() => ensureNullish([]));
+  assertThrows(() => ensureNullish({}));
+  assertThrows(() => ensureNullish(function () {}));
 });
 
 Deno.test("ensureLike does it's job on string", () => {

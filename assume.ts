@@ -5,7 +5,7 @@ import {
   ensureBoolean,
   ensureFunction,
   ensureLike,
-  ensureNone,
+  ensureNullish,
   ensureNull,
   ensureNumber,
   ensureObject,
@@ -98,8 +98,8 @@ export function assumeUndefined(x: unknown): undefined {
 /**
  * Return `x` as-is if `x` is null or undefined or raise an `EnsureError` when it's not.
  */
-export function assumeNone(x: unknown): null | undefined {
-  ensureNone(x);
+export function assumeNullish(x: unknown): null | undefined {
+  ensureNullish(x);
   return x;
 }
 

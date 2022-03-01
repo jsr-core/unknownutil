@@ -5,7 +5,7 @@ import {
   assumeBoolean,
   assumeFunction,
   assumeLike,
-  assumeNone,
+  assumeNullish,
   assumeNull,
   assumeNumber,
   assumeObject,
@@ -177,20 +177,20 @@ Deno.test("assumeUndefined throws error on non undefined", () => {
 });
 
 Deno.test(
-  "assumeNone returns the value when the value is null or undefined",
+  "assumeNullish returns the value when the value is null or undefined",
   () => {
-    assertEquals(assumeNone(null), null);
-    assertEquals(assumeNone(undefined), undefined);
+    assertEquals(assumeNullish(null), null);
+    assertEquals(assumeNullish(undefined), undefined);
   },
 );
-Deno.test("assumeNone throws error on non null nor undefined", () => {
-  assertThrows(() => assumeNone("a"));
-  assertThrows(() => assumeNone(0));
-  assertThrows(() => assumeNone(true));
-  assertThrows(() => assumeNone(false));
-  assertThrows(() => assumeNone([]));
-  assertThrows(() => assumeNone({}));
-  assertThrows(() => assumeNone(function () {}));
+Deno.test("assumeNullish throws error on non null nor undefined", () => {
+  assertThrows(() => assumeNullish("a"));
+  assertThrows(() => assumeNullish(0));
+  assertThrows(() => assumeNullish(true));
+  assertThrows(() => assumeNullish(false));
+  assertThrows(() => assumeNullish([]));
+  assertThrows(() => assumeNullish({}));
+  assertThrows(() => assumeNullish(function () {}));
 });
 
 Deno.test("assumeLike does it's job on string", () => {

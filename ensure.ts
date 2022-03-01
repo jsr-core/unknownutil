@@ -3,7 +3,7 @@ import {
   isBoolean,
   isFunction,
   isLike,
-  isNone,
+  isNullish,
   isNull,
   isNumber,
   isObject,
@@ -106,8 +106,8 @@ export function ensureUndefined(x: unknown): asserts x is undefined {
 /**
  * Ensure if `x` is null or undefined by raising an `EnsureError` when it's not.
  */
-export function ensureNone(x: unknown): asserts x is null | undefined {
-  return ensure(x, isNone, "The value must be null or undefined");
+export function ensureNullish(x: unknown): asserts x is null | undefined {
+  return ensure(x, isNullish, "The value must be null or undefined");
 }
 
 /**
