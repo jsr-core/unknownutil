@@ -16,7 +16,7 @@ import {
 /**
  * Return `x` as-is if `x` is expected type or raise an `EnsureError` when it's not.
  */
-export function require<T>(
+export function assume<T>(
   x: unknown,
   pred: Predicate<T>,
   message = "The value is not expected type",
@@ -28,7 +28,7 @@ export function require<T>(
 /**
  * Return `x` as-is if `x` is string or raise an `EnsureError` when it's not.
  */
-export function requireString(x: unknown): string {
+export function assumeString(x: unknown): string {
   ensureString(x);
   return x;
 }
@@ -36,7 +36,7 @@ export function requireString(x: unknown): string {
 /**
  * Return `x` as-is if `x` is number or raise an `EnsureError` when it's not.
  */
-export function requireNumber(x: unknown): number {
+export function assumeNumber(x: unknown): number {
   ensureNumber(x);
   return x;
 }
@@ -44,7 +44,7 @@ export function requireNumber(x: unknown): number {
 /**
  * Return `x` as-is if `x` is boolean or raise an `EnsureError` when it's not.
  */
-export function requireBoolean(x: unknown): boolean {
+export function assumeBoolean(x: unknown): boolean {
   ensureBoolean(x);
   return x;
 }
@@ -52,7 +52,7 @@ export function requireBoolean(x: unknown): boolean {
 /**
  * Return `x` as-is if `x` is array or raise an `EnsureError` when it's not.
  */
-export function requireArray<T extends unknown>(
+export function assumeArray<T extends unknown>(
   x: unknown,
   ipred?: Predicate<T>,
 ): T[] {
@@ -63,7 +63,7 @@ export function requireArray<T extends unknown>(
 /**
  * Return `x` as-is if `x` is object or raise an `EnsureError` when it's not.
  */
-export function requireObject<T>(
+export function assumeObject<T>(
   x: unknown,
   ipred?: Predicate<T>,
 ): Record<string, T> {
@@ -74,9 +74,7 @@ export function requireObject<T>(
 /**
  * Return `x` as-is if `x` is function or raise an `EnsureError` when it's not.
  */
-export function requireFunction(
-  x: unknown,
-): (...args: unknown[]) => unknown {
+export function assumeFunction(x: unknown): (...args: unknown[]) => unknown {
   ensureFunction(x);
   return x;
 }
@@ -84,7 +82,7 @@ export function requireFunction(
 /**
  * Return `x` as-is if `x` is null or raise an `EnsureError` when it's not.
  */
-export function requireNull(x: unknown): null {
+export function assumeNull(x: unknown): null {
   ensureNull(x);
   return x;
 }
@@ -92,7 +90,7 @@ export function requireNull(x: unknown): null {
 /**
  * Return `x` as-is if `x` is undefined or raise an `EnsureError` when it's not.
  */
-export function requireUndefined(x: unknown): undefined {
+export function assumeUndefined(x: unknown): undefined {
   ensureUndefined(x);
   return x;
 }
@@ -100,7 +98,7 @@ export function requireUndefined(x: unknown): undefined {
 /**
  * Return `x` as-is if `x` is null or undefined or raise an `EnsureError` when it's not.
  */
-export function requireNone(x: unknown): null | undefined {
+export function assumeNone(x: unknown): null | undefined {
   ensureNone(x);
   return x;
 }
@@ -108,7 +106,7 @@ export function requireNone(x: unknown): null | undefined {
 /**
  * Return `x` as-is if `x` follows the reference or raise an `EnsureError` when it doesn't.
  */
-export function requireLike<R, T extends unknown>(
+export function assumeLike<R, T extends unknown>(
   ref: R,
   x: unknown,
   ipred?: Predicate<T>,
