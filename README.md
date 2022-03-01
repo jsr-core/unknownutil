@@ -27,6 +27,9 @@ The `unknownutil` provides the following predicate functions
 - `isNullish(x: unknown): x is null | undefined`
 - `isLike<R, T extends unknown>(ref: R, x: unknown, pred?: Predicate<T>): x is R`
 
+The above function can be used to check the type of any variable and guarantee
+its type inside a closed `if` scope.
+
 For example:
 
 ```typescript
@@ -56,7 +59,7 @@ if (isArray(a, isString)) {
 }
 ```
 
-Use `isLike` if you need some complicated types like tuple or struct like:
+Use `isLike` if you need some complicated types like:
 
 ```typescript
 import { isLike } from "https://deno.land/x/unknownutil/mod.ts";
@@ -89,117 +92,148 @@ if (isLike({ foo: "", bar: 0 }, e)) {
 }
 ```
 
+### assertXXXXX
+
+The `unknownutil` provides the following assert functions
+
+- `assertString(x: unknown): assert x is string`
+- `assertNumber(x: unknown): assert x is number`
+- `assertBoolean(x: unknown): assert x is boolean`
+- `assertArray<T extends unknown>(x: unknown, pred?: Predicate<T>): assert x is T[]`
+- `assertObject<T extends unknown>(x: unknown, pred?: Predicate<T>): assert x is Record<string, T>`
+- `assertFunction(x: unknown): assert x is (...args: unknown[]) => unknown`
+- `assertNull(x: unknown): assert x is null`
+- `assertUndefined(x: unknown): assert x is undefined`
+- `assertNullish(x: unknown): assert x is null | undefined`
+- `assertLike<R, T extends unknown>(ref: R, x: unknown, pred?: Predicate<T>): assert x is R`
+
+The above function can be used to guarantee the type of any variable by throwing
+an exception if the type is not expected.
+
+For example:
+
+```typescript
+import { assertString } from "https://deno.land/x/unknownutil/mod.ts";
+
+function say(message: string): void {
+  console.log(message);
+}
+
+const a: unknown = "Hello";
+const b: unknown = 0;
+
+// Because 'a' is 'unknown', TypeScript won't allow a code like below
+//say(a);
+
+// But once the 'assertString(a)' is passed, TypeScript knows that 'a' is 'string'
+// thus it accepts the code that was not accepted before.
+assertString(a);
+say(a);
+
+// Or raise 'AssertError' if a given value is not string
+assertString(b);
+say(b);
+```
+
+More complex type predications are available on `assertXXXXX` as well like
+`isXXXXX`.
+
 ### ensureXXXXX
 
-The `unknownutil` provides the following ensure functions which will raise
-`EnsureError` when a given `x` is not expected type.
+The `unknownutil` provides the following ensure functions
 
-- `ensureString(x: unknown): assert x is string`
-- `ensureNumber(x: unknown): assert x is number`
-- `ensureBoolean(x: unknown): assert x is boolean`
-- `ensureArray<T extends unknown>(x: unknown, pred?: Predicate<T>): assert x is T[]`
-- `ensureObject<T extends unknown>(x: unknown, pred?: Predicate<T>): x is Record<string, T>`
-- `ensureFunction(x: unknown): x is (...args: unknown[]) => unknown`
-- `ensureNull(x: unknown): x is null`
-- `ensureUndefined(x: unknown): x is undefined`
-- `ensureNullish(x: unknown): x is null | undefined`
+- `ensureString(x: unknown): string`
+- `ensureNumber(x: unknown): number`
+- `ensureBoolean(x: unknown): boolean`
+- `ensureArray<T extends unknown>(x: unknown, pred?: Predicate<T>): T[]`
+- `ensureObject<T extends unknown>(x: unknown, pred?: Predicate<T>): Record<string, T>`
+- `ensureFunction(x: unknown): (...args: unknown[]) => unknown`
+- `ensureNull(x: unknown): null`
+- `ensureUndefined(x: unknown): undefined`
+- `ensureNullish(x: unknown): null | undefined`
+- `ensureLike<R, T extends unknown>(ref: R, x: unknown, pred?: Predicate<T>): R`
+
+The above function can be used to guarantee the type of any variable by throwing
+an exception if the type is not expected. The difference between assert and
+ensure is whether to assert the argument or the return type.
 
 For example:
 
 ```typescript
 import { ensureString } from "https://deno.land/x/unknownutil/mod.ts";
 
+function say(message: string): void {
+  console.log(message);
+}
+
 const a: unknown = "Hello";
-ensureString(a); // Now 'a' is 'string'
-
 const b: unknown = 0;
-ensureString(b); // Raise EnsureError on above while 'b' is not string
+
+// Because 'a' is 'unknown', TypeScript won't allow a code like below
+//say(a);
+
+// But once the 'ensureString(a)' is passed, TypeScript knows that return value is 'string'
+// thus it accepts the code.
+say(ensureString(a));
+
+// Or raise 'AssertError' if a given value is not string
+say(ensureString(b));
 ```
 
-Additionally, `ensureArray` and `ensureObject` supports an inner predicate
-function to predicate `x` more precisely like:
+More complex type predications are available on `ensureXXXXX` as well like
+`isXXXXX`.
 
-```typescript
-import { ensureArray, isString } from "https://deno.land/x/unknownutil/mod.ts";
+### maybeXXXXX
 
-const a: unknown = ["a", "b", "c"];
-ensureArray(a); // Now 'a' is 'unknown[]'
-ensureArray(a, isString); // Now 'a' is 'string[]'
+The `unknownutil` provides the following maybe functions
 
-const b: unknown = [0, 1, 2];
-ensureArray(b); // Now 'b' is 'unknown[]'
-ensureArray(b, isString); // Raise EnsureError on above while 'b' is not string array
-```
+- `maybeString(x: unknown): string | undefined`
+- `maybeNumber(x: unknown): number | undefined`
+- `maybeBoolean(x: unknown): boolean | undefined`
+- `maybeArray<T extends unknown>(x: unknown, pred?: Predicate<T>): T[] | undefined`
+- `maybeObject<T extends unknown>(x: unknown, pred?: Predicate<T>): Record<string, T> | undefined`
+- `maybeFunction(x: unknown): ((...args: unknown[]) => unknown) | undefined`
+- `maybeLike<R, T extends unknown>(ref: R, x: unknown, pred?: Predicate<T>): R | undefined`
 
-Use `ensureLike` if you need some complicated types like tuple or struct like:
-
-```typescript
-import { ensureLike } from "https://deno.land/x/unknownutil/mod.ts";
-
-const a: unknown = ["a", "b", "c"];
-ensureLike([], a); // Now 'a' is 'unknown[]'
-ensureLike(["", "", ""], a); // Now 'a' is '[string, string, string]'
-
-const b: unknown = { foo: "foo", bar: 0 };
-ensureLike({}, b); // Now 'b' is 'Record<string, unknown>'
-ensureLike({ foo: "", bar: 0 }, b); // Now 'b' is '{foo: string, bar: number}'
-```
-
-### assumeXXXXX
-
-The `unknownutil` provides the following assume functions which returns a given
-`x` as is or raise `EnsureError` when that is not expected type.
-
-- `assumeString(x: unknown): string`
-- `assumeNumber(x: unknown): number`
-- `assumeBoolean(x: unknown): boolean`
-- `assumeArray<T extends unknown>(x: unknown, pred?: Predicate<T>): T[]`
-- `assumeObject<T extends unknown>(x: unknown, pred?: Predicate<T>): Record<string, T>`
-- `assumeFunction(x: unknown): (...args: unknown[]) => unknown`
-- `assumeNull(x: unknown): null`
-- `assumeUndefined(x: unknown): undefined`
-- `assumeNullish(x: unknown): null | undefined`
+The above function will return `undefined` if the type of any variable is not
+expected, so it is possible to give an alternative value using the Nullish
+coalescing operator (`??`).
 
 For example:
 
 ```typescript
-import { assumeString } from "https://deno.land/x/unknownutil/mod.ts";
+import { maybeString } from "https://deno.land/x/unknownutil/mod.ts";
+
+function say(message: string): void {
+  console.log(message);
+}
 
 const a: unknown = "Hello";
-const a1 = assumeString(a); // Now 'a' and 'a1' is 'string'
-
 const b: unknown = 0;
-const b1 = assumeString(b); // Raise EnsureError on above while 'b' is not string
+
+// Because 'a' is 'unknown', TypeScript won't allow a code like below
+//say(a);
+
+// But the 'maybeString(a)' returns 'string | undefined' thus users can use
+// Nullish coalescing operator to give an alternative value to ensure that the
+// value given to the 'say()' is 'string'.
+// The following code print "Hello" to the console.
+say(maybeString(a) ?? "World");
+
+// The following code print "World" to the console.
+say(maybeString(b) ?? "World");
 ```
 
-Additionally, `assumeArray` and `assumeObject` supports an inner predicate
-function to predicate `x` more precisely like:
+More complex type predications are available on `maybeXXXXX` as well like
+`isXXXXX`.
 
-```typescript
-import { assumeArray, isString } from "https://deno.land/x/unknownutil/mod.ts";
+## Migration from v1 to v2
 
-const a: unknown = ["a", "b", "c"];
-const a1 = assumeArray(a); // Now 'a' and 'a1' is 'unknown[]'
-const a2 = assumeArray(a, isString); // Now 'a' and 'a2' is 'string[]'
-
-const b: unknown = [0, 1, 2];
-const b1 = assumeArray(b); // Now 'b' and 'b1' is 'unknown[]'
-const b2 = assumeArray(b, isString); // Raise EnsureError on above while 'b' is not string array
-```
-
-Use `assumeLike` if you need some complicated types like tuple or struct like:
-
-```typescript
-import { assumeLike } from "https://deno.land/x/unknownutil/mod.ts";
-
-const a: unknown = ["a", "b", "c"];
-const a1 = assumeLike([], a); // Now 'a' and 'a1' is 'unknown[]'
-const a2 = assumeLike(["", "", ""], a); // Now 'a' and 'a2' is '[string, string, string]'
-
-const b: unknown = { foo: "foo", bar: 0 };
-const b1 = assumeLike({}, b); // Now 'b' and 'b1' is 'Record<string, unknown>'
-const b2 = assumeLike({ foo: "", bar: 0 }, b); // Now 'b' and 'b2' is '{foo: string, bar: number}'
-```
+1. Replace `ensure` or `assert` to corresponding specific functions (e.g.
+   `ensureString` or `assertNumber`)
+2. Rename `xxxxxNone` to `xxxxxNullish` (e.g. `isNone` to `isNullish`)
+3. Rename `ensureXXXXX` to `assertXXXXX` (e.g. `ensureString` to `assertString`)
+4. Rename `assumeXXXXX` to `ensureXXXXX` (e.g. `assumeNumber` to `ensureNumber`)
 
 ## Development
 
