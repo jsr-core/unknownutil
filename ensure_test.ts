@@ -122,7 +122,10 @@ Deno.test("ensureFunction returns the value when the value is function", () => {
   assertEquals(ensureFunction(a), a);
   const b = () => {};
   assertEquals(ensureFunction(b), b);
-  assertEquals(ensureFunction(setTimeout), setTimeout);
+  assertEquals(
+    ensureFunction(setTimeout),
+    setTimeout as unknown,
+  );
 });
 Deno.test("ensureFunction throws error on non function", () => {
   assertThrows(() => ensureFunction("a"));
@@ -284,7 +287,7 @@ Deno.test("ensureLike does it's job on struct", () => {
     foo: "",
     bar: 0,
     hoge: "",
-  });
+  } as unknown);
 
   assertThrows(() => ensureLike(ref, {}));
   assertThrows(() => ensureLike(ref, { foo: "" }));
@@ -292,12 +295,12 @@ Deno.test("ensureLike does it's job on struct", () => {
 });
 Deno.test("ensureLike does it's job on function", () => {
   const ref = () => {};
-  assertEquals(ensureLike(ref, ensureFunction), ensureFunction);
+  assertEquals(ensureLike(ref, ensureFunction), ensureFunction as unknown);
   const a = function () {};
   assertEquals(ensureLike(ref, a), a);
   const b = () => {};
   assertEquals(ensureLike(ref, b), b);
-  assertEquals(ensureLike(ref, setTimeout), setTimeout);
+  assertEquals(ensureLike(ref, setTimeout), setTimeout as unknown);
 
   assertThrows(() => ensureLike(ref, "a"));
   assertThrows(() => ensureLike(ref, 0));

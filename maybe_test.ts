@@ -120,7 +120,7 @@ Deno.test("maybeFunction returns the value when the value is function", () => {
   assertEquals(maybeFunction(a), a);
   const b = () => {};
   assertEquals(maybeFunction(b), b);
-  assertEquals(maybeFunction(setTimeout), setTimeout);
+  assertEquals(maybeFunction(setTimeout), setTimeout as unknown);
 });
 Deno.test("maybeFunction returns undefined on non function", () => {
   assertUndefined(maybeFunction("a"));
@@ -234,7 +234,7 @@ Deno.test("maybeLike does it's job on struct", () => {
     foo: "",
     bar: 0,
     hoge: "",
-  });
+  } as unknown);
 
   assertUndefined(maybeLike(ref, {}));
   assertUndefined(maybeLike(ref, { foo: "" }));
@@ -242,12 +242,12 @@ Deno.test("maybeLike does it's job on struct", () => {
 });
 Deno.test("maybeLike does it's job on function", () => {
   const ref = () => {};
-  assertEquals(maybeLike(ref, maybeFunction), maybeFunction);
+  assertEquals(maybeLike(ref, maybeFunction), maybeFunction as unknown);
   const a = function () {};
   assertEquals(maybeLike(ref, a), a);
   const b = () => {};
   assertEquals(maybeLike(ref, b), b);
-  assertEquals(maybeLike(ref, setTimeout), setTimeout);
+  assertEquals(maybeLike(ref, setTimeout), setTimeout as unknown);
 
   assertUndefined(maybeLike(ref, "a"));
   assertUndefined(maybeLike(ref, 0));
