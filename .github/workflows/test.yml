@@ -1,8 +1,5 @@
 name: Test
 
-env:
-  DENO_VERSION: 1.x
-
 on:
   schedule:
     - cron: "0 7 * * 0"
@@ -14,43 +11,47 @@ on:
       - main
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
+  check:
+    strategy:
+      matrix:
+        runner:
+          - ubuntu-latest
+        version:
+          - "1.x"
+          - "1.28.x"
+    runs-on: ${{ matrix.runner }}
     steps:
-      - uses: actions/checkout@v2
-      - uses: denoland/setup-deno@main
+      - uses: actions/checkout@v3
+      - uses: denoland/setup-deno@v1
         with:
-          deno-version: ${{ env.DENO_VERSION }}
-      - name: Lint
-        run: make lint
-
-  format:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: denoland/setup-deno@main
-        with:
-          deno-version: ${{ env.DENO_VERSION }}
-      - name: Format
-        run: make fmt-check
+          deno-version: "${{ matrix.version }}"
+      - name: Lint check
+        run: |
+          make lint
+      - name: Format check
+        run: |
+          make fmt-check
+      - name: Type check
+        run: |
+          make type-check
 
   test:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        runner:
+          - windows-latest
+          - macos-latest
+          - ubuntu-latest
+        version:
+          - "1.x"
+          - "1.28.x"
+    runs-on: ${{ matrix.runner }}
     steps:
-      - uses: actions/checkout@v2
-      - uses: denoland/setup-deno@main
+      - uses: actions/checkout@v3
+      - uses: denoland/setup-deno@v1
         with:
-          deno-version: ${{ env.DENO_VERSION }}
+          deno-version: "${{ matrix.version }}"
       - name: Test
-        run: make test
+        run: |
+          make test
         timeout-minutes: 5
-
-  typecheck:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: denoland/setup-deno@main
-        with:
-          deno-version: ${{ env.DENO_VERSION }}
-      - name: Type check
-        run: make type-check
