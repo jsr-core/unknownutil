@@ -1,4 +1,4 @@
-import { assertThrows } from "./deps_test.ts";
+import { assertThrows } from "https://deno.land/std@0.186.0/testing/asserts.ts";
 import {
   assertArray,
   assertBoolean,

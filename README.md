@@ -235,32 +235,6 @@ More complex type predications are available on `maybeXXXXX` as well like
 3. Rename `ensureXXXXX` to `assertXXXXX` (e.g. `ensureString` to `assertString`)
 4. Rename `assumeXXXXX` to `ensureXXXXX` (e.g. `assumeNumber` to `ensureNumber`)
 
-## Development
-
-Lint code like:
-
-```text
-make lint
-```
-
-Format code like
-
-```text
-make fmt
-```
-
-Check types like
-
-```text
-make type-check
-```
-
-Run tests like:
-
-```text
-make test
-```
-
 ## License
 
 The code follows MIT license written in [LICENSE](./LICENSE). Contributors need

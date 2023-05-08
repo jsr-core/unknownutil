@@ -1,0 +1,9 @@
+{
+  "lock": false,
+  "tasks": {
+    "build-npm": "deno run -A scripts/build_npm.ts $(git describe --tags --always --dirty)",
+    "test": "deno test --unstable -A --parallel",
+    "check": "deno check --unstable $(find . -name '*.ts')",
+    "upgrade": "deno run -A https://deno.land/x/udd/main.ts $(find . -name '*.ts' -not -path '*/npm/*')"
+  }
+}
