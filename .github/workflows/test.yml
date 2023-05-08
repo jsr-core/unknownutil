@@ -1,5 +1,8 @@
 name: Test
 
+env:
+  DENO_VERSION: 1.x
+
 on:
   schedule:
     - cron: "0 7 * * 0"
@@ -7,51 +10,31 @@ on:
     branches:
       - main
   pull_request:
-    branches:
-      - main
 
 jobs:
   check:
-    strategy:
-      matrix:
-        runner:
-          - ubuntu-latest
-        version:
-          - "1.x"
-          - "1.28.x"
-    runs-on: ${{ matrix.runner }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: denoland/setup-deno@v1
         with:
-          deno-version: "${{ matrix.version }}"
-      - name: Lint check
+          deno-version: ${{ env.DENO_VERSION }}
+      - name: Format
         run: |
-          make lint
-      - name: Format check
-        run: |
-          make fmt-check
+          deno fmt --check
+      - name: Lint
+        run: deno lint
       - name: Type check
-        run: |
-          make type-check
+        run: deno task check
 
   test:
-    strategy:
-      matrix:
-        runner:
-          - windows-latest
-          - macos-latest
-          - ubuntu-latest
-        version:
-          - "1.x"
-          - "1.28.x"
-    runs-on: ${{ matrix.runner }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: denoland/setup-deno@v1
         with:
-          deno-version: "${{ matrix.version }}"
+          deno-version: ${{ env.DENO_VERSION }}
       - name: Test
         run: |
-          make test
+          deno task test
         timeout-minutes: 5

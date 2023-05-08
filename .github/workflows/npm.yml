@@ -7,7 +7,7 @@ env:
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
 
 jobs:
   publish:
@@ -22,9 +22,9 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
-          registry-url: 'https://registry.npmjs.org'
+          registry-url: "https://registry.npmjs.org"
       - name: Build
-        run: make build-npm
+        run: deno task build-npm
       - name: Publish
         run: |
           cd npm
