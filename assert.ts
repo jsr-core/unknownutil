@@ -6,8 +6,10 @@ import {
   isNullish,
   isNumber,
   isObject,
+  isOneOf,
   isString,
   isUndefined,
+  OneOf,
   Predicate,
 } from "./is.ts";
 
@@ -137,5 +139,21 @@ export function assertNullish(
     x,
     isNullish,
     options.message ?? "The value must be null or undefined",
+  );
+}
+
+/**
+ * Ensure that `x` is one of the predicated types, and raise `AssertError` if it is not.
+ */
+export function assertOneOf<T extends readonly unknown[] | []>(
+  x: unknown,
+  preds: Predicate<OneOf<T>>[],
+  options: { message?: string } = {},
+): asserts x is OneOf<T> {
+  const pred = (x: unknown): x is OneOf<T> => isOneOf(x, preds);
+  return assert(
+    x,
+    pred,
+    options.message ?? "The value must be one of the specified type",
   );
 }

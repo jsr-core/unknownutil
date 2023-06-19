@@ -7,6 +7,7 @@ import {
   isNullish,
   isNumber,
   isObject,
+  isOneOf,
   isString,
   isUndefined,
 } from "./is.ts";
@@ -165,4 +166,18 @@ Deno.test("isNullish returns false on non null/undefined", () => {
   assertEquals(isNullish([]), false);
   assertEquals(isNullish({}), false);
   assertEquals(isNullish(function () {}), false);
+});
+
+Deno.test("isOneOf returns true when one of preds returns true", () => {
+  assertEquals(isOneOf("", [isString, isNumber]), true);
+  assertEquals(isOneOf(0, [isString, isNumber]), true);
+});
+Deno.test("isOneOf returns false when none of preds returns true", () => {
+  assertEquals(isOneOf(true, [isString, isNumber]), false);
+  assertEquals(isOneOf(false, [isString, isNumber]), false);
+  assertEquals(isOneOf([], [isString, isNumber]), false);
+  assertEquals(isOneOf({}, [isString, isNumber]), false);
+  assertEquals(isOneOf(function () {}, [isString, isNumber]), false);
+  assertEquals(isOneOf(null, [isString, isNumber]), false);
+  assertEquals(isOneOf(undefined, [isString, isNumber]), false);
 });
