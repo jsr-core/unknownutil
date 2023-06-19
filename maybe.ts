@@ -42,11 +42,11 @@ export function maybeBoolean(x: unknown): boolean | undefined {
 /**
  * Return `x` as-is if the type of the value is array or `undefined` if not.
  */
-export function maybeArray<T extends unknown>(
+export function maybeArray<T>(
   x: unknown,
-  ipred?: Predicate<T>,
+  options: { pred?: Predicate<T> } = {},
 ): T[] | undefined {
-  const pred = (x: unknown): x is T[] => isArray(x, ipred);
+  const pred = (x: unknown): x is T[] => isArray(x, options);
   return maybe(x, pred);
 }
 
@@ -55,9 +55,9 @@ export function maybeArray<T extends unknown>(
  */
 export function maybeObject<T>(
   x: unknown,
-  ipred?: Predicate<T>,
+  options: { pred?: Predicate<T> } = {},
 ): Record<string, T> | undefined {
-  const pred = (x: unknown): x is Record<string, T> => isObject(x, ipred);
+  const pred = (x: unknown): x is Record<string, T> => isObject(x, options);
   return maybe(x, pred);
 }
 

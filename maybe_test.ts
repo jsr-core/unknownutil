@@ -70,18 +70,22 @@ Deno.test("maybeArray returns undefined on non array", () => {
   assertUndefined(maybeArray(null));
 });
 Deno.test("maybeArray<T> returns the value when the value is T array", () => {
-  assertEquals(maybeArray([0, 1, 2], isNumber), [0, 1, 2]);
-  assertEquals(maybeArray(["a", "b", "c"], isString), ["a", "b", "c"]);
-  assertEquals(maybeArray([true, false, true], isBoolean), [
+  assertEquals(maybeArray([0, 1, 2], { pred: isNumber }), [0, 1, 2]);
+  assertEquals(maybeArray(["a", "b", "c"], { pred: isString }), [
+    "a",
+    "b",
+    "c",
+  ]);
+  assertEquals(maybeArray([true, false, true], { pred: isBoolean }), [
     true,
     false,
     true,
   ]);
 });
 Deno.test("maybeArray<T> returns undefined on non T array", () => {
-  assertUndefined(maybeArray([0, 1, 2], isString));
-  assertUndefined(maybeArray(["a", "b", "c"], isNumber));
-  assertUndefined(maybeArray([true, false, true], isString));
+  assertUndefined(maybeArray([0, 1, 2], { pred: isString }));
+  assertUndefined(maybeArray(["a", "b", "c"], { pred: isNumber }));
+  assertUndefined(maybeArray([true, false, true], { pred: isString }));
 });
 
 Deno.test("maybeObject return the value when the value is object", () => {
@@ -102,15 +106,15 @@ Deno.test("maybeObject returns undefined on non object", () => {
 Deno.test(
   "maybeObject<T> returns the value when the value is T object",
   () => {
-    assertEquals(maybeObject({ a: 0 }, isNumber), { a: 0 });
-    assertEquals(maybeObject({ a: "a" }, isString), { a: "a" });
-    assertEquals(maybeObject({ a: true }, isBoolean), { a: true });
+    assertEquals(maybeObject({ a: 0 }, { pred: isNumber }), { a: 0 });
+    assertEquals(maybeObject({ a: "a" }, { pred: isString }), { a: "a" });
+    assertEquals(maybeObject({ a: true }, { pred: isBoolean }), { a: true });
   },
 );
 Deno.test("maybeObject<T> returns undefined on non T object", () => {
-  assertUndefined(maybeObject({ a: 0 }, isString));
-  assertUndefined(maybeObject({ a: "a" }, isNumber));
-  assertUndefined(maybeObject({ a: true }, isString));
+  assertUndefined(maybeObject({ a: 0 }, { pred: isString }));
+  assertUndefined(maybeObject({ a: "a" }, { pred: isNumber }));
+  assertUndefined(maybeObject({ a: true }, { pred: isString }));
 });
 
 Deno.test("maybeFunction returns the value when the value is function", () => {

@@ -72,14 +72,14 @@ Deno.test("assertArray throws error on non array", () => {
   assertThrows(() => assertArray(null));
 });
 Deno.test("assertArray<T> does nothing on T array", () => {
-  assertArray([0, 1, 2], isNumber);
-  assertArray(["a", "b", "c"], isString);
-  assertArray([true, false, true], isBoolean);
+  assertArray([0, 1, 2], { pred: isNumber });
+  assertArray(["a", "b", "c"], { pred: isString });
+  assertArray([true, false, true], { pred: isBoolean });
 });
 Deno.test("assertArray<T> throws error on non T array", () => {
-  assertThrows(() => assertArray([0, 1, 2], isString));
-  assertThrows(() => assertArray(["a", "b", "c"], isNumber));
-  assertThrows(() => assertArray([true, false, true], isString));
+  assertThrows(() => assertArray([0, 1, 2], { pred: isString }));
+  assertThrows(() => assertArray(["a", "b", "c"], { pred: isNumber }));
+  assertThrows(() => assertArray([true, false, true], { pred: isString }));
 });
 
 Deno.test("assertObject does nothing on object", () => {
@@ -98,14 +98,14 @@ Deno.test("assertObject throws error on non object", () => {
   assertThrows(() => assertObject(null));
 });
 Deno.test("assertObject<T> does nothing on T object", () => {
-  assertObject({ a: 0 }, isNumber);
-  assertObject({ a: "a" }, isString);
-  assertObject({ a: true }, isBoolean);
+  assertObject({ a: 0 }, { pred: isNumber });
+  assertObject({ a: "a" }, { pred: isString });
+  assertObject({ a: true }, { pred: isBoolean });
 });
 Deno.test("assertObject<T> throws error on non T object", () => {
-  assertThrows(() => assertObject({ a: 0 }, isString));
-  assertThrows(() => assertObject({ a: "a" }, isNumber));
-  assertThrows(() => assertObject({ a: true }, isString));
+  assertThrows(() => assertObject({ a: 0 }, { pred: isString }));
+  assertThrows(() => assertObject({ a: "a" }, { pred: isNumber }));
+  assertThrows(() => assertObject({ a: true }, { pred: isString }));
 });
 
 Deno.test("assertFunction does nothing on function", () => {

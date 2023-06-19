@@ -62,11 +62,11 @@ export function assertBoolean(x: unknown): asserts x is boolean {
  *
  * Use `ipred` to predicate the type of items.
  */
-export function assertArray<T extends unknown>(
+export function assertArray<T>(
   x: unknown,
-  ipred?: Predicate<T>,
+  options: { pred?: Predicate<T> } = {},
 ): asserts x is T[] {
-  const pred = (x: unknown): x is T[] => isArray(x, ipred);
+  const pred = (x: unknown): x is T[] => isArray(x, options);
   return assert(x, pred, "The value must be array");
 }
 
@@ -77,9 +77,9 @@ export function assertArray<T extends unknown>(
  */
 export function assertObject<T>(
   x: unknown,
-  ipred?: Predicate<T>,
+  options: { pred?: Predicate<T> } = {},
 ): asserts x is Record<string, T> {
-  const pred = (x: unknown): x is Record<string, T> => isObject(x, ipred);
+  const pred = (x: unknown): x is Record<string, T> => isObject(x, options);
   return assert(x, pred, "The value must be object");
 }
 

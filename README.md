@@ -19,8 +19,8 @@ The `unknownutil` provides the following predicate functions
 - `isString(x: unknown): x is string`
 - `isNumber(x: unknown): x is number`
 - `isBoolean(x: unknown): x is boolean`
-- `isArray<T extends unknown>(x: unknown, pred?: Predicate<T>): x is T[]`
-- `isObject<T extends unknown>(x: unknown, pred?: Predicate<T>): x is Record<string, T>`
+- `isArray<T>(x: unknown, options?: { pred?: Predicate<T> }): x is T[]`
+- `isObject<T>(x: unknown, options?: { pred?: Predicate<T> }): x is Record<string, T>`
 - `isFunction(x: unknown): x is (...args: unknown[]) => unknown`
 - `isNull(x: unknown): x is null`
 - `isUndefined(x: unknown): x is undefined`
@@ -53,7 +53,7 @@ if (isArray(a)) {
   // 'a' is 'unknown[]' in this block
 }
 
-if (isArray(a, isString)) {
+if (isArray(a, { pred: isString })) {
   // 'a' is 'string[]' in this block
 }
 ```
@@ -65,8 +65,8 @@ The `unknownutil` provides the following assert functions
 - `assertString(x: unknown): assert x is string`
 - `assertNumber(x: unknown): assert x is number`
 - `assertBoolean(x: unknown): assert x is boolean`
-- `assertArray<T extends unknown>(x: unknown, pred?: Predicate<T>): assert x is T[]`
-- `assertObject<T extends unknown>(x: unknown, pred?: Predicate<T>): assert x is Record<string, T>`
+- `assertArray<T>(x: unknown, options?: { pred?: Predicate<T> }): assert x is T[]`
+- `assertObject<T>(x: unknown, options?: { pred?: Predicate<T> }): assert x is Record<string, T>`
 - `assertFunction(x: unknown): assert x is (...args: unknown[]) => unknown`
 - `assertNull(x: unknown): assert x is null`
 - `assertUndefined(x: unknown): assert x is undefined`
@@ -110,8 +110,8 @@ The `unknownutil` provides the following ensure functions
 - `ensureString(x: unknown): string`
 - `ensureNumber(x: unknown): number`
 - `ensureBoolean(x: unknown): boolean`
-- `ensureArray<T extends unknown>(x: unknown, pred?: Predicate<T>): T[]`
-- `ensureObject<T extends unknown>(x: unknown, pred?: Predicate<T>): Record<string, T>`
+- `ensureArray<T>(x: unknown, options?: { pred?: Predicate<T> }): T[]`
+- `ensureObject<T>(x: unknown, options?: { pred?: Predicate<T> }): Record<string, T>`
 - `ensureFunction(x: unknown): (...args: unknown[]) => unknown`
 - `ensureNull(x: unknown): null`
 - `ensureUndefined(x: unknown): undefined`
@@ -154,8 +154,8 @@ The `unknownutil` provides the following maybe functions
 - `maybeString(x: unknown): string | undefined`
 - `maybeNumber(x: unknown): number | undefined`
 - `maybeBoolean(x: unknown): boolean | undefined`
-- `maybeArray<T extends unknown>(x: unknown, pred?: Predicate<T>): T[] | undefined`
-- `maybeObject<T extends unknown>(x: unknown, pred?: Predicate<T>): Record<string, T> | undefined`
+- `maybeArray<T>(x: unknown, options?: { pred?: Predicate<T> }): T[] | undefined`
+- `maybeObject<T>(x: unknown, options?: { pred?: Predicate<T> }): Record<string, T> | undefined`
 - `maybeFunction(x: unknown): ((...args: unknown[]) => unknown) | undefined`
 
 The above function will return `undefined` if the type of any variable is not

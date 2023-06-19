@@ -75,18 +75,22 @@ Deno.test("ensureArray throws error on non array", () => {
   assertThrows(() => ensureArray(null));
 });
 Deno.test("ensureArray<T> returns the value when the value is T array", () => {
-  assertEquals(ensureArray([0, 1, 2], isNumber), [0, 1, 2]);
-  assertEquals(ensureArray(["a", "b", "c"], isString), ["a", "b", "c"]);
-  assertEquals(ensureArray([true, false, true], isBoolean), [
+  assertEquals(ensureArray([0, 1, 2], { pred: isNumber }), [0, 1, 2]);
+  assertEquals(ensureArray(["a", "b", "c"], { pred: isString }), [
+    "a",
+    "b",
+    "c",
+  ]);
+  assertEquals(ensureArray([true, false, true], { pred: isBoolean }), [
     true,
     false,
     true,
   ]);
 });
 Deno.test("ensureArray<T> throws error on non T array", () => {
-  assertThrows(() => ensureArray([0, 1, 2], isString));
-  assertThrows(() => ensureArray(["a", "b", "c"], isNumber));
-  assertThrows(() => ensureArray([true, false, true], isString));
+  assertThrows(() => ensureArray([0, 1, 2], { pred: isString }));
+  assertThrows(() => ensureArray(["a", "b", "c"], { pred: isNumber }));
+  assertThrows(() => ensureArray([true, false, true], { pred: isString }));
 });
 
 Deno.test("ensureObject return the value when the value is object", () => {
@@ -107,15 +111,15 @@ Deno.test("ensureObject throws error on non object", () => {
 Deno.test(
   "ensureObject<T> returns the value when the value is T object",
   () => {
-    assertEquals(ensureObject({ a: 0 }, isNumber), { a: 0 });
-    assertEquals(ensureObject({ a: "a" }, isString), { a: "a" });
-    assertEquals(ensureObject({ a: true }, isBoolean), { a: true });
+    assertEquals(ensureObject({ a: 0 }, { pred: isNumber }), { a: 0 });
+    assertEquals(ensureObject({ a: "a" }, { pred: isString }), { a: "a" });
+    assertEquals(ensureObject({ a: true }, { pred: isBoolean }), { a: true });
   },
 );
 Deno.test("ensureObject<T> throws error on non T object", () => {
-  assertThrows(() => ensureObject({ a: 0 }, isString));
-  assertThrows(() => ensureObject({ a: "a" }, isNumber));
-  assertThrows(() => ensureObject({ a: true }, isString));
+  assertThrows(() => ensureObject({ a: 0 }, { pred: isString }));
+  assertThrows(() => ensureObject({ a: "a" }, { pred: isNumber }));
+  assertThrows(() => ensureObject({ a: true }, { pred: isString }));
 });
 
 Deno.test("ensureFunction returns the value when the value is function", () => {

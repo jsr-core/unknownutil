@@ -29,10 +29,11 @@ export function isBoolean(x: unknown): x is boolean {
  *
  * Use `pred` to predicate the type of items.
  */
-export function isArray<T extends unknown>(
+export function isArray<T>(
   x: unknown,
-  pred?: Predicate<T>,
+  options: { pred?: Predicate<T> } = {},
 ): x is T[] {
+  const pred = options.pred;
   return Array.isArray(x) && (!pred || x.every(pred));
 }
 
@@ -41,13 +42,14 @@ export function isArray<T extends unknown>(
  *
  * Use `pred` to predicate the type of values.
  */
-export function isObject<T extends unknown>(
+export function isObject<T>(
   x: unknown,
-  pred?: Predicate<T>,
+  options: { pred?: Predicate<T> } = {},
 ): x is Record<string, T> {
   if (isNullish(x) || isArray(x)) {
     return false;
   }
+  const pred = options.pred;
   return typeof x === "object" &&
     // deno-lint-ignore no-explicit-any
     (!pred || Object.values(x as any).every(pred));

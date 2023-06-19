@@ -72,14 +72,14 @@ Deno.test("isArray returns false on non array", () => {
   assertEquals(isArray(undefined), false);
 });
 Deno.test("isArray<T> returns true on T array", () => {
-  assertEquals(isArray([0, 1, 2], isNumber), true);
-  assertEquals(isArray(["a", "b", "c"], isString), true);
-  assertEquals(isArray([true, false, true], isBoolean), true);
+  assertEquals(isArray([0, 1, 2], { pred: isNumber }), true);
+  assertEquals(isArray(["a", "b", "c"], { pred: isString }), true);
+  assertEquals(isArray([true, false, true], { pred: isBoolean }), true);
 });
 Deno.test("isArray<T> returns false on non T array", () => {
-  assertEquals(isArray([0, 1, 2], isString), false);
-  assertEquals(isArray(["a", "b", "c"], isNumber), false);
-  assertEquals(isArray([true, false, true], isString), false);
+  assertEquals(isArray([0, 1, 2], { pred: isString }), false);
+  assertEquals(isArray(["a", "b", "c"], { pred: isNumber }), false);
+  assertEquals(isArray([true, false, true], { pred: isString }), false);
 });
 
 Deno.test("isObject returns true on object", () => {
@@ -98,14 +98,14 @@ Deno.test("isObject returns false on non object", () => {
   assertEquals(isObject(undefined), false);
 });
 Deno.test("isObject<T> returns true on T object", () => {
-  assertEquals(isObject({ a: 0 }, isNumber), true);
-  assertEquals(isObject({ a: "a" }, isString), true);
-  assertEquals(isObject({ a: true }, isBoolean), true);
+  assertEquals(isObject({ a: 0 }, { pred: isNumber }), true);
+  assertEquals(isObject({ a: "a" }, { pred: isString }), true);
+  assertEquals(isObject({ a: true }, { pred: isBoolean }), true);
 });
 Deno.test("isObject<T> returns false on non T object", () => {
-  assertEquals(isObject({ a: 0 }, isString), false);
-  assertEquals(isObject({ a: "a" }, isNumber), false);
-  assertEquals(isObject({ a: true }, isString), false);
+  assertEquals(isObject({ a: 0 }, { pred: isString }), false);
+  assertEquals(isObject({ a: "a" }, { pred: isNumber }), false);
+  assertEquals(isObject({ a: true }, { pred: isString }), false);
 });
 
 Deno.test("isFunction returns true on function", () => {

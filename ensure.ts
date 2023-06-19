@@ -38,11 +38,11 @@ export function ensureBoolean(x: unknown): boolean {
 /**
  * Return `x` as-is if `x` is array or raise an `EnsureError` when it's not.
  */
-export function ensureArray<T extends unknown>(
+export function ensureArray<T>(
   x: unknown,
-  ipred?: Predicate<T>,
+  options: { pred?: Predicate<T> } = {},
 ): T[] {
-  assertArray(x, ipred);
+  assertArray(x, options);
   return x;
 }
 
@@ -51,9 +51,9 @@ export function ensureArray<T extends unknown>(
  */
 export function ensureObject<T>(
   x: unknown,
-  ipred?: Predicate<T>,
+  options: { pred?: Predicate<T> } = {},
 ): Record<string, T> {
-  assertObject(x, ipred);
+  assertObject(x, options);
   return x;
 }
 
