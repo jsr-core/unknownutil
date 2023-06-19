@@ -2,7 +2,6 @@ import {
   isArray,
   isBoolean,
   isFunction,
-  isLike,
   isNumber,
   isObject,
   isString,
@@ -69,16 +68,4 @@ export function maybeFunction(
   x: unknown,
 ): ((...args: unknown[]) => unknown) | undefined {
   return maybe(x, isFunction);
-}
-
-/**
- * Return `x` as-is if the type of the value follow the reference or `undefined` if not.
- */
-export function maybeLike<R, T extends unknown>(
-  ref: R,
-  x: unknown,
-  ipred?: Predicate<T>,
-): R | undefined {
-  const pred = (x: unknown): x is R => isLike(ref, x, ipred);
-  return maybe(x, pred);
 }

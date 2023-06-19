@@ -2,7 +2,6 @@ import {
   isArray,
   isBoolean,
   isFunction,
-  isLike,
   isNull,
   isNullish,
   isNumber,
@@ -112,16 +111,4 @@ export function assertUndefined(x: unknown): asserts x is undefined {
  */
 export function assertNullish(x: unknown): asserts x is null | undefined {
   return assert(x, isNullish, "The value must be null or undefined");
-}
-
-/**
- * Ensure that `x` follows the type of `ref`, and raise `AssertError` if it is not.
- */
-export function assertLike<R, T extends unknown>(
-  ref: R,
-  x: unknown,
-  ipred?: Predicate<T>,
-): asserts x is R {
-  const pred = (x: unknown): x is T[] => isLike(ref, x, ipred);
-  return assert(x, pred, "The value must follow the reference");
 }

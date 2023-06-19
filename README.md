@@ -25,7 +25,6 @@ The `unknownutil` provides the following predicate functions
 - `isNull(x: unknown): x is null`
 - `isUndefined(x: unknown): x is undefined`
 - `isNullish(x: unknown): x is null | undefined`
-- `isLike<R, T extends unknown>(ref: R, x: unknown, pred?: Predicate<T>): x is R`
 
 The above function can be used to check the type of any variable and guarantee
 its type inside a closed `if` scope.
@@ -59,39 +58,6 @@ if (isArray(a, isString)) {
 }
 ```
 
-Use `isLike` if you need some complicated types like:
-
-```typescript
-import { isLike } from "https://deno.land/x/unknownutil/mod.ts";
-
-const a: unknown = ["a", 0, "b"];
-const b: unknown = ["a", 0, "b", "c"];
-
-if (isLike(["", 0, ""], a)) {
-  // 'a' is [string, number, string] thus this block is called
-}
-
-if (isLike(["", 0, ""], b)) {
-  // 'b' is [string, number, string, string] thus this block is NOT called
-}
-
-const c: unknown = { foo: "foo", bar: 100 };
-const d: unknown = { foo: "foo", bar: 100, hoge: "hoge" };
-const e: unknown = { foo: "foo", hoge: "hoge" };
-
-if (isLike({ foo: "", bar: 0 }, c)) {
-  // 'c' is {foo: string, bar: number} thus this block is called
-}
-
-if (isLike({ foo: "", bar: 0 }, d)) {
-  // 'd' contains {foo: string, bar: number} thus this block is called
-}
-
-if (isLike({ foo: "", bar: 0 }, e)) {
-  // 'e' does not contain {foo: '', bar: 0} thus this block is NOT called
-}
-```
-
 ### assertXXXXX
 
 The `unknownutil` provides the following assert functions
@@ -105,7 +71,6 @@ The `unknownutil` provides the following assert functions
 - `assertNull(x: unknown): assert x is null`
 - `assertUndefined(x: unknown): assert x is undefined`
 - `assertNullish(x: unknown): assert x is null | undefined`
-- `assertLike<R, T extends unknown>(ref: R, x: unknown, pred?: Predicate<T>): assert x is R`
 
 The above function can be used to guarantee the type of any variable by throwing
 an exception if the type is not expected.
@@ -151,7 +116,6 @@ The `unknownutil` provides the following ensure functions
 - `ensureNull(x: unknown): null`
 - `ensureUndefined(x: unknown): undefined`
 - `ensureNullish(x: unknown): null | undefined`
-- `ensureLike<R, T extends unknown>(ref: R, x: unknown, pred?: Predicate<T>): R`
 
 The above function can be used to guarantee the type of any variable by throwing
 an exception if the type is not expected. The difference between assert and
@@ -193,7 +157,6 @@ The `unknownutil` provides the following maybe functions
 - `maybeArray<T extends unknown>(x: unknown, pred?: Predicate<T>): T[] | undefined`
 - `maybeObject<T extends unknown>(x: unknown, pred?: Predicate<T>): Record<string, T> | undefined`
 - `maybeFunction(x: unknown): ((...args: unknown[]) => unknown) | undefined`
-- `maybeLike<R, T extends unknown>(ref: R, x: unknown, pred?: Predicate<T>): R | undefined`
 
 The above function will return `undefined` if the type of any variable is not
 expected, so it is possible to give an alternative value using the Nullish

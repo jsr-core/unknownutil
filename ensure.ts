@@ -3,7 +3,6 @@ import {
   assertArray,
   assertBoolean,
   assertFunction,
-  assertLike,
   assertNull,
   assertNullish,
   assertNumber,
@@ -87,17 +86,5 @@ export function ensureUndefined(x: unknown): undefined {
  */
 export function ensureNullish(x: unknown): null | undefined {
   assertNullish(x);
-  return x;
-}
-
-/**
- * Return `x` as-is if `x` follows the reference or raise an `EnsureError` when it doesn't.
- */
-export function ensureLike<R, T extends unknown>(
-  ref: R,
-  x: unknown,
-  ipred?: Predicate<T>,
-): R {
-  assertLike(ref, x, ipred);
   return x;
 }
