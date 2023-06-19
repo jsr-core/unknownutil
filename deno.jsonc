@@ -1,5 +1,10 @@
 {
   "lock": false,
+  "lint": {
+    "exclude": [
+      "npm"
+    ]
+  },
   "tasks": {
     "build-npm": "deno run -A scripts/build_npm.ts $(git describe --tags --always --dirty)",
     "test": "deno test --unstable -A --parallel",
