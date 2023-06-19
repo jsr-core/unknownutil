@@ -62,15 +62,15 @@ if (isArray(a, { pred: isString })) {
 
 The `unknownutil` provides the following assert functions
 
-- `assertString(x: unknown): assert x is string`
-- `assertNumber(x: unknown): assert x is number`
-- `assertBoolean(x: unknown): assert x is boolean`
-- `assertArray<T>(x: unknown, options?: { pred?: Predicate<T> }): assert x is T[]`
-- `assertObject<T>(x: unknown, options?: { pred?: Predicate<T> }): assert x is Record<string, T>`
-- `assertFunction(x: unknown): assert x is (...args: unknown[]) => unknown`
-- `assertNull(x: unknown): assert x is null`
-- `assertUndefined(x: unknown): assert x is undefined`
-- `assertNullish(x: unknown): assert x is null | undefined`
+- `assertString(x: unknown, options?: { message?: string }): assert x is string`
+- `assertNumber(x: unknown, options?: { message?: string }): assert x is number`
+- `assertBoolean(x: unknown, options?: { message?: string }): assert x is boolean`
+- `assertArray<T>(x: unknown, options?: { message?: string, pred?: Predicate<T> }): assert x is T[]`
+- `assertObject<T>(x: unknown, options?: { message?: string, pred?: Predicate<T> }): assert x is Record<string, T>`
+- `assertFunction(x: unknown, options?: { message?: string }): assert x is (...args: unknown[]) => unknown`
+- `assertNull(x: unknown, options?: { message?: string }): assert x is null`
+- `assertUndefined(x: unknown, options?: { message?: string }): assert x is undefined`
+- `assertNullish(x: unknown, options?: { message?: string }): assert x is null | undefined`
 
 The above function can be used to guarantee the type of any variable by throwing
 an exception if the type is not expected.

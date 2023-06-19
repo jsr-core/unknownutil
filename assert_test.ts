@@ -26,6 +26,13 @@ Deno.test("assertString throws AssertError on non string", () => {
   assertThrows(() => assertString(undefined), AssertError);
   assertThrows(() => assertString(null), AssertError);
 });
+Deno.test("assertString throws AssertError with custom message", () => {
+  assertThrows(
+    () => assertString(0, { message: "Hello world" }),
+    AssertError,
+    "Hello world",
+  );
+});
 
 Deno.test("assertNumber does nothing on number", () => {
   assertNumber(0);
@@ -42,6 +49,13 @@ Deno.test("assertNumber throws AssertError on non number", () => {
   assertThrows(() => assertNumber(undefined), AssertError);
   assertThrows(() => assertNumber(null), AssertError);
 });
+Deno.test("assertNumber throws AssertError with custom message", () => {
+  assertThrows(
+    () => assertNumber("a", { message: "Hello world" }),
+    AssertError,
+    "Hello world",
+  );
+});
 
 Deno.test("assertBoolean does nothing on boolean", () => {
   assertBoolean(true);
@@ -55,6 +69,13 @@ Deno.test("assertBoolean throws AssertError on non boolean", () => {
   assertThrows(() => assertBoolean(function () {}), AssertError);
   assertThrows(() => assertBoolean(undefined), AssertError);
   assertThrows(() => assertBoolean(null), AssertError);
+});
+Deno.test("assertBoolean throws AssertError with custom message", () => {
+  assertThrows(
+    () => assertBoolean("a", { message: "Hello world" }),
+    AssertError,
+    "Hello world",
+  );
 });
 
 Deno.test("assertArray does nothing on array", () => {
@@ -88,6 +109,13 @@ Deno.test("assertArray<T> throws AssertError on non T array", () => {
     AssertError,
   );
 });
+Deno.test("assertArray throws AssertError with custom message", () => {
+  assertThrows(
+    () => assertArray("a", { message: "Hello world" }),
+    AssertError,
+    "Hello world",
+  );
+});
 
 Deno.test("assertObject does nothing on object", () => {
   assertObject({});
@@ -117,6 +145,13 @@ Deno.test("assertObject<T> throws AssertError on non T object", () => {
     AssertError,
   );
 });
+Deno.test("assertObject throws AssertError with custom message", () => {
+  assertThrows(
+    () => assertObject("a", { message: "Hello world" }),
+    AssertError,
+    "Hello world",
+  );
+});
 
 Deno.test("assertFunction does nothing on function", () => {
   assertFunction(assertFunction);
@@ -134,6 +169,13 @@ Deno.test("assertFunction throws AssertError on non function", () => {
   assertThrows(() => assertFunction(undefined), AssertError);
   assertThrows(() => assertFunction(null), AssertError);
 });
+Deno.test("assertFunction throws AssertError with custom message", () => {
+  assertThrows(
+    () => assertFunction("a", { message: "Hello world" }),
+    AssertError,
+    "Hello world",
+  );
+});
 
 Deno.test("assertNull does nothing on null", () => {
   assertNull(null);
@@ -147,6 +189,13 @@ Deno.test("assertNull throws AssertError on non null", () => {
   assertThrows(() => assertNull({}), AssertError);
   assertThrows(() => assertNull(function () {}), AssertError);
   assertThrows(() => assertNull(undefined), AssertError);
+});
+Deno.test("assertNull throws AssertError with custom message", () => {
+  assertThrows(
+    () => assertNull("a", { message: "Hello world" }),
+    AssertError,
+    "Hello world",
+  );
 });
 
 Deno.test("assertUndefined does nothing on undefined", () => {
@@ -162,6 +211,13 @@ Deno.test("assertUndefined throws AssertError on non undefined", () => {
   assertThrows(() => assertUndefined(function () {}), AssertError);
   assertThrows(() => assertUndefined(null), AssertError);
 });
+Deno.test("assertUndefined throws AssertError with custom message", () => {
+  assertThrows(
+    () => assertUndefined("a", { message: "Hello world" }),
+    AssertError,
+    "Hello world",
+  );
+});
 
 Deno.test("assertNullish does nothing on null or undefined", () => {
   assertNullish(null);
@@ -175,4 +231,11 @@ Deno.test("assertNullish throws AssertError on non null nor undefined", () => {
   assertThrows(() => assertNullish([]), AssertError);
   assertThrows(() => assertNullish({}), AssertError);
   assertThrows(() => assertNullish(function () {}), AssertError);
+});
+Deno.test("assertNullish throws AssertError with custom message", () => {
+  assertThrows(
+    () => assertNullish("a", { message: "Hello world" }),
+    AssertError,
+    "Hello world",
+  );
 });

@@ -39,22 +39,31 @@ function assert<T>(
 /**
  * Ensure that `x` is string, and raise `AssertError` if it is not.
  */
-export function assertString(x: unknown): asserts x is string {
-  return assert(x, isString, "The value must be string");
+export function assertString(
+  x: unknown,
+  options: { message?: string } = {},
+): asserts x is string {
+  return assert(x, isString, options.message ?? "The value must be string");
 }
 
 /**
  * Ensure that `x` is number, and raise `AssertError` if it is not.
  */
-export function assertNumber(x: unknown): asserts x is number {
-  return assert(x, isNumber, "The value must be number");
+export function assertNumber(
+  x: unknown,
+  options: { message?: string } = {},
+): asserts x is number {
+  return assert(x, isNumber, options.message ?? "The value must be number");
 }
 
 /**
  * Ensure that `x` is boolean, and raise `AssertError` if it is not.
  */
-export function assertBoolean(x: unknown): asserts x is boolean {
-  return assert(x, isBoolean, "The value must be boolean");
+export function assertBoolean(
+  x: unknown,
+  options: { message?: string } = {},
+): asserts x is boolean {
+  return assert(x, isBoolean, options.message ?? "The value must be boolean");
 }
 
 /**
@@ -64,10 +73,10 @@ export function assertBoolean(x: unknown): asserts x is boolean {
  */
 export function assertArray<T>(
   x: unknown,
-  options: { pred?: Predicate<T> } = {},
+  options: { message?: string; pred?: Predicate<T> } = {},
 ): asserts x is T[] {
   const pred = (x: unknown): x is T[] => isArray(x, options);
-  return assert(x, pred, "The value must be array");
+  return assert(x, pred, options.message ?? "The value must be array");
 }
 
 /**
@@ -77,10 +86,10 @@ export function assertArray<T>(
  */
 export function assertObject<T>(
   x: unknown,
-  options: { pred?: Predicate<T> } = {},
+  options: { message?: string; pred?: Predicate<T> } = {},
 ): asserts x is Record<string, T> {
   const pred = (x: unknown): x is Record<string, T> => isObject(x, options);
-  return assert(x, pred, "The value must be object");
+  return assert(x, pred, options.message ?? "The value must be object");
 }
 
 /**
@@ -88,27 +97,45 @@ export function assertObject<T>(
  */
 export function assertFunction(
   x: unknown,
+  options: { message?: string } = {},
 ): asserts x is (...args: unknown[]) => unknown {
-  return assert(x, isFunction, "The value must be function");
+  return assert(x, isFunction, options.message ?? "The value must be function");
 }
 
 /**
  * Ensure that `x` is null, and raise `AssertError` if it is not.
  */
-export function assertNull(x: unknown): asserts x is null {
-  return assert(x, isNull, "The value must be null");
+export function assertNull(
+  x: unknown,
+  options: { message?: string } = {},
+): asserts x is null {
+  return assert(x, isNull, options.message ?? "The value must be null");
 }
 
 /**
  * Ensure that `x` is undefined, and raise `AssertError` if it is not.
  */
-export function assertUndefined(x: unknown): asserts x is undefined {
-  return assert(x, isUndefined, "The value must be undefined");
+export function assertUndefined(
+  x: unknown,
+  options: { message?: string } = {},
+): asserts x is undefined {
+  return assert(
+    x,
+    isUndefined,
+    options.message ?? "The value must be undefined",
+  );
 }
 
 /**
  * Ensure that `x` is null or undefined, and raise `AssertError` if it is not.
  */
-export function assertNullish(x: unknown): asserts x is null | undefined {
-  return assert(x, isNullish, "The value must be null or undefined");
+export function assertNullish(
+  x: unknown,
+  options: { message?: string } = {},
+): asserts x is null | undefined {
+  return assert(
+    x,
+    isNullish,
+    options.message ?? "The value must be null or undefined",
+  );
 }
