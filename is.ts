@@ -25,32 +25,45 @@ export function isBoolean(x: unknown): x is boolean {
 }
 
 /**
- * Return `true` if the type of `x` is `array`.
- *
- * Use `pred` to predicate the type of items.
+ * Return `true` if the type of `x` is `unknown[]`.
  */
-export function isArray<T extends unknown>(
+export function isArray(
   x: unknown,
-  pred?: Predicate<T>,
-): x is T[] {
-  return Array.isArray(x) && (!pred || x.every(pred));
+): x is unknown[] {
+  return Array.isArray(x);
 }
 
 /**
- * Return `true` if the type of `x` is `object`.
- *
- * Use `pred` to predicate the type of values.
+ * Return a predicate function that returns `true` if the type of `x` is `T[]`.
  */
-export function isObject<T extends unknown>(
+export function isArrayOf<T>(
+  pred: Predicate<T>,
+): Predicate<T[]> {
+  return (x: unknown): x is T[] => isArray(x) && x.every(pred);
+}
+
+export type RecordOf<T> = Record<string | number | symbol, T>;
+
+/**
+ * Return `true` if the type of `x` is `RecordOf<unknown>`.
+ */
+export function isRecord(
   x: unknown,
-  pred?: Predicate<T>,
-): x is Record<string, T> {
+): x is RecordOf<unknown> {
   if (isNullish(x) || isArray(x)) {
     return false;
   }
-  return typeof x === "object" &&
-    // deno-lint-ignore no-explicit-any
-    (!pred || Object.values(x as any).every(pred));
+  return typeof x === "object";
+}
+
+/**
+ * Return a predicate function that returns `true` if the type of `x` is `RecordOf<T>`.
+ */
+export function isRecordOf<T>(
+  pred: Predicate<T>,
+): Predicate<RecordOf<T>> {
+  return (x: unknown): x is RecordOf<T> =>
+    isRecord(x) && Object.values(x).every(pred);
 }
 
 /**
