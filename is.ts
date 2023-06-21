@@ -93,3 +93,17 @@ export function isUndefined(x: unknown): x is undefined {
 export function isNullish(x: unknown): x is null | undefined {
   return x == null;
 }
+
+export default {
+  String: isString,
+  Number: isNumber,
+  Boolean: isBoolean,
+  Array: isArray,
+  ArrayOf: isArrayOf,
+  Record: isRecord,
+  RecordOf: isRecordOf,
+  Function: isFunction,
+  Null: isNull,
+  Undefined: isUndefined,
+  Nullish: isNullish,
+};

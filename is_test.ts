@@ -1,5 +1,8 @@
-import { assertEquals } from "https://deno.land/std@0.186.0/testing/asserts.ts";
 import {
+  assertEquals,
+  assertStrictEquals,
+} from "https://deno.land/std@0.186.0/testing/asserts.ts";
+import is, {
   isArray,
   isArrayOf,
   isBoolean,
@@ -12,6 +15,20 @@ import {
   isString,
   isUndefined,
 } from "./is.ts";
+
+Deno.test("is defines aliases of functions", () => {
+  assertStrictEquals(is.String, isString);
+  assertStrictEquals(is.Number, isNumber);
+  assertStrictEquals(is.Boolean, isBoolean);
+  assertStrictEquals(is.Array, isArray);
+  assertStrictEquals(is.ArrayOf, isArrayOf);
+  assertStrictEquals(is.Record, isRecord);
+  assertStrictEquals(is.RecordOf, isRecordOf);
+  assertStrictEquals(is.Function, isFunction);
+  assertStrictEquals(is.Null, isNull);
+  assertStrictEquals(is.Undefined, isUndefined);
+  assertStrictEquals(is.Nullish, isNullish);
+});
 
 Deno.test("isString returns true on array", () => {
   assertEquals(isString(""), true);
