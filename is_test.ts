@@ -10,6 +10,7 @@ import is, {
   isNull,
   isNullish,
   isNumber,
+  isObjectOf,
   isRecord,
   isRecordOf,
   isString,
@@ -26,6 +27,7 @@ Deno.test("is defines aliases of functions", () => {
   assertStrictEquals(is.TupleOf, isTupleOf);
   assertStrictEquals(is.Record, isRecord);
   assertStrictEquals(is.RecordOf, isRecordOf);
+  assertStrictEquals(is.ObjectOf, isObjectOf);
   assertStrictEquals(is.Function, isFunction);
   assertStrictEquals(is.Null, isNull);
   assertStrictEquals(is.Undefined, isUndefined);
@@ -162,6 +164,50 @@ Deno.test("isRecordOf<T>", async (t) => {
     assertEquals(isRecordOf(isString)({ a: 0 }), false);
     assertEquals(isRecordOf(isNumber)({ a: "a" }), false);
     assertEquals(isRecordOf(isString)({ a: true }), false);
+  });
+});
+
+Deno.test("isObjectOf<T>", async (t) => {
+  await t.step("returns true on T object", () => {
+    const predObj = {
+      a: isNumber,
+      b: isString,
+      c: isBoolean,
+    };
+    assertEquals(isObjectOf(predObj)({ a: 0, b: "a", c: true }), true);
+    assertEquals(
+      isObjectOf(predObj)({ a: 0, b: "a", c: true, d: "ignored" }),
+      true,
+    );
+  });
+  await t.step("returns false on non T object", () => {
+    const predObj = {
+      a: isNumber,
+      b: isString,
+      c: isBoolean,
+    };
+    assertEquals(isObjectOf(predObj)({ a: 0, b: "a", c: "" }), false);
+    assertEquals(isObjectOf(predObj)({ a: 0, b: "a" }), false);
+    assertEquals(
+      isObjectOf(predObj, { strict: true })({
+        a: 0,
+        b: "a",
+        c: true,
+        d: "invalid",
+      }),
+      false,
+    );
+  });
+  await t.step("returns proper type predicate", () => {
+    const predObj = {
+      a: isNumber,
+      b: isString,
+      c: isBoolean,
+    };
+    const a: unknown = { a: 0, b: "a", c: true };
+    if (isObjectOf(predObj)(a)) {
+      const _: { a: number; b: string; c: boolean } = a;
+    }
   });
 });
 
