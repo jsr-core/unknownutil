@@ -24,10 +24,10 @@ export class AssertError extends Error {
  *
  * ```ts
  * import { assert } from "./util.ts";
- * import { isString } from "./is.ts";
+ * import is from "./is.ts";
  *
  * const a: unknown = "hello";
- * assert(a, isString);
+ * assert(a, is.String);
  * // a is now narrowed to string
  * ```
  *
@@ -54,10 +54,10 @@ export function assert<T>(
  *
  * ```ts
  * import { ensure } from "./util.ts";
- * import { isString } from "./is.ts";
+ * import is from "./is.ts";
  *
  * const a: unknown = "hello";
- * const _: string = ensure(a, isString);
+ * const _: string = ensure(a, is.String);
  * ```
  *
  * @param x The value to be ensured.
@@ -80,10 +80,10 @@ export function ensure<T>(
  *
  * ```ts
  * import { maybe } from "./util.ts";
- * import { isString } from "./is.ts";
+ * import is from "./is.ts";
  *
  * const a: unknown = "hello";
- * const _: string = maybe(a, isString) ?? "default value";
+ * const _: string = maybe(a, is.String) ?? "default value";
  * ```
  *
  * @param x The value to be tested.
