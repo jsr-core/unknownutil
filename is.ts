@@ -1,5 +1,5 @@
 /**
- * A type decision function
+ * A type predicate function
  */
 export type Predicate<T> = (x: unknown) => x is T;
 
@@ -34,7 +34,7 @@ export function isArray(
 }
 
 /**
- * Return a predicate function that returns `true` if the type of `x` is `T[]`.
+ * Return a type predicate function that returns `true` if the type of `x` is `T[]`.
  */
 export function isArrayOf<T>(
   pred: Predicate<T>,
@@ -42,6 +42,9 @@ export function isArrayOf<T>(
   return (x: unknown): x is T[] => isArray(x) && x.every(pred);
 }
 
+/**
+ * Synonym of `Record<string | number | symbol, T>`
+ */
 export type RecordOf<T> = Record<string | number | symbol, T>;
 
 /**
@@ -57,7 +60,7 @@ export function isRecord(
 }
 
 /**
- * Return a predicate function that returns `true` if the type of `x` is `RecordOf<T>`.
+ * Return a type predicate function that returns `true` if the type of `x` is `RecordOf<T>`.
  */
 export function isRecordOf<T>(
   pred: Predicate<T>,
