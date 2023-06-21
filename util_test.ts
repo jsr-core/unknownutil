@@ -1,7 +1,7 @@
 import {
   assertStrictEquals,
   assertThrows,
-} from "https://deno.land/std@0.186.0/testing/asserts.ts";
+} from "https://deno.land/std@0.192.0/testing/asserts.ts";
 import { assert, AssertError, ensure, maybe } from "./util.ts";
 
 const x: unknown = Symbol("x");
