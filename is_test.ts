@@ -13,6 +13,7 @@ import is, {
   isRecord,
   isRecordOf,
   isString,
+  isTupleOf,
   isUndefined,
 } from "./is.ts";
 
@@ -22,6 +23,7 @@ Deno.test("is defines aliases of functions", () => {
   assertStrictEquals(is.Boolean, isBoolean);
   assertStrictEquals(is.Array, isArray);
   assertStrictEquals(is.ArrayOf, isArrayOf);
+  assertStrictEquals(is.TupleOf, isTupleOf);
   assertStrictEquals(is.Record, isRecord);
   assertStrictEquals(is.RecordOf, isRecordOf);
   assertStrictEquals(is.Function, isFunction);
@@ -109,6 +111,26 @@ Deno.test("isArrayOf<T>", async (t) => {
     assertEquals(isArrayOf(isString)([0, 1, 2]), false);
     assertEquals(isArrayOf(isNumber)(["a", "b", "c"]), false);
     assertEquals(isArrayOf(isString)([true, false, true]), false);
+  });
+});
+
+Deno.test("isTupleOf<T>", async (t) => {
+  await t.step("returns true on T tuple", () => {
+    const predTup = [isNumber, isString, isBoolean] as const;
+    assertEquals(isTupleOf(predTup)([0, "a", true]), true);
+  });
+  await t.step("returns false on non T tuple", () => {
+    const predTup = [isNumber, isString, isBoolean] as const;
+    assertEquals(isTupleOf(predTup)([0, 1, 2]), false);
+    assertEquals(isTupleOf(predTup)([0, "a"]), false);
+    assertEquals(isTupleOf(predTup)([0, "a", true, 0]), false);
+  });
+  await t.step("returns proper type predicate", () => {
+    const predTup = [isNumber, isString, isBoolean] as const;
+    const a: unknown = [0, "a", true];
+    if (isTupleOf(predTup)(a)) {
+      const _: [number, string, boolean] = a;
+    }
   });
 });
 

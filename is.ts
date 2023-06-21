@@ -42,6 +42,35 @@ export function isArrayOf<T>(
   return (x: unknown): x is T[] => isArray(x) && x.every(pred);
 }
 
+export type TupleOf<T extends readonly Predicate<unknown>[]> = {
+  -readonly [P in keyof T]: T[P] extends Predicate<infer U> ? U : never;
+};
+
+/**
+ * Return a type predicate function that returns `true` if the type of `x` is `TupleOf<T>`.
+ *
+ * ```ts
+ * import is from "./is.ts";
+ *
+ * const predTup = [is.Number, is.String, is.Boolean] as const;
+ * const a: unknown = [0, "a", true];
+ * if (is.TupleOf(predTup)(a)) {
+ *  // a is narrowed to [number, string, boolean]
+ *  const _: [number, string, boolean] = a;
+ * }
+ * ```
+ */
+export function isTupleOf<T extends readonly Predicate<unknown>[]>(
+  predTup: T,
+): Predicate<TupleOf<T>> {
+  return (x: unknown): x is TupleOf<T> => {
+    if (!isArray(x) || x.length !== predTup.length) {
+      return false;
+    }
+    return predTup.every((pred, i) => pred(x[i]));
+  };
+}
+
 /**
  * Synonym of `Record<string | number | symbol, T>`
  */
@@ -103,6 +132,7 @@ export default {
   Boolean: isBoolean,
   Array: isArray,
   ArrayOf: isArrayOf,
+  TupleOf: isTupleOf,
   Record: isRecord,
   RecordOf: isRecordOf,
   Function: isFunction,
