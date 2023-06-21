@@ -11,6 +11,7 @@ import is, {
   isNullish,
   isNumber,
   isObjectOf,
+  isOneOf,
   isRecord,
   isRecordOf,
   isString,
@@ -32,6 +33,7 @@ Deno.test("is defines aliases of functions", () => {
   assertStrictEquals(is.Null, isNull);
   assertStrictEquals(is.Undefined, isUndefined);
   assertStrictEquals(is.Nullish, isNullish);
+  assertStrictEquals(is.OneOf, isOneOf);
 });
 
 Deno.test("isString", async (t) => {
@@ -275,5 +277,29 @@ Deno.test("isNullish", async (t) => {
     assertEquals(isNullish([]), false);
     assertEquals(isNullish({}), false);
     assertEquals(isNullish(function () {}), false);
+  });
+});
+
+Deno.test("isOneOf<T>", async (t) => {
+  await t.step("returns true on one of T", () => {
+    const preds = [isNumber, isString, isBoolean];
+    assertEquals(isOneOf(preds)(0), true);
+    assertEquals(isOneOf(preds)("a"), true);
+    assertEquals(isOneOf(preds)(true), true);
+  });
+  await t.step("returns false on non of T", () => {
+    const preds = [isNumber, isString, isBoolean];
+    assertEquals(isOneOf(preds)([]), false);
+    assertEquals(isOneOf(preds)({}), false);
+    assertEquals(isOneOf(preds)(function () {}), false);
+    assertEquals(isOneOf(preds)(null), false);
+    assertEquals(isOneOf(preds)(undefined), false);
+  });
+  await t.step("returns proper type predicate", () => {
+    const preds = [isNumber, isString, isBoolean];
+    const a: unknown = [0, "a", true];
+    if (isOneOf(preds)(a)) {
+      const _: number | string | boolean = a;
+    }
   });
 });

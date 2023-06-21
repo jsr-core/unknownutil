@@ -178,6 +178,30 @@ export function isNullish(x: unknown): x is null | undefined {
   return x == null;
 }
 
+export type OneOf<T> = T extends (infer U)[]
+  ? T extends Predicate<infer U>[] ? U : T
+  : T;
+
+/**
+ * Return a type predicate function that returns `true` if the type of `x` is `OneOf<T>`.
+ *
+ * ```ts
+ * import is from "./is.ts";
+ *
+ * const preds = [is.Number, is.String, is.Boolean];
+ * const a: unknown = { a: 0, b: "a", c: true };
+ * if (is.OneOf(preds)(a)) {
+ *  // a is narrowed to number | string | boolean;
+ *  const _: number | string | boolean = a;
+ * }
+ * ```
+ */
+export function isOneOf<T extends readonly Predicate<unknown>[]>(
+  preds: T,
+): Predicate<OneOf<T>> {
+  return (x: unknown): x is OneOf<T> => preds.some((pred) => pred(x));
+}
+
 export default {
   String: isString,
   Number: isNumber,
@@ -192,4 +216,5 @@ export default {
   Null: isNull,
   Undefined: isUndefined,
   Nullish: isNullish,
+  OneOf: isOneOf,
 };
