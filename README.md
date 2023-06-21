@@ -36,14 +36,38 @@ predicate types of `x` more precisely like:
 ```typescript
 import { is } from "./mod.ts";
 
-const a: unknown = ["a", "b", "c"];
+const isArticle = is.ObjectOf({
+  title: is.String,
+  body: is.String,
+  refs: is.ArrayOf(is.OneOf([
+    is.String,
+    is.ObjectOf({
+      name: is.String,
+      url: is.String,
+    }),
+  ])),
+});
 
-if (is.Array(a)) {
-  // 'a' is 'unknown[]' in this block
-}
-
-if (is.ArrayOf(is.String)(a)) {
-  // 'a' is 'string[]' in this block
+const a: unknown = {
+  title: "Awesome article",
+  body: "This is an awesome article",
+  refs: [
+    { name: "Deno", url: "https://deno.land/" },
+    "https://github.com",
+  ],
+};
+if (isArticle(a)) {
+  // a is narrowed to the type of `isArticle`
+  console.log(a.title);
+  console.log(a.body);
+  for (const ref of a.refs) {
+    if (is.String(ref)) {
+      console.log(ref);
+    } else {
+      console.log(ref.name);
+      console.log(ref.url);
+    }
+  }
 }
 ```
 
