@@ -1,5 +1,5 @@
 /**
- * A type decision function
+ * A type predicate function
  */
 export type Predicate<T> = (x: unknown) => x is T;
 
@@ -25,32 +25,129 @@ export function isBoolean(x: unknown): x is boolean {
 }
 
 /**
- * Return `true` if the type of `x` is `array`.
- *
- * Use `pred` to predicate the type of items.
+ * Return `true` if the type of `x` is `unknown[]`.
  */
-export function isArray<T extends unknown>(
+export function isArray(
   x: unknown,
-  pred?: Predicate<T>,
-): x is T[] {
-  return Array.isArray(x) && (!pred || x.every(pred));
+): x is unknown[] {
+  return Array.isArray(x);
 }
 
 /**
- * Return `true` if the type of `x` is `object`.
- *
- * Use `pred` to predicate the type of values.
+ * Return a type predicate function that returns `true` if the type of `x` is `T[]`.
  */
-export function isObject<T extends unknown>(
+export function isArrayOf<T>(
+  pred: Predicate<T>,
+): Predicate<T[]> {
+  return (x: unknown): x is T[] => isArray(x) && x.every(pred);
+}
+
+export type TupleOf<T extends readonly Predicate<unknown>[]> = {
+  -readonly [P in keyof T]: T[P] extends Predicate<infer U> ? U : never;
+};
+
+/**
+ * Return a type predicate function that returns `true` if the type of `x` is `TupleOf<T>`.
+ *
+ * ```ts
+ * import is from "./is.ts";
+ *
+ * const predTup = [is.Number, is.String, is.Boolean] as const;
+ * const a: unknown = [0, "a", true];
+ * if (is.TupleOf(predTup)(a)) {
+ *  // a is narrowed to [number, string, boolean]
+ *  const _: [number, string, boolean] = a;
+ * }
+ * ```
+ */
+export function isTupleOf<T extends readonly Predicate<unknown>[]>(
+  predTup: T,
+): Predicate<TupleOf<T>> {
+  return (x: unknown): x is TupleOf<T> => {
+    if (!isArray(x) || x.length !== predTup.length) {
+      return false;
+    }
+    return predTup.every((pred, i) => pred(x[i]));
+  };
+}
+
+/**
+ * Synonym of `Record<string | number | symbol, T>`
+ */
+export type RecordOf<T> = Record<string | number | symbol, T>;
+
+/**
+ * Return `true` if the type of `x` is `RecordOf<unknown>`.
+ */
+export function isRecord(
   x: unknown,
-  pred?: Predicate<T>,
-): x is Record<string, T> {
+): x is RecordOf<unknown> {
   if (isNullish(x) || isArray(x)) {
     return false;
   }
-  return typeof x === "object" &&
-    // deno-lint-ignore no-explicit-any
-    (!pred || Object.values(x as any).every(pred));
+  return typeof x === "object";
+}
+
+/**
+ * Return a type predicate function that returns `true` if the type of `x` is `RecordOf<T>`.
+ */
+export function isRecordOf<T>(
+  pred: Predicate<T>,
+): Predicate<RecordOf<T>> {
+  return (x: unknown): x is RecordOf<T> =>
+    isRecord(x) && Object.values(x).every(pred);
+}
+
+type FlatType<T> = T extends RecordOf<unknown>
+  ? { [K in keyof T]: FlatType<T[K]> }
+  : T;
+
+export type ObjectOf<
+  T extends RecordOf<Predicate<unknown>>,
+> = FlatType<{ [K in keyof T]: T[K] extends Predicate<infer U> ? U : never }>;
+
+/**
+ * Return a type predicate function that returns `true` if the type of `x` is `ObjectOf<T>`.
+ * When `options.strict` is `true`, the number of keys of `x` must be equal to the number of keys of `predObj`.
+ * Otherwise, the number of keys of `x` must be greater than or equal to the number of keys of `predObj`.
+ *
+ * ```ts
+ * import is from "./is.ts";
+ *
+ * const predObj = {
+ *  a: is.Number,
+ *  b: is.String,
+ *  c: is.Boolean,
+ * };
+ * const a: unknown = { a: 0, b: "a", c: true };
+ * if (is.ObjectOf(predObj)(a)) {
+ *  // a is narrowed to { a: number, b: string, c: boolean }
+ *  const _: { a: number, b: string, c: boolean } = a;
+ * }
+ * ```
+ */
+export function isObjectOf<
+  T extends RecordOf<Predicate<unknown>>,
+>(
+  predObj: T,
+  options: { strict?: boolean } = {},
+): Predicate<ObjectOf<T>> {
+  return (x: unknown): x is ObjectOf<T> => {
+    if (!isRecord(x)) {
+      return false;
+    }
+    const preds = Object.entries<Predicate<unknown>>(predObj);
+    if (options.strict) {
+      if (Object.keys(x).length !== preds.length) {
+        return false;
+      }
+    } else {
+      if (Object.keys(x).length < preds.length) {
+        return false;
+      }
+    }
+    return preds.every(([k, p]) => p(x[k]));
+  };
 }
 
 /**
@@ -81,41 +178,43 @@ export function isNullish(x: unknown): x is null | undefined {
   return x == null;
 }
 
+export type OneOf<T> = T extends (infer U)[]
+  ? T extends Predicate<infer U>[] ? U : T
+  : T;
+
 /**
- * Return `true` if the type of `x` follows the type of `ref`.
+ * Return a type predicate function that returns `true` if the type of `x` is `OneOf<T>`.
+ *
+ * ```ts
+ * import is from "./is.ts";
+ *
+ * const preds = [is.Number, is.String, is.Boolean];
+ * const a: unknown = { a: 0, b: "a", c: true };
+ * if (is.OneOf(preds)(a)) {
+ *  // a is narrowed to number | string | boolean;
+ *  const _: number | string | boolean = a;
+ * }
+ * ```
  */
-export function isLike<R, T extends unknown>(
-  ref: R,
-  x: unknown,
-  pred?: Predicate<T>,
-): x is R {
-  if (isString(ref) && isString(x)) {
-    return true;
-  }
-  if (isNumber(ref) && isNumber(x)) {
-    return true;
-  }
-  if (isBoolean(ref) && isBoolean(x)) {
-    return true;
-  }
-  if (isArray(ref, pred) && isArray(x, pred)) {
-    return ref.length === 0 || (
-      ref.length === x.length &&
-      ref.every((r, i) => isLike(r, x[i]))
-    );
-  }
-  if (isObject(ref, pred) && isObject(x, pred)) {
-    const es = Object.entries(ref);
-    return es.length === 0 || es.every(([k, v]) => isLike(v, x[k]));
-  }
-  if (isFunction(ref) && isFunction(x)) {
-    return true;
-  }
-  if (isNull(ref) && isNull(x)) {
-    return true;
-  }
-  if (isUndefined(ref) && isUndefined(x)) {
-    return true;
-  }
-  return false;
+export function isOneOf<T extends readonly Predicate<unknown>[]>(
+  preds: T,
+): Predicate<OneOf<T>> {
+  return (x: unknown): x is OneOf<T> => preds.some((pred) => pred(x));
 }
+
+export default {
+  String: isString,
+  Number: isNumber,
+  Boolean: isBoolean,
+  Array: isArray,
+  ArrayOf: isArrayOf,
+  TupleOf: isTupleOf,
+  Record: isRecord,
+  RecordOf: isRecordOf,
+  ObjectOf: isObjectOf,
+  Function: isFunction,
+  Null: isNull,
+  Undefined: isUndefined,
+  Nullish: isNullish,
+  OneOf: isOneOf,
+};
