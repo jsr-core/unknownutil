@@ -19,21 +19,19 @@ import is, {
   isUndefined,
 } from "./is.ts";
 
-Deno.test("is defines aliases of functions", () => {
-  assertStrictEquals(is.String, isString);
-  assertStrictEquals(is.Number, isNumber);
-  assertStrictEquals(is.Boolean, isBoolean);
-  assertStrictEquals(is.Array, isArray);
-  assertStrictEquals(is.ArrayOf, isArrayOf);
-  assertStrictEquals(is.TupleOf, isTupleOf);
-  assertStrictEquals(is.Record, isRecord);
-  assertStrictEquals(is.RecordOf, isRecordOf);
-  assertStrictEquals(is.ObjectOf, isObjectOf);
-  assertStrictEquals(is.Function, isFunction);
-  assertStrictEquals(is.Null, isNull);
-  assertStrictEquals(is.Undefined, isUndefined);
-  assertStrictEquals(is.Nullish, isNullish);
-  assertStrictEquals(is.OneOf, isOneOf);
+Deno.test("is defines aliases of functions", async () => {
+  const mod = await import("./is.ts");
+  const cases = Object.entries(mod)
+    .filter(([k, _]) => k.startsWith("is"))
+    .map(([k, v]) => [k.slice(2), v] as const);
+  for (const [alias, fn] of cases) {
+    assertStrictEquals(is[alias as keyof typeof is], fn);
+  }
+  assertEquals(
+    Object.keys(is).length,
+    cases.length,
+    "The number of entries in `is` is not equal to `is*` functions",
+  );
 });
 
 Deno.test("isString", async (t) => {
