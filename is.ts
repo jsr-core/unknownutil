@@ -59,6 +59,10 @@ export type TupleOf<T extends readonly Predicate<unknown>[]> = {
  *  const _: [number, string, boolean] = a;
  * }
  * ```
+ *
+ * Note that `predTup` must be `readonly` (`as const`) to infer the type of `a` correctly.
+ * TypeScript won't argues if `predTup` is not `readonly` because of its design limitation.
+ * https://github.com/microsoft/TypeScript/issues/34274#issuecomment-541691353
  */
 export function isTupleOf<T extends readonly Predicate<unknown>[]>(
   predTup: T,
