@@ -158,6 +158,26 @@ export function isFunction(x: unknown): x is (...args: unknown[]) => unknown {
 }
 
 /**
+ * Return `true` if the type of `x` is instance of `ctor`.
+ *
+ * ```ts
+ * import is from "./is.ts";
+ *
+ * const a: unknown = new Date();
+ * if (is.InstanceOf(Date)(a)) {
+ *   // a is narrowed to Date
+ *   const _: Date = a;
+ * }
+ * ```
+ */
+// deno-lint-ignore no-explicit-any
+export function isInstanceOf<T extends new (...args: any) => unknown>(
+  ctor: T,
+): Predicate<InstanceType<T>> {
+  return (x: unknown): x is InstanceType<T> => x instanceof ctor;
+}
+
+/**
  * Return `true` if the type of `x` is `null`.
  */
 export function isNull(x: unknown): x is null {
@@ -213,6 +233,7 @@ export default {
   RecordOf: isRecordOf,
   ObjectOf: isObjectOf,
   Function: isFunction,
+  InstanceOf: isInstanceOf,
   Null: isNull,
   Undefined: isUndefined,
   Nullish: isNullish,

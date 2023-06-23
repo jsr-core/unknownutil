@@ -7,6 +7,7 @@ import is, {
   isArrayOf,
   isBoolean,
   isFunction,
+  isInstanceOf,
   isNull,
   isNullish,
   isNumber,
@@ -178,6 +179,46 @@ Deno.test("isObjectOf<T>", async (t) => {
 
 Deno.test("isFunction", async (t) => {
   await testWithExamples(t, isFunction, ["function"]);
+});
+
+Deno.test("isInstanceOf<T>", async (t) => {
+  await t.step("returns true on T instance", () => {
+    class Cls {}
+    assertEquals(isInstanceOf(Cls)(new Cls()), true);
+    assertEquals(isInstanceOf(Date)(new Date()), true);
+    assertEquals(isInstanceOf(Promise<string>)(new Promise(() => {})), true);
+  });
+  await t.step("returns false on non function", () => {
+    class Cls {}
+    assertEquals(isInstanceOf(Cls)(new Date()), false);
+    assertEquals(isInstanceOf(Cls)(new Promise(() => {})), false);
+    assertEquals(isInstanceOf(Cls)(""), false);
+    assertEquals(isInstanceOf(Cls)(0), false);
+    assertEquals(isInstanceOf(Cls)(true), false);
+    assertEquals(isInstanceOf(Cls)(false), false);
+    assertEquals(isInstanceOf(Cls)([]), false);
+    assertEquals(isInstanceOf(Cls)({}), false);
+    assertEquals(isInstanceOf(Cls)(function () {}), false);
+    assertEquals(isInstanceOf(Cls)(null), false);
+    assertEquals(isInstanceOf(Cls)(undefined), false);
+  });
+  await t.step("returns proper type predicate", () => {
+    class Cls {}
+    const a: unknown = new Cls();
+    if (isInstanceOf(Cls)(a)) {
+      const _: Cls = a;
+    }
+
+    const b: unknown = new Date();
+    if (isInstanceOf(Date)(b)) {
+      const _: Date = b;
+    }
+
+    const c: unknown = new Promise(() => {});
+    if (isInstanceOf(Promise)(c)) {
+      const _: Promise<unknown> = c;
+    }
+  });
 });
 
 Deno.test("isNull", async (t) => {
