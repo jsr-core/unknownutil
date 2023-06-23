@@ -17,6 +17,7 @@ import is, {
   isRecord,
   isRecordOf,
   isString,
+  isSymbol,
   isTupleOf,
   isUndefined,
   Predicate,
@@ -32,6 +33,7 @@ const examples = {
   function: [function () {}],
   null: [null],
   undefined: [undefined],
+  symbol: [Symbol("a"), Symbol("b"), Symbol("c")],
 };
 
 function stringify(x: unknown): string {
@@ -238,6 +240,10 @@ Deno.test("isUndefined", async (t) => {
 
 Deno.test("isNullish", async (t) => {
   await testWithExamples(t, isNullish, ["null", "undefined"]);
+});
+
+Deno.test("isSymbol", async (t) => {
+  await testWithExamples(t, isSymbol, ["symbol"]);
 });
 
 Deno.test("isOneOf<T>", async (t) => {

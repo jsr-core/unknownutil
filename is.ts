@@ -205,6 +205,13 @@ export function isNullish(x: unknown): x is null | undefined {
   return x == null;
 }
 
+/**
+ * Return `true` if the type of `x` is `symbol`.
+ */
+export function isSymbol(x: unknown): x is symbol {
+  return typeof x === "symbol";
+}
+
 export type OneOf<T> = T extends (infer U)[]
   ? T extends Predicate<infer U>[] ? U : T
   : T;
@@ -245,5 +252,6 @@ export default {
   Null: isNull,
   Undefined: isUndefined,
   Nullish: isNullish,
+  Symbol: isSymbol,
   OneOf: isOneOf,
 };
