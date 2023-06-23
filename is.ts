@@ -50,7 +50,7 @@ export function isArrayOf<T>(
 }
 
 export type TupleOf<T extends readonly Predicate<unknown>[]> = {
-  -readonly [P in keyof T]: T[P] extends Predicate<infer U> ? U : never;
+  [P in keyof T]: T[P] extends Predicate<infer U> ? U : never;
 };
 
 /**
@@ -63,7 +63,7 @@ export type TupleOf<T extends readonly Predicate<unknown>[]> = {
  * const a: unknown = [0, "a", true];
  * if (is.TupleOf(predTup)(a)) {
  *  // a is narrowed to [number, string, boolean]
- *  const _: [number, string, boolean] = a;
+ *  const _: readonly [number, string, boolean] = a;
  * }
  * ```
  *
