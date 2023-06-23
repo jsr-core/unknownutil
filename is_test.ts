@@ -104,7 +104,7 @@ Deno.test("isTupleOf<T>", async (t) => {
     const predTup = [isNumber, isString, isBoolean] as const;
     const a: unknown = [0, "a", true];
     if (isTupleOf(predTup)(a)) {
-      const _: [number, string, boolean] = a;
+      const _: readonly [number, string, boolean] = a;
     }
   });
   await t.step("returns true on T tuple", () => {
