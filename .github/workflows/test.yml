@@ -38,3 +38,15 @@ jobs:
         run: |
           deno task test
         timeout-minutes: 5
+
+  bench:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: ${{ env.DENO_VERSION }}
+      - name: Test
+        run: |
+          deno bench
+        timeout-minutes: 5
