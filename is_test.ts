@@ -5,8 +5,10 @@ import {
 import is, {
   isArray,
   isArrayOf,
+  isBigInt,
   isBoolean,
   isFunction,
+  isInstanceOf,
   isNull,
   isNullish,
   isNumber,
@@ -15,6 +17,7 @@ import is, {
   isRecord,
   isRecordOf,
   isString,
+  isSymbol,
   isTupleOf,
   isUndefined,
   Predicate,
@@ -23,16 +26,19 @@ import is, {
 const examples = {
   string: ["", "Hello world"],
   number: [0, 1234567890],
+  bigint: [0n, 1234567890n],
   boolean: [true, false],
   array: [[], [0, 1, 2], ["a", "b", "c"], [0, "a", true]],
   record: [{}, { a: 0, b: 1, c: 2 }, { a: "a", b: "b", c: "c" }],
   function: [function () {}],
   null: [null],
   undefined: [undefined],
+  symbol: [Symbol("a"), Symbol("b"), Symbol("c")],
 };
 
 function stringify(x: unknown): string {
   if (typeof x === "function") return x.toString();
+  if (typeof x === "bigint") return `${x}n`;
   return JSON.stringify(x);
 }
 
@@ -60,6 +66,10 @@ Deno.test("isString", async (t) => {
 
 Deno.test("isNumber", async (t) => {
   await testWithExamples(t, isNumber, ["number"]);
+});
+
+Deno.test("isBigInt", async (t) => {
+  await testWithExamples(t, isBigInt, ["bigint"]);
 });
 
 Deno.test("isBoolean", async (t) => {
@@ -180,6 +190,46 @@ Deno.test("isFunction", async (t) => {
   await testWithExamples(t, isFunction, ["function"]);
 });
 
+Deno.test("isInstanceOf<T>", async (t) => {
+  await t.step("returns true on T instance", () => {
+    class Cls {}
+    assertEquals(isInstanceOf(Cls)(new Cls()), true);
+    assertEquals(isInstanceOf(Date)(new Date()), true);
+    assertEquals(isInstanceOf(Promise<string>)(new Promise(() => {})), true);
+  });
+  await t.step("returns false on non function", () => {
+    class Cls {}
+    assertEquals(isInstanceOf(Cls)(new Date()), false);
+    assertEquals(isInstanceOf(Cls)(new Promise(() => {})), false);
+    assertEquals(isInstanceOf(Cls)(""), false);
+    assertEquals(isInstanceOf(Cls)(0), false);
+    assertEquals(isInstanceOf(Cls)(true), false);
+    assertEquals(isInstanceOf(Cls)(false), false);
+    assertEquals(isInstanceOf(Cls)([]), false);
+    assertEquals(isInstanceOf(Cls)({}), false);
+    assertEquals(isInstanceOf(Cls)(function () {}), false);
+    assertEquals(isInstanceOf(Cls)(null), false);
+    assertEquals(isInstanceOf(Cls)(undefined), false);
+  });
+  await t.step("returns proper type predicate", () => {
+    class Cls {}
+    const a: unknown = new Cls();
+    if (isInstanceOf(Cls)(a)) {
+      const _: Cls = a;
+    }
+
+    const b: unknown = new Date();
+    if (isInstanceOf(Date)(b)) {
+      const _: Date = b;
+    }
+
+    const c: unknown = new Promise(() => {});
+    if (isInstanceOf(Promise)(c)) {
+      const _: Promise<unknown> = c;
+    }
+  });
+});
+
 Deno.test("isNull", async (t) => {
   await testWithExamples(t, isNull, ["null"]);
 });
@@ -190,6 +240,10 @@ Deno.test("isUndefined", async (t) => {
 
 Deno.test("isNullish", async (t) => {
   await testWithExamples(t, isNullish, ["null", "undefined"]);
+});
+
+Deno.test("isSymbol", async (t) => {
+  await testWithExamples(t, isSymbol, ["symbol"]);
 });
 
 Deno.test("isOneOf<T>", async (t) => {

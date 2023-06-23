@@ -18,6 +18,13 @@ export function isNumber(x: unknown): x is number {
 }
 
 /**
+ * Return `true` if the type of `x` is `bigint`.
+ */
+export function isBigInt(x: unknown): x is bigint {
+  return typeof x === "bigint";
+}
+
+/**
  * Return `true` if the type of `x` is `boolean`.
  */
 export function isBoolean(x: unknown): x is boolean {
@@ -162,6 +169,26 @@ export function isFunction(x: unknown): x is (...args: unknown[]) => unknown {
 }
 
 /**
+ * Return `true` if the type of `x` is instance of `ctor`.
+ *
+ * ```ts
+ * import is from "./is.ts";
+ *
+ * const a: unknown = new Date();
+ * if (is.InstanceOf(Date)(a)) {
+ *   // a is narrowed to Date
+ *   const _: Date = a;
+ * }
+ * ```
+ */
+// deno-lint-ignore no-explicit-any
+export function isInstanceOf<T extends new (...args: any) => unknown>(
+  ctor: T,
+): Predicate<InstanceType<T>> {
+  return (x: unknown): x is InstanceType<T> => x instanceof ctor;
+}
+
+/**
  * Return `true` if the type of `x` is `null`.
  */
 export function isNull(x: unknown): x is null {
@@ -180,6 +207,13 @@ export function isUndefined(x: unknown): x is undefined {
  */
 export function isNullish(x: unknown): x is null | undefined {
   return x == null;
+}
+
+/**
+ * Return `true` if the type of `x` is `symbol`.
+ */
+export function isSymbol(x: unknown): x is symbol {
+  return typeof x === "symbol";
 }
 
 export type OneOf<T> = T extends (infer U)[]
@@ -209,6 +243,7 @@ export function isOneOf<T extends readonly Predicate<unknown>[]>(
 export default {
   String: isString,
   Number: isNumber,
+  BigInt: isBigInt,
   Boolean: isBoolean,
   Array: isArray,
   ArrayOf: isArrayOf,
@@ -217,8 +252,10 @@ export default {
   RecordOf: isRecordOf,
   ObjectOf: isObjectOf,
   Function: isFunction,
+  InstanceOf: isInstanceOf,
   Null: isNull,
   Undefined: isUndefined,
   Nullish: isNullish,
+  Symbol: isSymbol,
   OneOf: isOneOf,
 };
