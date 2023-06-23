@@ -18,6 +18,13 @@ export function isNumber(x: unknown): x is number {
 }
 
 /**
+ * Return `true` if the type of `x` is `bigint`.
+ */
+export function isBigInt(x: unknown): x is bigint {
+  return typeof x === "bigint";
+}
+
+/**
  * Return `true` if the type of `x` is `boolean`.
  */
 export function isBoolean(x: unknown): x is boolean {
@@ -225,6 +232,7 @@ export function isOneOf<T extends readonly Predicate<unknown>[]>(
 export default {
   String: isString,
   Number: isNumber,
+  BigInt: isBigInt,
   Boolean: isBoolean,
   Array: isArray,
   ArrayOf: isArrayOf,

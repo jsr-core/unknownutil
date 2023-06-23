@@ -5,6 +5,7 @@ import {
 import is, {
   isArray,
   isArrayOf,
+  isBigInt,
   isBoolean,
   isFunction,
   isInstanceOf,
@@ -24,6 +25,7 @@ import is, {
 const examples = {
   string: ["", "Hello world"],
   number: [0, 1234567890],
+  bigint: [0n, 1234567890n],
   boolean: [true, false],
   array: [[], [0, 1, 2], ["a", "b", "c"], [0, "a", true]],
   record: [{}, { a: 0, b: 1, c: 2 }, { a: "a", b: "b", c: "c" }],
@@ -34,6 +36,7 @@ const examples = {
 
 function stringify(x: unknown): string {
   if (typeof x === "function") return x.toString();
+  if (typeof x === "bigint") return `${x}n`;
   return JSON.stringify(x);
 }
 
@@ -61,6 +64,10 @@ Deno.test("isString", async (t) => {
 
 Deno.test("isNumber", async (t) => {
   await testWithExamples(t, isNumber, ["number"]);
+});
+
+Deno.test("isBigInt", async (t) => {
+  await testWithExamples(t, isBigInt, ["bigint"]);
 });
 
 Deno.test("isBoolean", async (t) => {
