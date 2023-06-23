@@ -82,6 +82,39 @@ export function isTupleOf<T extends readonly Predicate<unknown>[]>(
   };
 }
 
+// https://stackoverflow.com/a/71700658/1273406
+export type UniformTupleOf<
+  T,
+  N extends number,
+  R extends readonly T[] = [],
+> = R["length"] extends N ? R : UniformTupleOf<T, N, readonly [T, ...R]>;
+
+/**
+ * Return a type predicate function that returns `true` if the type of `x` is `UniformTupleOf<T>`.
+ *
+ * ```ts
+ * import is from "./is.ts";
+ *
+ * const a: unknown = [0, 1, 2, 3, 4];
+ * if (is.UniformTupleOf(5)(a)) {
+ *  // a is narrowed to [unknown, unknown, unknown, unknown, unknown]
+ *  const _: readonly [unknown, unknown, unknown, unknown, unknown] = a;
+ * }
+ *
+ * if (is.UniformTupleOf(5, is.Number)(a)) {
+ *  // a is narrowed to [number, number, number, number, number]
+ *  const _: readonly [number, number, number, number, number] = a;
+ * }
+ * ```
+ */
+export function isUniformTupleOf<T, N extends number>(
+  n: N,
+  pred: Predicate<T> = (_x: unknown): _x is T => true,
+): Predicate<UniformTupleOf<T, N>> {
+  const predTup = Array(n).fill(pred);
+  return isTupleOf(predTup) as Predicate<UniformTupleOf<T, N>>;
+}
+
 /**
  * Synonym of `Record<string | number | symbol, T>`
  */
@@ -248,6 +281,7 @@ export default {
   Array: isArray,
   ArrayOf: isArrayOf,
   TupleOf: isTupleOf,
+  UniformTupleOf: isUniformTupleOf,
   Record: isRecord,
   RecordOf: isRecordOf,
   ObjectOf: isObjectOf,

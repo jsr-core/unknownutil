@@ -20,6 +20,7 @@ import is, {
   isSymbol,
   isTupleOf,
   isUndefined,
+  isUniformTupleOf,
   Predicate,
 } from "./is.ts";
 
@@ -116,6 +117,28 @@ Deno.test("isTupleOf<T>", async (t) => {
     assertEquals(isTupleOf(predTup)([0, 1, 2]), false);
     assertEquals(isTupleOf(predTup)([0, "a"]), false);
     assertEquals(isTupleOf(predTup)([0, "a", true, 0]), false);
+  });
+});
+
+Deno.test("isUniformTupleOf<T>", async (t) => {
+  await t.step("returns proper type predicate", () => {
+    const a: unknown = [0, 1, 2, 3, 4];
+    if (isUniformTupleOf(5)(a)) {
+      const _: readonly [unknown, unknown, unknown, unknown, unknown] = a;
+    }
+
+    if (isUniformTupleOf(5, isNumber)(a)) {
+      const _: readonly [number, number, number, number, number] = a;
+    }
+  });
+  await t.step("returns true on mono-typed T tuple", () => {
+    assertEquals(isUniformTupleOf(3)([0, 1, 2]), true);
+    assertEquals(isUniformTupleOf(3, is.Number)([0, 1, 2]), true);
+  });
+  await t.step("returns false on non mono-typed T tuple", () => {
+    assertEquals(isUniformTupleOf(4)([0, 1, 2]), false);
+    assertEquals(isUniformTupleOf(4)([0, 1, 2, 3, 4]), false);
+    assertEquals(isUniformTupleOf(3, is.Number)(["a", "b", "c"]), false);
   });
 });
 
