@@ -236,8 +236,14 @@ Deno.test("isObjectOf<T>", async (t) => {
     };
     assertEquals(isObjectOf(predObj)({ a: 0, b: "a", c: true }), true);
     assertEquals(
+      isObjectOf(predObj, { strict: true })({ a: 0, b: "a", c: true }),
+      true,
+      "Specify `{ strict: true }`",
+    );
+    assertEquals(
       isObjectOf(predObj)({ a: 0, b: "a", c: true, d: "ignored" }),
       true,
+      "Object have an unknown property",
     );
   });
   await t.step("returns false on non T object", () => {
@@ -246,8 +252,17 @@ Deno.test("isObjectOf<T>", async (t) => {
       b: isString,
       c: isBoolean,
     };
-    assertEquals(isObjectOf(predObj)({ a: 0, b: "a", c: "" }), false);
-    assertEquals(isObjectOf(predObj)({ a: 0, b: "a" }), false);
+    assertEquals(isObjectOf(predObj)("a"), false, "Value is not an object");
+    assertEquals(
+      isObjectOf(predObj)({ a: 0, b: "a", c: "" }),
+      false,
+      "Object have a different type property",
+    );
+    assertEquals(
+      isObjectOf(predObj)({ a: 0, b: "a" }),
+      false,
+      "Object does not have one property",
+    );
     assertEquals(
       isObjectOf(predObj, { strict: true })({
         a: 0,
@@ -256,6 +271,7 @@ Deno.test("isObjectOf<T>", async (t) => {
         d: "invalid",
       }),
       false,
+      "Specify `{ strict: true }` and object have an unknown property",
     );
   });
   await testWithExamples(
@@ -263,6 +279,85 @@ Deno.test("isObjectOf<T>", async (t) => {
     isObjectOf({ a: (_: unknown): _ is unknown => true }),
     { excludeExamples: ["record"] },
   );
+  await t.step("with optional properties", async (t) => {
+    await t.step("returns proper type predicate", () => {
+      const predObj = {
+        a: isNumber,
+        b: isOneOf([isString, isUndefined]),
+        c: isOptionalOf(isBoolean),
+      };
+      const a: unknown = { a: 0, b: "a" };
+      if (isObjectOf(predObj)(a)) {
+        type _ = AssertTrue<
+          IsExact<typeof a, { a: number; b: string | undefined; c?: boolean }>
+        >;
+      }
+    });
+    await t.step("returns true on T object", () => {
+      const predObj = {
+        a: isNumber,
+        b: isOneOf([isString, isUndefined]),
+        c: isOptionalOf(isBoolean),
+      };
+      assertEquals(isObjectOf(predObj)({ a: 0, b: "a", c: true }), true);
+      assertEquals(
+        isObjectOf(predObj)({ a: 0, b: "a" }),
+        true,
+        "Object does not have an optional property",
+      );
+      assertEquals(
+        isObjectOf(predObj)({ a: 0, b: "a", c: undefined }),
+        true,
+        "Object has `undefined` as value of optional property",
+      );
+      assertEquals(
+        isObjectOf(predObj, { strict: true })({ a: 0, b: "a", c: true }),
+        true,
+        "Specify `{ strict: true }`",
+      );
+      assertEquals(
+        isObjectOf(predObj, { strict: true })({ a: 0, b: "a" }),
+        true,
+        "Specify `{ strict: true }` and object does not have one optional property",
+      );
+    });
+    await t.step("returns false on non T object", () => {
+      const predObj = {
+        a: isNumber,
+        b: isOneOf([isString, isUndefined]),
+        c: isOptionalOf(isBoolean),
+      };
+      assertEquals(
+        isObjectOf(predObj)({ a: 0, b: "a", c: "" }),
+        false,
+        "Object have a different type property",
+      );
+      assertEquals(
+        isObjectOf(predObj)({ a: 0, b: "a", c: null }),
+        false,
+        "Object has `null` as value of optional property",
+      );
+      assertEquals(
+        isObjectOf(predObj, { strict: true })({
+          a: 0,
+          b: "a",
+          c: true,
+          d: "invalid",
+        }),
+        false,
+        "Specify `{ strict: true }` and object have an unknown property",
+      );
+      assertEquals(
+        isObjectOf(predObj, { strict: true })({
+          a: 0,
+          b: "a",
+          d: "invalid",
+        }),
+        false,
+        "Specify `{ strict: true }` and object have the same number of properties but an unknown property exists",
+      );
+    });
+  });
 });
 
 Deno.test("isFunction", async (t) => {
