@@ -35,13 +35,17 @@ const examples = {
   boolean: [true, false],
   array: [[], [0, 1, 2], ["a", "b", "c"], [0, "a", true]],
   record: [{}, { a: 0, b: 1, c: 2 }, { a: "a", b: "b", c: "c" }],
-  function: [function () {}],
+  function: [function a() {}, () => {}],
   null: [null],
   undefined: [undefined],
   symbol: [Symbol("a"), Symbol("b"), Symbol("c")],
-};
+  date: [new Date(1690248225000), new Date(0)],
+  promise: [new Promise(() => {})],
+} as const;
 
 function stringify(x: unknown): string {
+  if (x instanceof Date) return `Date(${x.valueOf()})`;
+  if (x instanceof Promise) return "Promise";
   if (typeof x === "function") return x.toString();
   if (typeof x === "bigint") return `${x}n`;
   if (typeof x === "symbol") return x.toString();
@@ -51,10 +55,18 @@ function stringify(x: unknown): string {
 async function testWithExamples<T>(
   t: Deno.TestContext,
   pred: Predicate<T>,
-  validExamples: (keyof typeof examples)[],
+  opts?: {
+    validExamples?: (keyof typeof examples)[];
+    excludeExamples?: (keyof typeof examples)[];
+  },
 ): Promise<void> {
-  for (const [name, example] of Object.entries(examples)) {
-    const expect = validExamples.includes(name as keyof typeof examples);
+  const { validExamples = [], excludeExamples = [] } = opts ?? {};
+  const exampleEntries = (Object.entries(examples) as unknown as [
+    name: keyof typeof examples,
+    example: unknown[],
+  ][]).filter(([k]) => !excludeExamples.includes(k));
+  for (const [name, example] of exampleEntries) {
+    const expect = validExamples.includes(name);
     for (const v of example) {
       await t.step(
         `returns ${expect} on ${stringify(v)}`,
@@ -67,23 +79,23 @@ async function testWithExamples<T>(
 }
 
 Deno.test("isString", async (t) => {
-  await testWithExamples(t, isString, ["string"]);
+  await testWithExamples(t, isString, { validExamples: ["string"] });
 });
 
 Deno.test("isNumber", async (t) => {
-  await testWithExamples(t, isNumber, ["number"]);
+  await testWithExamples(t, isNumber, { validExamples: ["number"] });
 });
 
 Deno.test("isBigInt", async (t) => {
-  await testWithExamples(t, isBigInt, ["bigint"]);
+  await testWithExamples(t, isBigInt, { validExamples: ["bigint"] });
 });
 
 Deno.test("isBoolean", async (t) => {
-  await testWithExamples(t, isBoolean, ["boolean"]);
+  await testWithExamples(t, isBoolean, { validExamples: ["boolean"] });
 });
 
 Deno.test("isArray", async (t) => {
-  await testWithExamples(t, isArray, ["array"]);
+  await testWithExamples(t, isArray, { validExamples: ["array"] });
 });
 
 Deno.test("isArrayOf<T>", async (t) => {
@@ -103,6 +115,9 @@ Deno.test("isArrayOf<T>", async (t) => {
     assertEquals(isArrayOf(isNumber)(["a", "b", "c"]), false);
     assertEquals(isArrayOf(isString)([true, false, true]), false);
   });
+  await testWithExamples(t, isArrayOf((_: unknown): _ is unknown => true), {
+    excludeExamples: ["array"],
+  });
 });
 
 Deno.test("isTupleOf<T>", async (t) => {
@@ -118,12 +133,21 @@ Deno.test("isTupleOf<T>", async (t) => {
   await t.step("returns true on T tuple", () => {
     const predTup = [isNumber, isString, isBoolean] as const;
     assertEquals(isTupleOf(predTup)([0, "a", true]), true);
+    assertEquals(isTupleOf([])([]), true, "Specify empty predicates");
   });
   await t.step("returns false on non T tuple", () => {
     const predTup = [isNumber, isString, isBoolean] as const;
     assertEquals(isTupleOf(predTup)([0, 1, 2]), false);
     assertEquals(isTupleOf(predTup)([0, "a"]), false);
     assertEquals(isTupleOf(predTup)([0, "a", true, 0]), false);
+    assertEquals(
+      isTupleOf([])([0]),
+      false,
+      "Specify empty predicates and value has entry",
+    );
+  });
+  await testWithExamples(t, isTupleOf([(_: unknown): _ is unknown => true]), {
+    excludeExamples: ["array"],
   });
 });
 
@@ -154,10 +178,15 @@ Deno.test("isUniformTupleOf<T>", async (t) => {
     assertEquals(isUniformTupleOf(4)([0, 1, 2, 3, 4]), false);
     assertEquals(isUniformTupleOf(3, is.Number)(["a", "b", "c"]), false);
   });
+  await testWithExamples(t, isUniformTupleOf(4), {
+    excludeExamples: ["array"],
+  });
 });
 
 Deno.test("isRecord", async (t) => {
-  await testWithExamples(t, isRecord, ["record"]);
+  await testWithExamples(t, isRecord, {
+    validExamples: ["record", "date", "promise"],
+  });
 });
 
 Deno.test("isRecordOf<T>", async (t) => {
@@ -178,6 +207,9 @@ Deno.test("isRecordOf<T>", async (t) => {
     assertEquals(isRecordOf(isString)({ a: 0 }), false);
     assertEquals(isRecordOf(isNumber)({ a: "a" }), false);
     assertEquals(isRecordOf(isString)({ a: true }), false);
+  });
+  await testWithExamples(t, isRecordOf((_: unknown): _ is unknown => true), {
+    excludeExamples: ["record", "date", "promise"],
   });
 });
 
@@ -225,10 +257,15 @@ Deno.test("isObjectOf<T>", async (t) => {
       false,
     );
   });
+  await testWithExamples(
+    t,
+    isObjectOf({ a: (_: unknown): _ is unknown => true }),
+    { excludeExamples: ["record"] },
+  );
 });
 
 Deno.test("isFunction", async (t) => {
-  await testWithExamples(t, isFunction, ["function"]);
+  await testWithExamples(t, isFunction, { validExamples: ["function"] });
 });
 
 Deno.test("isInstanceOf<T>", async (t) => {
@@ -238,19 +275,17 @@ Deno.test("isInstanceOf<T>", async (t) => {
     assertEquals(isInstanceOf(Date)(new Date()), true);
     assertEquals(isInstanceOf(Promise<string>)(new Promise(() => {})), true);
   });
-  await t.step("returns false on non function", () => {
+  await t.step("with user-defined class", async (t) => {
     class Cls {}
-    assertEquals(isInstanceOf(Cls)(new Date()), false);
-    assertEquals(isInstanceOf(Cls)(new Promise(() => {})), false);
-    assertEquals(isInstanceOf(Cls)(""), false);
-    assertEquals(isInstanceOf(Cls)(0), false);
-    assertEquals(isInstanceOf(Cls)(true), false);
-    assertEquals(isInstanceOf(Cls)(false), false);
-    assertEquals(isInstanceOf(Cls)([]), false);
-    assertEquals(isInstanceOf(Cls)({}), false);
-    assertEquals(isInstanceOf(Cls)(function () {}), false);
-    assertEquals(isInstanceOf(Cls)(null), false);
-    assertEquals(isInstanceOf(Cls)(undefined), false);
+    await testWithExamples(t, isInstanceOf(Cls));
+  });
+  await t.step("with Date", async (t) => {
+    await testWithExamples(t, isInstanceOf(Date), { validExamples: ["date"] });
+  });
+  await t.step("with Promise", async (t) => {
+    await testWithExamples(t, isInstanceOf(Promise), {
+      validExamples: ["promise"],
+    });
   });
   await t.step("returns proper type predicate", () => {
     class Cls {}
@@ -272,19 +307,21 @@ Deno.test("isInstanceOf<T>", async (t) => {
 });
 
 Deno.test("isNull", async (t) => {
-  await testWithExamples(t, isNull, ["null"]);
+  await testWithExamples(t, isNull, { validExamples: ["null"] });
 });
 
 Deno.test("isUndefined", async (t) => {
-  await testWithExamples(t, isUndefined, ["undefined"]);
+  await testWithExamples(t, isUndefined, { validExamples: ["undefined"] });
 });
 
 Deno.test("isNullish", async (t) => {
-  await testWithExamples(t, isNullish, ["null", "undefined"]);
+  await testWithExamples(t, isNullish, {
+    validExamples: ["null", "undefined"],
+  });
 });
 
 Deno.test("isSymbol", async (t) => {
-  await testWithExamples(t, isSymbol, ["symbol"]);
+  await testWithExamples(t, isSymbol, { validExamples: ["symbol"] });
 });
 
 Deno.test("isOneOf<T>", async (t) => {
@@ -301,13 +338,11 @@ Deno.test("isOneOf<T>", async (t) => {
     assertEquals(isOneOf(preds)("a"), true);
     assertEquals(isOneOf(preds)(true), true);
   });
-  await t.step("returns false on non of T", () => {
+  await t.step("returns false on non of T", async (t) => {
     const preds = [isNumber, isString, isBoolean];
-    assertEquals(isOneOf(preds)([]), false);
-    assertEquals(isOneOf(preds)({}), false);
-    assertEquals(isOneOf(preds)(function () {}), false);
-    assertEquals(isOneOf(preds)(null), false);
-    assertEquals(isOneOf(preds)(undefined), false);
+    await testWithExamples(t, isOneOf(preds), {
+      excludeExamples: ["number", "string", "boolean"],
+    });
   });
 });
 
