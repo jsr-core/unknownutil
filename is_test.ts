@@ -40,6 +40,7 @@ const examples = {
 function stringify(x: unknown): string {
   if (typeof x === "function") return x.toString();
   if (typeof x === "bigint") return `${x}n`;
+  if (typeof x === "symbol") return x.toString();
   return JSON.stringify(x);
 }
 
