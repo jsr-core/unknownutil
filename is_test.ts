@@ -18,6 +18,7 @@ import is, {
   isNumber,
   isObjectOf,
   isOneOf,
+  isOptionalOf,
   isRecord,
   isRecordOf,
   isString,
@@ -342,6 +343,65 @@ Deno.test("isOneOf<T>", async (t) => {
     const preds = [isNumber, isString, isBoolean];
     await testWithExamples(t, isOneOf(preds), {
       excludeExamples: ["number", "string", "boolean"],
+    });
+  });
+});
+
+Deno.test("isOptionalOf<T>", async (t) => {
+  await t.step("returns proper type predicate", () => {
+    const a: unknown = undefined;
+    if (isOptionalOf(isNumber)(a)) {
+      type _ = AssertTrue<IsExact<typeof a, number | undefined>>;
+    }
+  });
+  await t.step("with isString", async (t) => {
+    await testWithExamples(t, isOptionalOf(isString), {
+      validExamples: ["string", "undefined"],
+    });
+  });
+  await t.step("with isNumber", async (t) => {
+    await testWithExamples(t, isOptionalOf(isNumber), {
+      validExamples: ["number", "undefined"],
+    });
+  });
+  await t.step("with isBigInt", async (t) => {
+    await testWithExamples(t, isOptionalOf(isBigInt), {
+      validExamples: ["bigint", "undefined"],
+    });
+  });
+  await t.step("with isBoolean", async (t) => {
+    await testWithExamples(t, isOptionalOf(isBoolean), {
+      validExamples: ["boolean", "undefined"],
+    });
+  });
+  await t.step("with isArray", async (t) => {
+    await testWithExamples(t, isOptionalOf(isArray), {
+      validExamples: ["array", "undefined"],
+    });
+  });
+  await t.step("with isRecord", async (t) => {
+    await testWithExamples(t, isOptionalOf(isRecord), {
+      validExamples: ["record", "date", "promise", "undefined"],
+    });
+  });
+  await t.step("with isFunction", async (t) => {
+    await testWithExamples(t, isOptionalOf(isFunction), {
+      validExamples: ["function", "undefined"],
+    });
+  });
+  await t.step("with isNull", async (t) => {
+    await testWithExamples(t, isOptionalOf(isNull), {
+      validExamples: ["null", "undefined"],
+    });
+  });
+  await t.step("with isUndefined", async (t) => {
+    await testWithExamples(t, isOptionalOf(isUndefined), {
+      validExamples: ["undefined"],
+    });
+  });
+  await t.step("with isSymbol", async (t) => {
+    await testWithExamples(t, isOptionalOf(isSymbol), {
+      validExamples: ["symbol", "undefined"],
     });
   });
 });

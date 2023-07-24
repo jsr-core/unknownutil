@@ -273,6 +273,27 @@ export function isOneOf<T extends readonly Predicate<unknown>[]>(
   return (x: unknown): x is OneOf<T> => preds.some((pred) => pred(x));
 }
 
+export type OptionalPredicate<T> = Predicate<T | undefined>;
+
+/**
+ * Return a type predicate function that returns `true` if the type of `x` is `T` or `undefined`.
+ *
+ * ```ts
+ * import is from "./is.ts";
+ *
+ * const a: unknown = "a";
+ * if (is.OptionalOf(is.String)(a)) {
+ *  // a is narrowed to string | undefined;
+ *  const _: string | undefined = a;
+ * }
+ * ```
+ */
+export function isOptionalOf<T>(
+  pred: Predicate<T>,
+): OptionalPredicate<T> {
+  return isOneOf([isUndefined, pred]);
+}
+
 export default {
   String: isString,
   Number: isNumber,
@@ -292,4 +313,5 @@ export default {
   Nullish: isNullish,
   Symbol: isSymbol,
   OneOf: isOneOf,
+  OptionalOf: isOptionalOf,
 };
