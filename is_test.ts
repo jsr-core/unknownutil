@@ -2,6 +2,10 @@ import {
   assertEquals,
   assertStrictEquals,
 } from "https://deno.land/std@0.192.0/testing/asserts.ts";
+import type {
+  AssertTrue,
+  IsExact,
+} from "https://deno.land/std@0.192.0/testing/types.ts";
 import is, {
   isArray,
   isArrayOf,
@@ -86,7 +90,7 @@ Deno.test("isArrayOf<T>", async (t) => {
   await t.step("returns proper type predicate", () => {
     const a: unknown = [0, 1, 2];
     if (isArrayOf(isNumber)(a)) {
-      const _: number[] = a;
+      type _ = AssertTrue<IsExact<typeof a, number[]>>;
     }
   });
   await t.step("returns true on T array", () => {
@@ -106,7 +110,9 @@ Deno.test("isTupleOf<T>", async (t) => {
     const predTup = [isNumber, isString, isBoolean] as const;
     const a: unknown = [0, "a", true];
     if (isTupleOf(predTup)(a)) {
-      const _: readonly [number, string, boolean] = a;
+      type _ = AssertTrue<
+        IsExact<typeof a, readonly [number, string, boolean]>
+      >;
     }
   });
   await t.step("returns true on T tuple", () => {
@@ -125,11 +131,18 @@ Deno.test("isUniformTupleOf<T>", async (t) => {
   await t.step("returns proper type predicate", () => {
     const a: unknown = [0, 1, 2, 3, 4];
     if (isUniformTupleOf(5)(a)) {
-      const _: readonly [unknown, unknown, unknown, unknown, unknown] = a;
+      type _ = AssertTrue<
+        IsExact<
+          typeof a,
+          readonly [unknown, unknown, unknown, unknown, unknown]
+        >
+      >;
     }
 
     if (isUniformTupleOf(5, isNumber)(a)) {
-      const _: readonly [number, number, number, number, number] = a;
+      type _ = AssertTrue<
+        IsExact<typeof a, readonly [number, number, number, number, number]>
+      >;
     }
   });
   await t.step("returns true on mono-typed T tuple", () => {
@@ -151,7 +164,9 @@ Deno.test("isRecordOf<T>", async (t) => {
   await t.step("returns proper type predicate", () => {
     const a: unknown = { a: 0 };
     if (isRecordOf(isNumber)(a)) {
-      const _: Record<string | number | symbol, number> = a;
+      type _ = AssertTrue<
+        IsExact<typeof a, Record<string | number | symbol, number>>
+      >;
     }
   });
   await t.step("returns true on T record", () => {
@@ -175,7 +190,9 @@ Deno.test("isObjectOf<T>", async (t) => {
     };
     const a: unknown = { a: 0, b: "a", c: true };
     if (isObjectOf(predObj)(a)) {
-      const _: { a: number; b: string; c: boolean } = a;
+      type _ = AssertTrue<
+        IsExact<typeof a, { a: number; b: string; c: boolean }>
+      >;
     }
   });
   await t.step("returns true on T object", () => {
@@ -239,17 +256,17 @@ Deno.test("isInstanceOf<T>", async (t) => {
     class Cls {}
     const a: unknown = new Cls();
     if (isInstanceOf(Cls)(a)) {
-      const _: Cls = a;
+      type _ = AssertTrue<IsExact<typeof a, Cls>>;
     }
 
     const b: unknown = new Date();
     if (isInstanceOf(Date)(b)) {
-      const _: Date = b;
+      type _ = AssertTrue<IsExact<typeof b, Date>>;
     }
 
     const c: unknown = new Promise(() => {});
     if (isInstanceOf(Promise)(c)) {
-      const _: Promise<unknown> = c;
+      type _ = AssertTrue<IsExact<typeof c, Promise<unknown>>>;
     }
   });
 });
@@ -275,7 +292,7 @@ Deno.test("isOneOf<T>", async (t) => {
     const preds = [isNumber, isString, isBoolean];
     const a: unknown = [0, "a", true];
     if (isOneOf(preds)(a)) {
-      const _: number | string | boolean = a;
+      type _ = AssertTrue<IsExact<typeof a, number | string | boolean>>;
     }
   });
   await t.step("returns true on one of T", () => {
