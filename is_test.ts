@@ -294,17 +294,21 @@ Deno.test("isOneOf<T>", async (t) => {
   });
 });
 
-Deno.test("is defines aliases of functions", async () => {
+Deno.test("is", async (t) => {
   const mod = await import("./is.ts");
-  const cases = Object.entries(mod)
+  const casesOfAliasAndIsFunction = Object.entries(mod)
     .filter(([k, _]) => k.startsWith("is"))
     .map(([k, v]) => [k.slice(2), v] as const);
-  for (const [alias, fn] of cases) {
-    assertStrictEquals(is[alias as keyof typeof is], fn);
+  for (const [alias, fn] of casesOfAliasAndIsFunction) {
+    await t.step(`defines \`${alias}\` function`, () => {
+      assertStrictEquals(is[alias as keyof typeof is], fn);
+    });
   }
-  assertEquals(
-    Object.keys(is).length,
-    cases.length,
-    "The number of entries in `is` is not equal to `is*` functions",
+  await t.step(
+    "only has entries that are the same as the `is*` function aliases",
+    () => {
+      const aliases = casesOfAliasAndIsFunction.map(([a]) => a).toSorted();
+      assertEquals(Object.keys(is).toSorted(), aliases);
+    },
   );
 });
