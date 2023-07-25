@@ -177,8 +177,8 @@ export type ObjectOf<T extends RecordOf<Predicate<unknown>>> = FlatType<
  * };
  * const a: unknown = { a: 0, b: "a" };
  * if (is.ObjectOf(predObj)(a)) {
- *  // a is narrowed to { a: number, b: string, c?: boolean }
- *  const _: { a: number, b: string, c?: boolean } = a;
+ *  // a is narrowed to { a: number; b: string; c?: boolean }
+ *  const _: { a: number; b: string; c?: boolean } = a;
  * }
  * ```
  */
@@ -255,9 +255,7 @@ export function isSymbol(x: unknown): x is symbol {
   return typeof x === "symbol";
 }
 
-export type OneOf<T> = T extends (infer U)[]
-  ? T extends Predicate<infer U>[] ? U : T
-  : T;
+export type OneOf<T> = T extends Predicate<infer U>[] ? U : never;
 
 /**
  * Return a type predicate function that returns `true` if the type of `x` is `OneOf<T>`.
@@ -266,9 +264,9 @@ export type OneOf<T> = T extends (infer U)[]
  * import is from "./is.ts";
  *
  * const preds = [is.Number, is.String, is.Boolean];
- * const a: unknown = { a: 0, b: "a", c: true };
+ * const a: unknown = 0;
  * if (is.OneOf(preds)(a)) {
- *  // a is narrowed to number | string | boolean;
+ *  // a is narrowed to number | string | boolean
  *  const _: number | string | boolean = a;
  * }
  * ```
@@ -277,6 +275,32 @@ export function isOneOf<T extends readonly Predicate<unknown>[]>(
   preds: T,
 ): Predicate<OneOf<T>> {
   return (x: unknown): x is OneOf<T> => preds.some((pred) => pred(x));
+}
+
+type UnionToIntersection<U> =
+  (U extends unknown ? (k: U) => void : never) extends ((k: infer I) => void)
+    ? I
+    : never;
+export type AllOf<T> = UnionToIntersection<OneOf<T>>;
+
+/**
+ * Return a type predicate function that returns `true` if the type of `x` is `AllOf<T>`.
+ *
+ * ```ts
+ * import is from "./is.ts";
+ *
+ * const preds = [is.ObjectOf({ a: is.Number }), is.ObjectOf({ b: is.String })];
+ * const a: unknown = { a: 0, b: "a" };
+ * if (is.AllOf(preds)(a)) {
+ *  // a is narrowed to { a: number; b: string }
+ *  const _: { a: number; b: string } = a;
+ * }
+ * ```
+ */
+export function isAllOf<T extends readonly Predicate<unknown>[]>(
+  preds: T,
+): Predicate<AllOf<T>> {
+  return (x: unknown): x is AllOf<T> => preds.every((pred) => pred(x));
 }
 
 export type OptionalPredicate<T> = Predicate<T | undefined> & {
@@ -291,7 +315,7 @@ export type OptionalPredicate<T> = Predicate<T | undefined> & {
  *
  * const a: unknown = "a";
  * if (is.OptionalOf(is.String)(a)) {
- *  // a is narrowed to string | undefined;
+ *  // a is narrowed to string | undefined
  *  const _: string | undefined = a;
  * }
  * ```
@@ -323,5 +347,6 @@ export default {
   Nullish: isNullish,
   Symbol: isSymbol,
   OneOf: isOneOf,
+  AllOf: isAllOf,
   OptionalOf: isOptionalOf,
 };
