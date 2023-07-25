@@ -177,8 +177,8 @@ export type ObjectOf<T extends RecordOf<Predicate<unknown>>> = FlatType<
  * };
  * const a: unknown = { a: 0, b: "a" };
  * if (is.ObjectOf(predObj)(a)) {
- *  // a is narrowed to { a: number, b: string, c?: boolean }
- *  const _: { a: number, b: string, c?: boolean } = a;
+ *  // a is narrowed to { a: number; b: string; c?: boolean }
+ *  const _: { a: number; b: string; c?: boolean } = a;
  * }
  * ```
  */
@@ -266,9 +266,9 @@ export type OneOf<T> = T extends (infer U)[]
  * import is from "./is.ts";
  *
  * const preds = [is.Number, is.String, is.Boolean];
- * const a: unknown = { a: 0, b: "a", c: true };
+ * const a: unknown = 0;
  * if (is.OneOf(preds)(a)) {
- *  // a is narrowed to number | string | boolean;
+ *  // a is narrowed to number | string | boolean
  *  const _: number | string | boolean = a;
  * }
  * ```
@@ -291,7 +291,7 @@ export type OptionalPredicate<T> = Predicate<T | undefined> & {
  *
  * const a: unknown = "a";
  * if (is.OptionalOf(is.String)(a)) {
- *  // a is narrowed to string | undefined;
+ *  // a is narrowed to string | undefined
  *  const _: string | undefined = a;
  * }
  * ```
