@@ -2,6 +2,7 @@ name: Test
 
 env:
   DENO_VERSION: 1.x
+  NODE_VERSION: 16.x
 
 on:
   schedule:
@@ -50,3 +51,17 @@ jobs:
         run: |
           deno bench
         timeout-minutes: 5
+
+  build-npm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: ${{ env.DENO_VERSION }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          registry-url: "https://registry.npmjs.org"
+      - name: Build
+        run: deno task build-npm
