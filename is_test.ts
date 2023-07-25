@@ -7,6 +7,7 @@ import type {
   IsExact,
 } from "https://deno.land/std@0.192.0/testing/types.ts";
 import is, {
+  isAllOf,
   isArray,
   isArrayOf,
   isBigInt,
@@ -438,6 +439,45 @@ Deno.test("isOneOf<T>", async (t) => {
     const preds = [isNumber, isString, isBoolean];
     await testWithExamples(t, isOneOf(preds), {
       excludeExamples: ["number", "string", "boolean"],
+    });
+  });
+});
+
+Deno.test("isAllOf<T>", async (t) => {
+  await t.step("returns proper type predicate", () => {
+    const preds = [
+      is.ObjectOf({ a: is.Number }),
+      is.ObjectOf({ b: is.String }),
+    ];
+    const a: unknown = { a: 0, b: "a" };
+    if (isAllOf(preds)(a)) {
+      type _ = AssertTrue<IsExact<typeof a, { a: number; b: string }>>;
+    }
+  });
+  await t.step("returns true on all of T", () => {
+    const preds = [
+      is.ObjectOf({ a: is.Number }),
+      is.ObjectOf({ b: is.String }),
+    ];
+    assertEquals(isAllOf(preds)({ a: 0, b: "a" }), true);
+  });
+  await t.step("returns false on non of T", async (t) => {
+    const preds = [
+      is.ObjectOf({ a: is.Number }),
+      is.ObjectOf({ b: is.String }),
+    ];
+    assertEquals(
+      isAllOf(preds)({ a: 0, b: 0 }),
+      false,
+      "Some properties has wrong type",
+    );
+    assertEquals(
+      isAllOf(preds)({ a: 0 }),
+      false,
+      "Some properties does not exists",
+    );
+    await testWithExamples(t, isAllOf(preds), {
+      excludeExamples: ["record"],
     });
   });
 });

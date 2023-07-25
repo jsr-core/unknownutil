@@ -267,6 +267,27 @@ Deno.bench({
   },
 });
 
+const predsAll = [is.String, is.Number, is.Boolean] as const;
+Deno.bench({
+  name: "is.AllOf",
+  fn: () => {
+    const pred = is.AllOf(predsAll);
+    for (const c of cs) {
+      pred(c);
+    }
+  },
+});
+
+const isAllOfPred = is.AllOf(predsAll);
+Deno.bench({
+  name: "is.AllOf (pre)",
+  fn: () => {
+    for (const c of cs) {
+      isAllOfPred(c);
+    }
+  },
+});
+
 Deno.bench({
   name: "is.OptionalOf",
   fn: () => {
