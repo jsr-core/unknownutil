@@ -304,6 +304,28 @@ export function isOptionalOf<T>(
   });
 }
 
+/**
+ * Return a type predicate function that returns `true` if the type of `x` is included in `T`.
+ * This function compares value to items of the array using the *SameValueZero* algorithm.
+ * It is the same as `Array.prototype.includes()`.
+ *
+ * ```ts
+ * import is from "./is.ts";
+ *
+ * const items = [0, "a", true] as const;
+ * const a: unknown = "a";
+ * if (is.IncludeIn(items)(a)) {
+ *  // a is narrowed to 0 | "a" | true
+ *  const _: 0 | "a" | true = a;
+ * }
+ * ```
+ */
+export function isIncludeIn<T extends readonly unknown[]>(
+  items: T,
+): Predicate<T[number]> {
+  return (x: unknown): x is T[number] => items.includes(x);
+}
+
 export default {
   String: isString,
   Number: isNumber,
@@ -324,4 +346,5 @@ export default {
   Symbol: isSymbol,
   OneOf: isOneOf,
   OptionalOf: isOptionalOf,
+  IncludeIn: isIncludeIn,
 };

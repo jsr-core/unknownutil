@@ -286,3 +286,24 @@ Deno.bench({
     }
   },
 });
+
+const includeItems = ["a", "b", "c"] as const;
+Deno.bench({
+  name: "is.IncludeIn",
+  fn: () => {
+    const pred = is.IncludeIn(includeItems);
+    for (const c of cs) {
+      pred(c);
+    }
+  },
+});
+
+const isIncludeInPred = is.IncludeIn(includeItems);
+Deno.bench({
+  name: "is.IncludeIn (pre)",
+  fn: () => {
+    for (const c of cs) {
+      isIncludeInPred(c);
+    }
+  },
+});

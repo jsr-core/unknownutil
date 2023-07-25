@@ -12,6 +12,7 @@ import is, {
   isBigInt,
   isBoolean,
   isFunction,
+  isIncludeIn,
   isInstanceOf,
   isNull,
   isNullish,
@@ -497,6 +498,45 @@ Deno.test("isOptionalOf<T>", async (t) => {
   await t.step("with isSymbol", async (t) => {
     await testWithExamples(t, isOptionalOf(isSymbol), {
       validExamples: ["symbol", "undefined"],
+    });
+  });
+});
+
+Deno.test("isIncludeIn<T>", async (t) => {
+  await t.step("returns proper type predicate", () => {
+    const items = [0, "a", true] as const;
+    const a: unknown = "a";
+    if (isIncludeIn(items)(a)) {
+      type _ = AssertTrue<IsExact<typeof a, 0 | "a" | true>>;
+    }
+  });
+  await t.step("returns true on T includes value", () => {
+    const items = [0, "a", true] as const;
+    assertEquals(isIncludeIn(items)(0), true);
+    assertEquals(isIncludeIn(items)("a"), true);
+    assertEquals(isIncludeIn(items)(true), true);
+    assertEquals(isIncludeIn(items)(+0), true, "+0 is same as 0");
+    assertEquals(isIncludeIn(items)(-0), true, "-0 is same as 0");
+  });
+  await t.step("returns false on non of T", async (t) => {
+    const items = [0, "a", true] as const;
+    assertEquals(
+      isIncludeIn(items)(1),
+      false,
+      "Is a number that is not in the items",
+    );
+    assertEquals(
+      isIncludeIn(items)("b"),
+      false,
+      "Is a string that is not in the items",
+    );
+    assertEquals(
+      isIncludeIn(items)(false),
+      false,
+      "Is `false` that is not in the items",
+    );
+    await testWithExamples(t, isIncludeIn(items), {
+      excludeExamples: ["number", "string", "boolean"],
     });
   });
 });
