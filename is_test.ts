@@ -514,8 +514,8 @@ Deno.test("is", async (t) => {
   await t.step(
     "only has entries that are the same as the `is*` function aliases",
     () => {
-      const aliases = casesOfAliasAndIsFunction.map(([a]) => a).toSorted();
-      assertEquals(Object.keys(is).toSorted(), aliases);
+      const aliases = casesOfAliasAndIsFunction.map(([a]) => a).sort();
+      assertEquals(Object.keys(is).sort(), aliases);
     },
   );
 });
