@@ -2,6 +2,10 @@ import {
   assertEquals,
   assertStrictEquals,
 } from "https://deno.land/std@0.192.0/testing/asserts.ts";
+import type {
+  AssertTrue,
+  IsExact,
+} from "https://deno.land/std@0.192.0/testing/types.ts";
 import is, {
   isArray,
   isArrayOf,
@@ -14,6 +18,7 @@ import is, {
   isNumber,
   isObjectOf,
   isOneOf,
+  isOptionalOf,
   isRecord,
   isRecordOf,
   isString,
@@ -31,25 +36,38 @@ const examples = {
   boolean: [true, false],
   array: [[], [0, 1, 2], ["a", "b", "c"], [0, "a", true]],
   record: [{}, { a: 0, b: 1, c: 2 }, { a: "a", b: "b", c: "c" }],
-  function: [function () {}],
+  function: [function a() {}, () => {}],
   null: [null],
   undefined: [undefined],
   symbol: [Symbol("a"), Symbol("b"), Symbol("c")],
-};
+  date: [new Date(1690248225000), new Date(0)],
+  promise: [new Promise(() => {})],
+} as const;
 
 function stringify(x: unknown): string {
+  if (x instanceof Date) return `Date(${x.valueOf()})`;
+  if (x instanceof Promise) return "Promise";
   if (typeof x === "function") return x.toString();
   if (typeof x === "bigint") return `${x}n`;
+  if (typeof x === "symbol") return x.toString();
   return JSON.stringify(x);
 }
 
 async function testWithExamples<T>(
   t: Deno.TestContext,
   pred: Predicate<T>,
-  validExamples: (keyof typeof examples)[],
+  opts?: {
+    validExamples?: (keyof typeof examples)[];
+    excludeExamples?: (keyof typeof examples)[];
+  },
 ): Promise<void> {
-  for (const [name, example] of Object.entries(examples)) {
-    const expect = validExamples.includes(name as keyof typeof examples);
+  const { validExamples = [], excludeExamples = [] } = opts ?? {};
+  const exampleEntries = (Object.entries(examples) as unknown as [
+    name: keyof typeof examples,
+    example: unknown[],
+  ][]).filter(([k]) => !excludeExamples.includes(k));
+  for (const [name, example] of exampleEntries) {
+    const expect = validExamples.includes(name);
     for (const v of example) {
       await t.step(
         `returns ${expect} on ${stringify(v)}`,
@@ -62,30 +80,30 @@ async function testWithExamples<T>(
 }
 
 Deno.test("isString", async (t) => {
-  await testWithExamples(t, isString, ["string"]);
+  await testWithExamples(t, isString, { validExamples: ["string"] });
 });
 
 Deno.test("isNumber", async (t) => {
-  await testWithExamples(t, isNumber, ["number"]);
+  await testWithExamples(t, isNumber, { validExamples: ["number"] });
 });
 
 Deno.test("isBigInt", async (t) => {
-  await testWithExamples(t, isBigInt, ["bigint"]);
+  await testWithExamples(t, isBigInt, { validExamples: ["bigint"] });
 });
 
 Deno.test("isBoolean", async (t) => {
-  await testWithExamples(t, isBoolean, ["boolean"]);
+  await testWithExamples(t, isBoolean, { validExamples: ["boolean"] });
 });
 
 Deno.test("isArray", async (t) => {
-  await testWithExamples(t, isArray, ["array"]);
+  await testWithExamples(t, isArray, { validExamples: ["array"] });
 });
 
 Deno.test("isArrayOf<T>", async (t) => {
   await t.step("returns proper type predicate", () => {
     const a: unknown = [0, 1, 2];
     if (isArrayOf(isNumber)(a)) {
-      const _: number[] = a;
+      type _ = AssertTrue<IsExact<typeof a, number[]>>;
     }
   });
   await t.step("returns true on T array", () => {
@@ -98,6 +116,9 @@ Deno.test("isArrayOf<T>", async (t) => {
     assertEquals(isArrayOf(isNumber)(["a", "b", "c"]), false);
     assertEquals(isArrayOf(isString)([true, false, true]), false);
   });
+  await testWithExamples(t, isArrayOf((_: unknown): _ is unknown => true), {
+    excludeExamples: ["array"],
+  });
 });
 
 Deno.test("isTupleOf<T>", async (t) => {
@@ -105,18 +126,29 @@ Deno.test("isTupleOf<T>", async (t) => {
     const predTup = [isNumber, isString, isBoolean] as const;
     const a: unknown = [0, "a", true];
     if (isTupleOf(predTup)(a)) {
-      const _: readonly [number, string, boolean] = a;
+      type _ = AssertTrue<
+        IsExact<typeof a, readonly [number, string, boolean]>
+      >;
     }
   });
   await t.step("returns true on T tuple", () => {
     const predTup = [isNumber, isString, isBoolean] as const;
     assertEquals(isTupleOf(predTup)([0, "a", true]), true);
+    assertEquals(isTupleOf([])([]), true, "Specify empty predicates");
   });
   await t.step("returns false on non T tuple", () => {
     const predTup = [isNumber, isString, isBoolean] as const;
     assertEquals(isTupleOf(predTup)([0, 1, 2]), false);
     assertEquals(isTupleOf(predTup)([0, "a"]), false);
     assertEquals(isTupleOf(predTup)([0, "a", true, 0]), false);
+    assertEquals(
+      isTupleOf([])([0]),
+      false,
+      "Specify empty predicates and value has entry",
+    );
+  });
+  await testWithExamples(t, isTupleOf([(_: unknown): _ is unknown => true]), {
+    excludeExamples: ["array"],
   });
 });
 
@@ -124,11 +156,18 @@ Deno.test("isUniformTupleOf<T>", async (t) => {
   await t.step("returns proper type predicate", () => {
     const a: unknown = [0, 1, 2, 3, 4];
     if (isUniformTupleOf(5)(a)) {
-      const _: readonly [unknown, unknown, unknown, unknown, unknown] = a;
+      type _ = AssertTrue<
+        IsExact<
+          typeof a,
+          readonly [unknown, unknown, unknown, unknown, unknown]
+        >
+      >;
     }
 
     if (isUniformTupleOf(5, isNumber)(a)) {
-      const _: readonly [number, number, number, number, number] = a;
+      type _ = AssertTrue<
+        IsExact<typeof a, readonly [number, number, number, number, number]>
+      >;
     }
   });
   await t.step("returns true on mono-typed T tuple", () => {
@@ -140,17 +179,24 @@ Deno.test("isUniformTupleOf<T>", async (t) => {
     assertEquals(isUniformTupleOf(4)([0, 1, 2, 3, 4]), false);
     assertEquals(isUniformTupleOf(3, is.Number)(["a", "b", "c"]), false);
   });
+  await testWithExamples(t, isUniformTupleOf(4), {
+    excludeExamples: ["array"],
+  });
 });
 
 Deno.test("isRecord", async (t) => {
-  await testWithExamples(t, isRecord, ["record"]);
+  await testWithExamples(t, isRecord, {
+    validExamples: ["record", "date", "promise"],
+  });
 });
 
 Deno.test("isRecordOf<T>", async (t) => {
   await t.step("returns proper type predicate", () => {
     const a: unknown = { a: 0 };
     if (isRecordOf(isNumber)(a)) {
-      const _: Record<string | number | symbol, number> = a;
+      type _ = AssertTrue<
+        IsExact<typeof a, Record<string | number | symbol, number>>
+      >;
     }
   });
   await t.step("returns true on T record", () => {
@@ -163,6 +209,9 @@ Deno.test("isRecordOf<T>", async (t) => {
     assertEquals(isRecordOf(isNumber)({ a: "a" }), false);
     assertEquals(isRecordOf(isString)({ a: true }), false);
   });
+  await testWithExamples(t, isRecordOf((_: unknown): _ is unknown => true), {
+    excludeExamples: ["record", "date", "promise"],
+  });
 });
 
 Deno.test("isObjectOf<T>", async (t) => {
@@ -174,7 +223,9 @@ Deno.test("isObjectOf<T>", async (t) => {
     };
     const a: unknown = { a: 0, b: "a", c: true };
     if (isObjectOf(predObj)(a)) {
-      const _: { a: number; b: string; c: boolean } = a;
+      type _ = AssertTrue<
+        IsExact<typeof a, { a: number; b: string; c: boolean }>
+      >;
     }
   });
   await t.step("returns true on T object", () => {
@@ -185,8 +236,14 @@ Deno.test("isObjectOf<T>", async (t) => {
     };
     assertEquals(isObjectOf(predObj)({ a: 0, b: "a", c: true }), true);
     assertEquals(
+      isObjectOf(predObj, { strict: true })({ a: 0, b: "a", c: true }),
+      true,
+      "Specify `{ strict: true }`",
+    );
+    assertEquals(
       isObjectOf(predObj)({ a: 0, b: "a", c: true, d: "ignored" }),
       true,
+      "Object have an unknown property",
     );
   });
   await t.step("returns false on non T object", () => {
@@ -195,8 +252,17 @@ Deno.test("isObjectOf<T>", async (t) => {
       b: isString,
       c: isBoolean,
     };
-    assertEquals(isObjectOf(predObj)({ a: 0, b: "a", c: "" }), false);
-    assertEquals(isObjectOf(predObj)({ a: 0, b: "a" }), false);
+    assertEquals(isObjectOf(predObj)("a"), false, "Value is not an object");
+    assertEquals(
+      isObjectOf(predObj)({ a: 0, b: "a", c: "" }),
+      false,
+      "Object have a different type property",
+    );
+    assertEquals(
+      isObjectOf(predObj)({ a: 0, b: "a" }),
+      false,
+      "Object does not have one property",
+    );
     assertEquals(
       isObjectOf(predObj, { strict: true })({
         a: 0,
@@ -205,12 +271,97 @@ Deno.test("isObjectOf<T>", async (t) => {
         d: "invalid",
       }),
       false,
+      "Specify `{ strict: true }` and object have an unknown property",
     );
+  });
+  await testWithExamples(
+    t,
+    isObjectOf({ a: (_: unknown): _ is unknown => true }),
+    { excludeExamples: ["record"] },
+  );
+  await t.step("with optional properties", async (t) => {
+    await t.step("returns proper type predicate", () => {
+      const predObj = {
+        a: isNumber,
+        b: isOneOf([isString, isUndefined]),
+        c: isOptionalOf(isBoolean),
+      };
+      const a: unknown = { a: 0, b: "a" };
+      if (isObjectOf(predObj)(a)) {
+        type _ = AssertTrue<
+          IsExact<typeof a, { a: number; b: string | undefined; c?: boolean }>
+        >;
+      }
+    });
+    await t.step("returns true on T object", () => {
+      const predObj = {
+        a: isNumber,
+        b: isOneOf([isString, isUndefined]),
+        c: isOptionalOf(isBoolean),
+      };
+      assertEquals(isObjectOf(predObj)({ a: 0, b: "a", c: true }), true);
+      assertEquals(
+        isObjectOf(predObj)({ a: 0, b: "a" }),
+        true,
+        "Object does not have an optional property",
+      );
+      assertEquals(
+        isObjectOf(predObj)({ a: 0, b: "a", c: undefined }),
+        true,
+        "Object has `undefined` as value of optional property",
+      );
+      assertEquals(
+        isObjectOf(predObj, { strict: true })({ a: 0, b: "a", c: true }),
+        true,
+        "Specify `{ strict: true }`",
+      );
+      assertEquals(
+        isObjectOf(predObj, { strict: true })({ a: 0, b: "a" }),
+        true,
+        "Specify `{ strict: true }` and object does not have one optional property",
+      );
+    });
+    await t.step("returns false on non T object", () => {
+      const predObj = {
+        a: isNumber,
+        b: isOneOf([isString, isUndefined]),
+        c: isOptionalOf(isBoolean),
+      };
+      assertEquals(
+        isObjectOf(predObj)({ a: 0, b: "a", c: "" }),
+        false,
+        "Object have a different type property",
+      );
+      assertEquals(
+        isObjectOf(predObj)({ a: 0, b: "a", c: null }),
+        false,
+        "Object has `null` as value of optional property",
+      );
+      assertEquals(
+        isObjectOf(predObj, { strict: true })({
+          a: 0,
+          b: "a",
+          c: true,
+          d: "invalid",
+        }),
+        false,
+        "Specify `{ strict: true }` and object have an unknown property",
+      );
+      assertEquals(
+        isObjectOf(predObj, { strict: true })({
+          a: 0,
+          b: "a",
+          d: "invalid",
+        }),
+        false,
+        "Specify `{ strict: true }` and object have the same number of properties but an unknown property exists",
+      );
+    });
   });
 });
 
 Deno.test("isFunction", async (t) => {
-  await testWithExamples(t, isFunction, ["function"]);
+  await testWithExamples(t, isFunction, { validExamples: ["function"] });
 });
 
 Deno.test("isInstanceOf<T>", async (t) => {
@@ -220,53 +371,53 @@ Deno.test("isInstanceOf<T>", async (t) => {
     assertEquals(isInstanceOf(Date)(new Date()), true);
     assertEquals(isInstanceOf(Promise<string>)(new Promise(() => {})), true);
   });
-  await t.step("returns false on non function", () => {
+  await t.step("with user-defined class", async (t) => {
     class Cls {}
-    assertEquals(isInstanceOf(Cls)(new Date()), false);
-    assertEquals(isInstanceOf(Cls)(new Promise(() => {})), false);
-    assertEquals(isInstanceOf(Cls)(""), false);
-    assertEquals(isInstanceOf(Cls)(0), false);
-    assertEquals(isInstanceOf(Cls)(true), false);
-    assertEquals(isInstanceOf(Cls)(false), false);
-    assertEquals(isInstanceOf(Cls)([]), false);
-    assertEquals(isInstanceOf(Cls)({}), false);
-    assertEquals(isInstanceOf(Cls)(function () {}), false);
-    assertEquals(isInstanceOf(Cls)(null), false);
-    assertEquals(isInstanceOf(Cls)(undefined), false);
+    await testWithExamples(t, isInstanceOf(Cls));
+  });
+  await t.step("with Date", async (t) => {
+    await testWithExamples(t, isInstanceOf(Date), { validExamples: ["date"] });
+  });
+  await t.step("with Promise", async (t) => {
+    await testWithExamples(t, isInstanceOf(Promise), {
+      validExamples: ["promise"],
+    });
   });
   await t.step("returns proper type predicate", () => {
     class Cls {}
     const a: unknown = new Cls();
     if (isInstanceOf(Cls)(a)) {
-      const _: Cls = a;
+      type _ = AssertTrue<IsExact<typeof a, Cls>>;
     }
 
     const b: unknown = new Date();
     if (isInstanceOf(Date)(b)) {
-      const _: Date = b;
+      type _ = AssertTrue<IsExact<typeof b, Date>>;
     }
 
     const c: unknown = new Promise(() => {});
     if (isInstanceOf(Promise)(c)) {
-      const _: Promise<unknown> = c;
+      type _ = AssertTrue<IsExact<typeof c, Promise<unknown>>>;
     }
   });
 });
 
 Deno.test("isNull", async (t) => {
-  await testWithExamples(t, isNull, ["null"]);
+  await testWithExamples(t, isNull, { validExamples: ["null"] });
 });
 
 Deno.test("isUndefined", async (t) => {
-  await testWithExamples(t, isUndefined, ["undefined"]);
+  await testWithExamples(t, isUndefined, { validExamples: ["undefined"] });
 });
 
 Deno.test("isNullish", async (t) => {
-  await testWithExamples(t, isNullish, ["null", "undefined"]);
+  await testWithExamples(t, isNullish, {
+    validExamples: ["null", "undefined"],
+  });
 });
 
 Deno.test("isSymbol", async (t) => {
-  await testWithExamples(t, isSymbol, ["symbol"]);
+  await testWithExamples(t, isSymbol, { validExamples: ["symbol"] });
 });
 
 Deno.test("isOneOf<T>", async (t) => {
@@ -274,7 +425,7 @@ Deno.test("isOneOf<T>", async (t) => {
     const preds = [isNumber, isString, isBoolean];
     const a: unknown = [0, "a", true];
     if (isOneOf(preds)(a)) {
-      const _: number | string | boolean = a;
+      type _ = AssertTrue<IsExact<typeof a, number | string | boolean>>;
     }
   });
   await t.step("returns true on one of T", () => {
@@ -283,27 +434,88 @@ Deno.test("isOneOf<T>", async (t) => {
     assertEquals(isOneOf(preds)("a"), true);
     assertEquals(isOneOf(preds)(true), true);
   });
-  await t.step("returns false on non of T", () => {
+  await t.step("returns false on non of T", async (t) => {
     const preds = [isNumber, isString, isBoolean];
-    assertEquals(isOneOf(preds)([]), false);
-    assertEquals(isOneOf(preds)({}), false);
-    assertEquals(isOneOf(preds)(function () {}), false);
-    assertEquals(isOneOf(preds)(null), false);
-    assertEquals(isOneOf(preds)(undefined), false);
+    await testWithExamples(t, isOneOf(preds), {
+      excludeExamples: ["number", "string", "boolean"],
+    });
   });
 });
 
-Deno.test("is defines aliases of functions", async () => {
+Deno.test("isOptionalOf<T>", async (t) => {
+  await t.step("returns proper type predicate", () => {
+    const a: unknown = undefined;
+    if (isOptionalOf(isNumber)(a)) {
+      type _ = AssertTrue<IsExact<typeof a, number | undefined>>;
+    }
+  });
+  await t.step("with isString", async (t) => {
+    await testWithExamples(t, isOptionalOf(isString), {
+      validExamples: ["string", "undefined"],
+    });
+  });
+  await t.step("with isNumber", async (t) => {
+    await testWithExamples(t, isOptionalOf(isNumber), {
+      validExamples: ["number", "undefined"],
+    });
+  });
+  await t.step("with isBigInt", async (t) => {
+    await testWithExamples(t, isOptionalOf(isBigInt), {
+      validExamples: ["bigint", "undefined"],
+    });
+  });
+  await t.step("with isBoolean", async (t) => {
+    await testWithExamples(t, isOptionalOf(isBoolean), {
+      validExamples: ["boolean", "undefined"],
+    });
+  });
+  await t.step("with isArray", async (t) => {
+    await testWithExamples(t, isOptionalOf(isArray), {
+      validExamples: ["array", "undefined"],
+    });
+  });
+  await t.step("with isRecord", async (t) => {
+    await testWithExamples(t, isOptionalOf(isRecord), {
+      validExamples: ["record", "date", "promise", "undefined"],
+    });
+  });
+  await t.step("with isFunction", async (t) => {
+    await testWithExamples(t, isOptionalOf(isFunction), {
+      validExamples: ["function", "undefined"],
+    });
+  });
+  await t.step("with isNull", async (t) => {
+    await testWithExamples(t, isOptionalOf(isNull), {
+      validExamples: ["null", "undefined"],
+    });
+  });
+  await t.step("with isUndefined", async (t) => {
+    await testWithExamples(t, isOptionalOf(isUndefined), {
+      validExamples: ["undefined"],
+    });
+  });
+  await t.step("with isSymbol", async (t) => {
+    await testWithExamples(t, isOptionalOf(isSymbol), {
+      validExamples: ["symbol", "undefined"],
+    });
+  });
+});
+
+Deno.test("is", async (t) => {
   const mod = await import("./is.ts");
-  const cases = Object.entries(mod)
+  const casesOfAliasAndIsFunction = Object.entries(mod)
     .filter(([k, _]) => k.startsWith("is"))
     .map(([k, v]) => [k.slice(2), v] as const);
-  for (const [alias, fn] of cases) {
-    assertStrictEquals(is[alias as keyof typeof is], fn);
+  for (const [alias, fn] of casesOfAliasAndIsFunction) {
+    await t.step(`defines \`${alias}\` function`, () => {
+      assertStrictEquals(is[alias as keyof typeof is], fn);
+    });
   }
-  assertEquals(
-    Object.keys(is).length,
-    cases.length,
-    "The number of entries in `is` is not equal to `is*` functions",
+  await t.step(
+    "only has entries that are the same as the `is*` function aliases",
+    () => {
+      const aliases = casesOfAliasAndIsFunction.map(([a]) => a).toSorted();
+      assertEquals(Object.keys(is).toSorted(), aliases);
+    },
   );
 });

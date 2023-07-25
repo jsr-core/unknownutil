@@ -196,3 +196,13 @@ Deno.bench({
     }
   },
 });
+
+Deno.bench({
+  name: "is.OptionalOf",
+  fn: () => {
+    const pred = is.OptionalOf(is.String);
+    for (const c of cs) {
+      pred(c);
+    }
+  },
+});

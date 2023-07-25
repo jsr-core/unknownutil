@@ -146,12 +146,24 @@ type FlatType<T> = T extends RecordOf<unknown>
   ? { [K in keyof T]: FlatType<T[K]> }
   : T;
 
-export type ObjectOf<
-  T extends RecordOf<Predicate<unknown>>,
-> = FlatType<{ [K in keyof T]: T[K] extends Predicate<infer U> ? U : never }>;
+type OptionalPredicateKeys<T extends RecordOf<unknown>> = {
+  [K in keyof T]: T[K] extends OptionalPredicate<unknown> ? K : never;
+}[keyof T];
+
+export type ObjectOf<T extends RecordOf<Predicate<unknown>>> = FlatType<
+  & {
+    [K in Exclude<keyof T, OptionalPredicateKeys<T>>]: T[K] extends
+      Predicate<infer U> ? U : never;
+  }
+  & {
+    [K in OptionalPredicateKeys<T>]?: T[K] extends Predicate<infer U> ? U
+      : never;
+  }
+>;
 
 /**
  * Return a type predicate function that returns `true` if the type of `x` is `ObjectOf<T>`.
+ * If `is.OptionalOf()` is specified in the predicate function, the property becomes optional.
  * When `options.strict` is `true`, the number of keys of `x` must be equal to the number of keys of `predObj`.
  * Otherwise, the number of keys of `x` must be greater than or equal to the number of keys of `predObj`.
  *
@@ -161,12 +173,12 @@ export type ObjectOf<
  * const predObj = {
  *  a: is.Number,
  *  b: is.String,
- *  c: is.Boolean,
+ *  c: is.OptionalOf(is.Boolean),
  * };
- * const a: unknown = { a: 0, b: "a", c: true };
+ * const a: unknown = { a: 0, b: "a" };
  * if (is.ObjectOf(predObj)(a)) {
- *  // a is narrowed to { a: number, b: string, c: boolean }
- *  const _: { a: number, b: string, c: boolean } = a;
+ *  // a is narrowed to { a: number, b: string, c?: boolean }
+ *  const _: { a: number, b: string, c?: boolean } = a;
  * }
  * ```
  */
@@ -176,22 +188,16 @@ export function isObjectOf<
   predObj: T,
   options: { strict?: boolean } = {},
 ): Predicate<ObjectOf<T>> {
-  return (x: unknown): x is ObjectOf<T> => {
-    if (!isRecord(x)) {
-      return false;
-    }
-    const preds = Object.entries<Predicate<unknown>>(predObj);
-    if (options.strict) {
-      if (Object.keys(x).length !== preds.length) {
-        return false;
-      }
-    } else {
-      if (Object.keys(x).length < preds.length) {
-        return false;
-      }
-    }
-    return preds.every(([k, p]) => p(x[k]));
-  };
+  const preds = Object.entries(predObj);
+  const allKeys = new Set(preds.map(([key]) => key));
+  const requiredKeys = preds
+    .filter(([_, pred]) => !(pred as OptionalPredicate<unknown>).optional)
+    .map(([key]) => key);
+  const hasKeys = options.strict
+    ? (props: string[]) => props.every((p) => allKeys.has(p))
+    : (props: string[]) => requiredKeys.every((k) => props.includes(k));
+  return (x: unknown): x is ObjectOf<T> =>
+    isRecord(x) && hasKeys(Object.keys(x)) && preds.every(([k, p]) => p(x[k]));
 }
 
 /**
@@ -273,6 +279,31 @@ export function isOneOf<T extends readonly Predicate<unknown>[]>(
   return (x: unknown): x is OneOf<T> => preds.some((pred) => pred(x));
 }
 
+export type OptionalPredicate<T> = Predicate<T | undefined> & {
+  optional: true;
+};
+
+/**
+ * Return a type predicate function that returns `true` if the type of `x` is `T` or `undefined`.
+ *
+ * ```ts
+ * import is from "./is.ts";
+ *
+ * const a: unknown = "a";
+ * if (is.OptionalOf(is.String)(a)) {
+ *  // a is narrowed to string | undefined;
+ *  const _: string | undefined = a;
+ * }
+ * ```
+ */
+export function isOptionalOf<T>(
+  pred: Predicate<T>,
+): OptionalPredicate<T> {
+  return Object.assign(isOneOf([isUndefined, pred]), {
+    optional: true as const,
+  });
+}
+
 export default {
   String: isString,
   Number: isNumber,
@@ -292,4 +323,5 @@ export default {
   Nullish: isNullish,
   Symbol: isSymbol,
   OneOf: isOneOf,
+  OptionalOf: isOptionalOf,
 };
