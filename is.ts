@@ -390,9 +390,12 @@ export type OptionalPredicate<T> = Predicate<T | undefined> & {
 export function isOptionalOf<T>(
   pred: Predicate<T>,
 ): OptionalPredicate<T> {
-  return Object.assign(isOneOf([isUndefined, pred]), {
-    optional: true as const,
-  });
+  return Object.assign(
+    (x: unknown): x is Predicate<T | undefined> => isUndefined(x) || pred(x),
+    {
+      optional: true as const,
+    },
+  ) as OptionalPredicate<T>;
 }
 
 export default {
