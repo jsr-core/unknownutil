@@ -279,6 +279,25 @@ export function isLiteralOf<T extends Primitive>(pred: T): Predicate<T> {
   return (x: unknown): x is T => x === pred;
 }
 
+/**
+ * Return a type predicate function that returns `true` if the type of `x` is one of literal type in `preds`.
+ *
+ * ```ts
+ * import is from "./is.ts";
+ * const a: unknown = "hello";
+ * if (is.LiteralOneOf(["hello", "world"] as const)(a)) {
+ *  // a is narrowed to "hello" | "world"
+ *  const _: "hello" | "world" = a;
+ * }
+ * ```
+ */
+export function isLiteralOneOf<T extends readonly Primitive[]>(
+  preds: T,
+): Predicate<T[number]> {
+  return (x: unknown): x is T[number] =>
+    preds.includes(x as unknown as T[number]);
+}
+
 export type OneOf<T> = T extends Predicate<infer U>[] ? U : never;
 
 /**
@@ -372,6 +391,7 @@ export default {
   Symbol: isSymbol,
   Primitive: isPrimitive,
   LiteralOf: isLiteralOf,
+  LiteralOneOf: isLiteralOneOf,
   OneOf: isOneOf,
   AllOf: isAllOf,
   OptionalOf: isOptionalOf,

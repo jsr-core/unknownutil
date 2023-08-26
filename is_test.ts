@@ -15,6 +15,7 @@ import is, {
   isFunction,
   isInstanceOf,
   isLiteralOf,
+  isLiteralOneOf,
   isNull,
   isNullish,
   isNumber,
@@ -452,6 +453,25 @@ Deno.test("isLiteralOf<T>", async (t) => {
   await t.step("returns false on non literal T", async (t) => {
     const pred = "hello";
     await testWithExamples(t, isLiteralOf(pred));
+  });
+});
+
+Deno.test("isLiteralOneOf<T>", async (t) => {
+  await t.step("returns proper type predicate", () => {
+    const preds = ["hello", "world"] as const;
+    const a: unknown = "hello";
+    if (isLiteralOneOf(preds)(a)) {
+      type _ = AssertTrue<IsExact<typeof a, "hello" | "world">>;
+    }
+  });
+  await t.step("returns true on literal T", () => {
+    const preds = ["hello", "world"] as const;
+    assertEquals(isLiteralOneOf(preds)("hello"), true);
+    assertEquals(isLiteralOneOf(preds)("world"), true);
+  });
+  await t.step("returns false on non literal T", async (t) => {
+    const preds = ["hello", "world"] as const;
+    await testWithExamples(t, isLiteralOneOf(preds));
   });
 });
 
