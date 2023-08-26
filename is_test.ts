@@ -280,7 +280,7 @@ Deno.test("isObjectOf<T>", async (t) => {
   });
   await testWithExamples(
     t,
-    isObjectOf({ a: (_: unknown): _ is unknown => true }),
+    isObjectOf({ a: (_: unknown): _ is unknown => false }),
     { excludeExamples: ["record"] },
   );
   await t.step("with optional properties", async (t) => {
