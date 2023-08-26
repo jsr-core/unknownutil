@@ -14,12 +14,15 @@ import is, {
   isBoolean,
   isFunction,
   isInstanceOf,
+  isLiteralOf,
+  isLiteralOneOf,
   isNull,
   isNullish,
   isNumber,
   isObjectOf,
   isOneOf,
   isOptionalOf,
+  isPrimitive,
   isRecord,
   isRecordOf,
   isString,
@@ -419,6 +422,57 @@ Deno.test("isNullish", async (t) => {
 
 Deno.test("isSymbol", async (t) => {
   await testWithExamples(t, isSymbol, { validExamples: ["symbol"] });
+});
+
+Deno.test("isPrimitive", async (t) => {
+  await testWithExamples(t, isPrimitive, {
+    validExamples: [
+      "string",
+      "number",
+      "bigint",
+      "boolean",
+      "null",
+      "undefined",
+      "symbol",
+    ],
+  });
+});
+
+Deno.test("isLiteralOf<T>", async (t) => {
+  await t.step("returns proper type predicate", () => {
+    const pred = "hello";
+    const a: unknown = "hello";
+    if (isLiteralOf(pred)(a)) {
+      type _ = AssertTrue<IsExact<typeof a, "hello">>;
+    }
+  });
+  await t.step("returns true on literal T", () => {
+    const pred = "hello";
+    assertEquals(isLiteralOf(pred)("hello"), true);
+  });
+  await t.step("returns false on non literal T", async (t) => {
+    const pred = "hello";
+    await testWithExamples(t, isLiteralOf(pred));
+  });
+});
+
+Deno.test("isLiteralOneOf<T>", async (t) => {
+  await t.step("returns proper type predicate", () => {
+    const preds = ["hello", "world"] as const;
+    const a: unknown = "hello";
+    if (isLiteralOneOf(preds)(a)) {
+      type _ = AssertTrue<IsExact<typeof a, "hello" | "world">>;
+    }
+  });
+  await t.step("returns true on literal T", () => {
+    const preds = ["hello", "world"] as const;
+    assertEquals(isLiteralOneOf(preds)("hello"), true);
+    assertEquals(isLiteralOneOf(preds)("world"), true);
+  });
+  await t.step("returns false on non literal T", async (t) => {
+    const preds = ["hello", "world"] as const;
+    await testWithExamples(t, isLiteralOneOf(preds));
+  });
 });
 
 Deno.test("isOneOf<T>", async (t) => {

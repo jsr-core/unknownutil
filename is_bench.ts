@@ -246,6 +246,57 @@ Deno.bench({
   },
 });
 
+Deno.bench({
+  name: "is.Primitive",
+  fn: () => {
+    for (const c of cs) {
+      is.Primitive(c);
+    }
+  },
+});
+
+const predLiteral = "hello";
+Deno.bench({
+  name: "is.LiteralOf",
+  fn: () => {
+    const pred = is.LiteralOf(predLiteral);
+    for (const c of cs) {
+      pred(c);
+    }
+  },
+});
+
+const isLiteralOfPred = is.LiteralOf(predLiteral);
+Deno.bench({
+  name: "is.LiteralOf (pre)",
+  fn: () => {
+    for (const c of cs) {
+      isLiteralOfPred(c);
+    }
+  },
+});
+
+const predLiteralOne = ["hello", "world"] as const;
+Deno.bench({
+  name: "is.LiteralOneOf",
+  fn: () => {
+    const pred = is.LiteralOneOf(predLiteralOne);
+    for (const c of cs) {
+      pred(c);
+    }
+  },
+});
+
+const isLiteralOneOfPred = is.LiteralOneOf(predLiteralOne);
+Deno.bench({
+  name: "is.LiteralOneOf (pre)",
+  fn: () => {
+    for (const c of cs) {
+      isLiteralOneOfPred(c);
+    }
+  },
+});
+
 const predsOne = [is.String, is.Number, is.Boolean] as const;
 Deno.bench({
   name: "is.OneOf",
