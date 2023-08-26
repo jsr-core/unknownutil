@@ -255,6 +255,23 @@ export function isSymbol(x: unknown): x is symbol {
   return typeof x === "symbol";
 }
 
+export type Primitive =
+  | string
+  | number
+  | bigint
+  | boolean
+  | null
+  | undefined
+  | symbol;
+
+/**
+ * Return `true` if the type of `x` is Primitive.
+ */
+export function isPrimitive(x: unknown): x is Primitive {
+  return x == null ||
+    ["string", "number", "bigint", "boolean", "symbol"].includes(typeof x);
+}
+
 export type OneOf<T> = T extends Predicate<infer U>[] ? U : never;
 
 /**
@@ -346,6 +363,7 @@ export default {
   Undefined: isUndefined,
   Nullish: isNullish,
   Symbol: isSymbol,
+  Primitive: isPrimitive,
   OneOf: isOneOf,
   AllOf: isAllOf,
   OptionalOf: isOptionalOf,

@@ -246,6 +246,15 @@ Deno.bench({
   },
 });
 
+Deno.bench({
+  name: "is.Primitive",
+  fn: () => {
+    for (const c of cs) {
+      is.Primitive(c);
+    }
+  },
+});
+
 const predsOne = [is.String, is.Number, is.Boolean] as const;
 Deno.bench({
   name: "is.OneOf",

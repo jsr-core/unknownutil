@@ -20,6 +20,7 @@ import is, {
   isObjectOf,
   isOneOf,
   isOptionalOf,
+  isPrimitive,
   isRecord,
   isRecordOf,
   isString,
@@ -419,6 +420,20 @@ Deno.test("isNullish", async (t) => {
 
 Deno.test("isSymbol", async (t) => {
   await testWithExamples(t, isSymbol, { validExamples: ["symbol"] });
+});
+
+Deno.test("isPrimitive", async (t) => {
+  await testWithExamples(t, isPrimitive, {
+    validExamples: [
+      "string",
+      "number",
+      "bigint",
+      "boolean",
+      "null",
+      "undefined",
+      "symbol",
+    ],
+  });
 });
 
 Deno.test("isOneOf<T>", async (t) => {
