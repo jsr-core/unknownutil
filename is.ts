@@ -138,8 +138,13 @@ export function isRecord(
 export function isRecordOf<T>(
   pred: Predicate<T>,
 ): Predicate<RecordOf<T>> {
-  return (x: unknown): x is RecordOf<T> =>
-    isRecord(x) && Object.values(x).every(pred);
+  return (x: unknown): x is RecordOf<T> => {
+    if (!isRecord(x)) return false;
+    for (const k in x) {
+      if (!pred(x[k])) return false;
+    }
+    return true;
+  };
 }
 
 type FlatType<T> = T extends RecordOf<unknown>
