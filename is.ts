@@ -193,16 +193,35 @@ export function isObjectOf<
   predObj: T,
   options: { strict?: boolean } = {},
 ): Predicate<ObjectOf<T>> {
-  const preds = Object.entries(predObj);
-  const allKeys = new Set(preds.map(([key]) => key));
-  const requiredKeys = preds
-    .filter(([_, pred]) => !(pred as OptionalPredicate<unknown>).optional)
-    .map(([key]) => key);
-  const hasKeys = options.strict
-    ? (props: string[]) => props.every((p) => allKeys.has(p))
-    : (props: string[]) => requiredKeys.every((k) => props.includes(k));
-  return (x: unknown): x is ObjectOf<T> =>
-    isRecord(x) && hasKeys(Object.keys(x)) && preds.every(([k, p]) => p(x[k]));
+  return options.strict ? isObjectOfStrict(predObj) : isObjectOfLoose(predObj);
+}
+
+function isObjectOfLoose<
+  T extends RecordOf<Predicate<unknown>>,
+>(
+  predObj: T,
+): Predicate<ObjectOf<T>> {
+  return (x: unknown): x is ObjectOf<T> => {
+    if (!isRecord(x)) return false;
+    for (const k in predObj) {
+      if (!predObj[k](x[k])) return false;
+    }
+    return true;
+  };
+}
+
+function isObjectOfStrict<
+  T extends RecordOf<Predicate<unknown>>,
+>(
+  predObj: T,
+): Predicate<ObjectOf<T>> {
+  const keys = new Set(Object.keys(predObj));
+  const pred = isObjectOfLoose(predObj);
+  return (x: unknown): x is ObjectOf<T> => {
+    if (!pred(x)) return false;
+    const ks = Object.keys(x);
+    return ks.length <= keys.size && ks.every((k) => keys.has(k));
+  };
 }
 
 /**
