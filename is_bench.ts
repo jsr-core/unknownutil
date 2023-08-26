@@ -255,6 +255,27 @@ Deno.bench({
   },
 });
 
+const predLiteral = "hello";
+Deno.bench({
+  name: "is.LiteralOf",
+  fn: () => {
+    const pred = is.LiteralOf(predLiteral);
+    for (const c of cs) {
+      pred(c);
+    }
+  },
+});
+
+const isLiteralOfPred = is.LiteralOf(predLiteral);
+Deno.bench({
+  name: "is.LiteralOf (pre)",
+  fn: () => {
+    for (const c of cs) {
+      isLiteralOfPred(c);
+    }
+  },
+});
+
 const predsOne = [is.String, is.Number, is.Boolean] as const;
 Deno.bench({
   name: "is.OneOf",

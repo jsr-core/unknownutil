@@ -14,6 +14,7 @@ import is, {
   isBoolean,
   isFunction,
   isInstanceOf,
+  isLiteralOf,
   isNull,
   isNullish,
   isNumber,
@@ -433,6 +434,24 @@ Deno.test("isPrimitive", async (t) => {
       "undefined",
       "symbol",
     ],
+  });
+});
+
+Deno.test("isLiteralOf<T>", async (t) => {
+  await t.step("returns proper type predicate", () => {
+    const pred = "hello";
+    const a: unknown = "hello";
+    if (isLiteralOf(pred)(a)) {
+      type _ = AssertTrue<IsExact<typeof a, "hello">>;
+    }
+  });
+  await t.step("returns true on literal T", () => {
+    const pred = "hello";
+    assertEquals(isLiteralOf(pred)("hello"), true);
+  });
+  await t.step("returns false on non literal T", async (t) => {
+    const pred = "hello";
+    await testWithExamples(t, isLiteralOf(pred));
   });
 });
 

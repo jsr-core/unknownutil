@@ -272,6 +272,13 @@ export function isPrimitive(x: unknown): x is Primitive {
     ["string", "number", "bigint", "boolean", "symbol"].includes(typeof x);
 }
 
+/**
+ * Return a type predicate function that returns `true` if the type of `x` is a literal type of `pred`.
+ */
+export function isLiteralOf<T extends Primitive>(pred: T): Predicate<T> {
+  return (x: unknown): x is T => x === pred;
+}
+
 export type OneOf<T> = T extends Predicate<infer U>[] ? U : never;
 
 /**
@@ -364,6 +371,7 @@ export default {
   Nullish: isNullish,
   Symbol: isSymbol,
   Primitive: isPrimitive,
+  LiteralOf: isLiteralOf,
   OneOf: isOneOf,
   AllOf: isAllOf,
   OptionalOf: isOptionalOf,
