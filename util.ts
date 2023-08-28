@@ -1,5 +1,19 @@
 import type { Predicate } from "./is.ts";
 
+export type AssertMessageFactory = (
+  x: unknown,
+  pred: Predicate<unknown>,
+) => string;
+
+export const defaultAssertMessageFactory: AssertMessageFactory = (x, pred) => {
+  const p = pred.name || "anonymous predicate";
+  const t = typeof x;
+  const v = JSON.stringify(x, null, 2);
+  return `Expected a value that satisfies the predicate ${p}, got ${t}: ${v}`;
+};
+
+let assertMessageFactory = defaultAssertMessageFactory;
+
 /**
  * Represents an error that occurs when an assertion fails.
  */
@@ -17,6 +31,31 @@ export class AssertError extends Error {
 
     this.name = this.constructor.name;
   }
+}
+
+/**
+ * Sets the factory function used to generate assertion error messages.
+ * @param factory The factory function.
+ * @example
+ * ```ts
+ * import { setAssertMessageFactory } from "./util.ts";
+ * import is from "./is.ts";
+ *
+ * setAssertMessageFactory((x, pred) => {
+ *   if (pred === is.String) {
+ *     return `Expected a string, got ${typeof x}`;
+ *   } else if (pred === is.Number) {
+ *     return `Expected a number, got ${typeof x}`;
+ *   } else if (pred === is.Boolean) {
+ *     return `Expected a boolean, got ${typeof x}`;
+ *   } else {
+ *     return `Expected a value that satisfies the predicate, got ${typeof x}`;
+ *   }
+ * });
+ * ```
+ */
+export function setAssertMessageFactory(factory: AssertMessageFactory): void {
+  assertMessageFactory = factory;
 }
 
 /**
@@ -44,7 +83,7 @@ export function assert<T>(
 ): asserts x is T {
   if (!pred(x)) {
     throw new AssertError(
-      options.message ?? "The value is not the expected type",
+      options.message ?? assertMessageFactory(x, pred),
     );
   }
 }
