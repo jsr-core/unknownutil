@@ -8,6 +8,7 @@ import type {
 } from "https://deno.land/std@0.202.0/testing/types.ts";
 import is, {
   isAllOf,
+  isAny,
   isArray,
   isArrayOf,
   isBigInt,
@@ -106,6 +107,25 @@ Deno.test("PredicateType", () => {
       }
     >
   >;
+});
+
+Deno.test("isAny", async (t) => {
+  await testWithExamples(t, isAny, {
+    validExamples: [
+      "string",
+      "number",
+      "bigint",
+      "boolean",
+      "array",
+      "record",
+      "function",
+      "null",
+      "undefined",
+      "symbol",
+      "date",
+      "promise",
+    ],
+  });
 });
 
 Deno.test("isString", async (t) => {

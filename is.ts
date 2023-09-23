@@ -9,6 +9,14 @@ export type Predicate<T> = (x: unknown) => x is T;
 export type PredicateType<P> = P extends Predicate<infer T> ? T : never;
 
 /**
+ * Always return `true` regardless of the type of `x`.
+ */
+// deno-lint-ignore no-explicit-any
+export function isAny(_x: unknown): _x is any {
+  return true;
+}
+
+/**
  * Return `true` if the type of `x` is `string`.
  */
 export function isString(x: unknown): x is string {
@@ -404,6 +412,7 @@ export function isOptionalOf<T>(
 }
 
 export default {
+  Any: isAny,
   String: isString,
   Number: isNumber,
   BigInt: isBigInt,
