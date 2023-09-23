@@ -1,0 +1,45 @@
+export const snapshot = {};
+
+snapshot[`inspect > string 1`] = `'"hello world"'`;
+
+snapshot[`inspect > number 1`] = `"100"`;
+
+snapshot[`inspect > bigint 1`] = `"100n"`;
+
+snapshot[`inspect > boolean 1`] = `"true"`;
+
+snapshot[`inspect > array 1`] = `"[]"`;
+
+snapshot[`inspect > array 2`] = `"[0, 1, 2]"`;
+
+snapshot[`inspect > array 3`] = `'[0, "a", true]'`;
+
+snapshot[`inspect > array 4`] = `"[0, [1, [2]]]"`;
+
+snapshot[`inspect > record 1`] = `"{}"`;
+
+snapshot[`inspect > record 2`] = `"{a: 0, b: 1, c: 2}"`;
+
+snapshot[`inspect > record 3`] = `
+'{
+  a: "a",
+  b: 1,
+  c: true
+}'
+`;
+
+snapshot[`inspect > record 4`] = `"{a: {b: {c: 0}}}"`;
+
+snapshot[`inspect > function 1`] = `"inspect"`;
+
+snapshot[`inspect > function 2`] = `"(anonymous)"`;
+
+snapshot[`inspect > null 1`] = `"null"`;
+
+snapshot[`inspect > undefined 1`] = `"undefined"`;
+
+snapshot[`inspect > symbol 1`] = `"Symbol(a)"`;
+
+snapshot[`inspect > date 1`] = `"Date"`;
+
+snapshot[`inspect > promise 1`] = `"Promise"`;
