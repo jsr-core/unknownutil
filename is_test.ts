@@ -31,6 +31,7 @@ import is, {
   isUndefined,
   isUniformTupleOf,
   Predicate,
+  PredicateType,
 } from "./is.ts";
 
 const examples = {
@@ -82,6 +83,30 @@ async function testWithExamples<T>(
     }
   }
 }
+
+Deno.test("PredicateType", () => {
+  const isArticle = is.ObjectOf({
+    title: is.String,
+    body: is.String,
+    refs: is.ArrayOf(is.OneOf([
+      is.String,
+      is.ObjectOf({
+        name: is.String,
+        url: is.String,
+      }),
+    ])),
+  });
+  type _ = AssertTrue<
+    IsExact<
+      PredicateType<typeof isArticle>,
+      {
+        title: string;
+        body: string;
+        refs: (string | { name: string; url: string })[];
+      }
+    >
+  >;
+});
 
 Deno.test("isString", async (t) => {
   await testWithExamples(t, isString, { validExamples: ["string"] });
