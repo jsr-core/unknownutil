@@ -4,6 +4,11 @@
 export type Predicate<T> = (x: unknown) => x is T;
 
 /**
+ * A type predicated by Predicate<T>
+ */
+export type PredicateType<P> = P extends Predicate<infer T> ? T : never;
+
+/**
  * Return `true` if the type of `x` is `string`.
  */
 export function isString(x: unknown): x is string {

@@ -34,7 +34,7 @@ Additionally, `is*Of` (or `is.*Of`) functions return type predicate functions to
 predicate types of `x` more precisely like:
 
 ```typescript
-import { is } from "./mod.ts";
+import { is, PredicateType } from "./mod.ts";
 
 const isArticle = is.ObjectOf({
   title: is.String,
@@ -47,6 +47,8 @@ const isArticle = is.ObjectOf({
     }),
   ])),
 });
+
+type Article = PredicateType<typeof isArticle>;
 
 const a: unknown = {
   title: "Awesome article",
