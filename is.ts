@@ -1,3 +1,5 @@
+import { inspect } from "./inspect.ts";
+
 /**
  * A type predicate function
  */
@@ -7,6 +9,14 @@ export type Predicate<T> = (x: unknown) => x is T;
  * A type predicated by Predicate<T>
  */
 export type PredicateType<P> = P extends Predicate<infer T> ? T : never;
+
+/**
+ * Always return `true` regardless of the type of `x`.
+ */
+// deno-lint-ignore no-explicit-any
+export function isAny(_x: unknown): _x is any {
+  return true;
+}
 
 /**
  * Return `true` if the type of `x` is `string`.
@@ -51,7 +61,14 @@ export function isArray(
 export function isArrayOf<T>(
   pred: Predicate<T>,
 ): Predicate<T[]> {
-  return (x: unknown): x is T[] => isArray(x) && x.every(pred);
+  return Object.defineProperties(
+    (x: unknown): x is T[] => isArray(x) && x.every(pred),
+    {
+      name: {
+        get: () => `isArrayOf(${inspect(pred)})`,
+      },
+    },
+  );
 }
 
 export type TupleOf<T extends readonly Predicate<unknown>[]> = {
@@ -79,12 +96,19 @@ export type TupleOf<T extends readonly Predicate<unknown>[]> = {
 export function isTupleOf<T extends readonly Predicate<unknown>[]>(
   predTup: T,
 ): Predicate<TupleOf<T>> {
-  return (x: unknown): x is TupleOf<T> => {
-    if (!isArray(x) || x.length !== predTup.length) {
-      return false;
-    }
-    return predTup.every((pred, i) => pred(x[i]));
-  };
+  return Object.defineProperties(
+    (x: unknown): x is TupleOf<T> => {
+      if (!isArray(x) || x.length !== predTup.length) {
+        return false;
+      }
+      return predTup.every((pred, i) => pred(x[i]));
+    },
+    {
+      name: {
+        get: () => `isTupleOf(${inspect(predTup)})`,
+      },
+    },
+  );
 }
 
 // https://stackoverflow.com/a/71700658/1273406
@@ -114,10 +138,17 @@ export type UniformTupleOf<
  */
 export function isUniformTupleOf<T, N extends number>(
   n: N,
-  pred: Predicate<T> = (_x: unknown): _x is T => true,
+  pred: Predicate<T> = isAny,
 ): Predicate<UniformTupleOf<T, N>> {
-  const predTup = Array(n).fill(pred);
-  return isTupleOf(predTup) as Predicate<UniformTupleOf<T, N>>;
+  const predInner = isTupleOf(Array(n).fill(pred));
+  return Object.defineProperties(
+    (x: unknown): x is UniformTupleOf<T, N> => predInner(x),
+    {
+      name: {
+        get: () => `isUniformTupleOf(${n}, ${inspect(pred)})`,
+      },
+    },
+  );
 }
 
 /**
@@ -143,13 +174,20 @@ export function isRecord(
 export function isRecordOf<T>(
   pred: Predicate<T>,
 ): Predicate<RecordOf<T>> {
-  return (x: unknown): x is RecordOf<T> => {
-    if (!isRecord(x)) return false;
-    for (const k in x) {
-      if (!pred(x[k])) return false;
-    }
-    return true;
-  };
+  return Object.defineProperties(
+    (x: unknown): x is RecordOf<T> => {
+      if (!isRecord(x)) return false;
+      for (const k in x) {
+        if (!pred(x[k])) return false;
+      }
+      return true;
+    },
+    {
+      name: {
+        get: () => `isRecordOf(${inspect(pred)})`,
+      },
+    },
+  );
 }
 
 type FlatType<T> = T extends RecordOf<unknown>
@@ -196,9 +234,16 @@ export function isObjectOf<
   T extends RecordOf<Predicate<unknown>>,
 >(
   predObj: T,
-  options: { strict?: boolean } = {},
+  { strict }: { strict?: boolean } = {},
 ): Predicate<ObjectOf<T>> {
-  return options.strict ? isObjectOfStrict(predObj) : isObjectOfLoose(predObj);
+  return Object.defineProperties(
+    strict ? isObjectOfStrict(predObj) : isObjectOfLoose(predObj),
+    {
+      name: {
+        get: () => `isObjectOf(${inspect(predObj)})`,
+      },
+    },
+  );
 }
 
 function isObjectOfLoose<
@@ -253,7 +298,14 @@ export function isFunction(x: unknown): x is (...args: unknown[]) => unknown {
 export function isInstanceOf<T extends new (...args: any) => unknown>(
   ctor: T,
 ): Predicate<InstanceType<T>> {
-  return (x: unknown): x is InstanceType<T> => x instanceof ctor;
+  return Object.defineProperties(
+    (x: unknown): x is InstanceType<T> => x instanceof ctor,
+    {
+      name: {
+        get: () => `isInstanceOf(${inspect(ctor)})`,
+      },
+    },
+  );
 }
 
 /**
@@ -304,8 +356,15 @@ export function isPrimitive(x: unknown): x is Primitive {
 /**
  * Return a type predicate function that returns `true` if the type of `x` is a literal type of `pred`.
  */
-export function isLiteralOf<T extends Primitive>(pred: T): Predicate<T> {
-  return (x: unknown): x is T => x === pred;
+export function isLiteralOf<T extends Primitive>(literal: T): Predicate<T> {
+  return Object.defineProperties(
+    (x: unknown): x is T => x === literal,
+    {
+      name: {
+        get: () => `isLiteralOf(${inspect(literal)})`,
+      },
+    },
+  );
 }
 
 /**
@@ -321,10 +380,17 @@ export function isLiteralOf<T extends Primitive>(pred: T): Predicate<T> {
  * ```
  */
 export function isLiteralOneOf<T extends readonly Primitive[]>(
-  preds: T,
+  literals: T,
 ): Predicate<T[number]> {
-  return (x: unknown): x is T[number] =>
-    preds.includes(x as unknown as T[number]);
+  return Object.defineProperties(
+    (x: unknown): x is T[number] =>
+      literals.includes(x as unknown as T[number]),
+    {
+      name: {
+        get: () => `isLiteralOneOf(${inspect(literals)})`,
+      },
+    },
+  );
 }
 
 export type OneOf<T> = T extends Predicate<infer U>[] ? U : never;
@@ -346,7 +412,14 @@ export type OneOf<T> = T extends Predicate<infer U>[] ? U : never;
 export function isOneOf<T extends readonly Predicate<unknown>[]>(
   preds: T,
 ): Predicate<OneOf<T>> {
-  return (x: unknown): x is OneOf<T> => preds.some((pred) => pred(x));
+  return Object.defineProperties(
+    (x: unknown): x is OneOf<T> => preds.some((pred) => pred(x)),
+    {
+      name: {
+        get: () => `isOneOf(${inspect(preds)})`,
+      },
+    },
+  );
 }
 
 type UnionToIntersection<U> =
@@ -372,7 +445,14 @@ export type AllOf<T> = UnionToIntersection<OneOf<T>>;
 export function isAllOf<T extends readonly Predicate<unknown>[]>(
   preds: T,
 ): Predicate<AllOf<T>> {
-  return (x: unknown): x is AllOf<T> => preds.every((pred) => pred(x));
+  return Object.defineProperties(
+    (x: unknown): x is AllOf<T> => preds.every((pred) => pred(x)),
+    {
+      name: {
+        get: () => `isAllOf(${inspect(preds)})`,
+      },
+    },
+  );
 }
 
 export type OptionalPredicate<T> = Predicate<T | undefined> & {
@@ -395,15 +475,21 @@ export type OptionalPredicate<T> = Predicate<T | undefined> & {
 export function isOptionalOf<T>(
   pred: Predicate<T>,
 ): OptionalPredicate<T> {
-  return Object.assign(
+  return Object.defineProperties(
     (x: unknown): x is Predicate<T | undefined> => isUndefined(x) || pred(x),
     {
-      optional: true as const,
+      optional: {
+        value: true as const,
+      },
+      name: {
+        get: () => `isOptionalOf(${inspect(pred)})`,
+      },
     },
   ) as OptionalPredicate<T>;
 }
 
 export default {
+  Any: isAny,
   String: isString,
   Number: isNumber,
   BigInt: isBigInt,

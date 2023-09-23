@@ -13,6 +13,10 @@ await emptyDir("./npm");
 
 await build({
   typeCheck: false,
+  // XXX:
+  // snapshot tests doesn't work with dnt so we disable tests for now
+  // https://github.com/denoland/dnt/issues/254
+  test: false,
   entryPoints: ["./mod.ts"],
   outDir: "./npm",
   shims: {
