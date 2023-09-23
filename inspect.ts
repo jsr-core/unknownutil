@@ -54,6 +54,6 @@ function inspectRecord(
 }
 
 function indent(level: number, text: string): string {
-  const prefix = "  ".repeat(level);
+  const prefix = " ".repeat(level);
   return text.split("\n").map((line) => `${prefix}${line}`).join("\n");
 }

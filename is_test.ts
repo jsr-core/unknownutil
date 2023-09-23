@@ -2,6 +2,9 @@ import {
   assertEquals,
   assertStrictEquals,
 } from "https://deno.land/std@0.202.0/assert/mod.ts";
+import {
+  assertSnapshot,
+} from "https://deno.land/std@0.202.0/testing/snapshot.ts";
 import type {
   AssertTrue,
   IsExact,
@@ -149,6 +152,10 @@ Deno.test("isArray", async (t) => {
 });
 
 Deno.test("isArrayOf<T>", async (t) => {
+  await t.step("returns properly named function", async (t) => {
+    await assertSnapshot(t, isArrayOf(isNumber).name);
+    await assertSnapshot(t, isArrayOf((_x): _x is string => false).name);
+  });
   await t.step("returns proper type predicate", () => {
     const a: unknown = [0, 1, 2];
     if (isArrayOf(isNumber)(a)) {
@@ -171,6 +178,15 @@ Deno.test("isArrayOf<T>", async (t) => {
 });
 
 Deno.test("isTupleOf<T>", async (t) => {
+  await t.step("returns properly named function", async (t) => {
+    await assertSnapshot(t, isTupleOf([isNumber, isString, isBoolean]).name);
+    await assertSnapshot(t, isTupleOf([(_x): _x is string => false]).name);
+    // Nested
+    await assertSnapshot(
+      t,
+      isTupleOf([isTupleOf([isTupleOf([isNumber, isString, isBoolean])])]).name,
+    );
+  });
   await t.step("returns proper type predicate", () => {
     const predTup = [isNumber, isString, isBoolean] as const;
     const a: unknown = [0, "a", true];
@@ -202,6 +218,14 @@ Deno.test("isTupleOf<T>", async (t) => {
 });
 
 Deno.test("isUniformTupleOf<T>", async (t) => {
+  await t.step("returns properly named function", async (t) => {
+    await assertSnapshot(t, isUniformTupleOf(3).name);
+    await assertSnapshot(t, isUniformTupleOf(3, isNumber).name);
+    await assertSnapshot(
+      t,
+      isUniformTupleOf(3, (_x): _x is string => false).name,
+    );
+  });
   await t.step("returns proper type predicate", () => {
     const a: unknown = [0, 1, 2, 3, 4];
     if (isUniformTupleOf(5)(a)) {
@@ -240,6 +264,10 @@ Deno.test("isRecord", async (t) => {
 });
 
 Deno.test("isRecordOf<T>", async (t) => {
+  await t.step("returns properly named function", async (t) => {
+    await assertSnapshot(t, isRecordOf(isNumber).name);
+    await assertSnapshot(t, isRecordOf((_x): _x is string => false).name);
+  });
   await t.step("returns proper type predicate", () => {
     const a: unknown = { a: 0 };
     if (isRecordOf(isNumber)(a)) {
@@ -264,6 +292,21 @@ Deno.test("isRecordOf<T>", async (t) => {
 });
 
 Deno.test("isObjectOf<T>", async (t) => {
+  await t.step("returns properly named function", async (t) => {
+    await assertSnapshot(
+      t,
+      isObjectOf({ a: isNumber, b: isString, c: isBoolean }).name,
+    );
+    await assertSnapshot(
+      t,
+      isObjectOf({ a: (_x): _x is string => false }).name,
+    );
+    // Nested
+    await assertSnapshot(
+      t,
+      isObjectOf({ a: isObjectOf({ b: isObjectOf({ c: isBoolean }) }) }).name,
+    );
+  });
   await t.step("returns proper type predicate", () => {
     const predObj = {
       a: isNumber,
@@ -414,6 +457,10 @@ Deno.test("isFunction", async (t) => {
 });
 
 Deno.test("isInstanceOf<T>", async (t) => {
+  await t.step("returns properly named function", async (t) => {
+    await assertSnapshot(t, isInstanceOf(Date).name);
+    await assertSnapshot(t, isInstanceOf(class {}).name);
+  });
   await t.step("returns true on T instance", () => {
     class Cls {}
     assertEquals(isInstanceOf(Cls)(new Cls()), true);
@@ -484,6 +531,15 @@ Deno.test("isPrimitive", async (t) => {
 });
 
 Deno.test("isLiteralOf<T>", async (t) => {
+  await t.step("returns properly named function", async (t) => {
+    await assertSnapshot(t, isLiteralOf("hello").name);
+    await assertSnapshot(t, isLiteralOf(100).name);
+    await assertSnapshot(t, isLiteralOf(100n).name);
+    await assertSnapshot(t, isLiteralOf(true).name);
+    await assertSnapshot(t, isLiteralOf(null).name);
+    await assertSnapshot(t, isLiteralOf(undefined).name);
+    await assertSnapshot(t, isLiteralOf(Symbol("asdf")).name);
+  });
   await t.step("returns proper type predicate", () => {
     const pred = "hello";
     const a: unknown = "hello";
@@ -502,6 +558,9 @@ Deno.test("isLiteralOf<T>", async (t) => {
 });
 
 Deno.test("isLiteralOneOf<T>", async (t) => {
+  await t.step("returns properly named function", async (t) => {
+    await assertSnapshot(t, isLiteralOneOf(["hello", "world"]).name);
+  });
   await t.step("returns proper type predicate", () => {
     const preds = ["hello", "world"] as const;
     const a: unknown = "hello";
@@ -521,6 +580,9 @@ Deno.test("isLiteralOneOf<T>", async (t) => {
 });
 
 Deno.test("isOneOf<T>", async (t) => {
+  await t.step("returns properly named function", async (t) => {
+    await assertSnapshot(t, isOneOf([isNumber, isString, isBoolean]).name);
+  });
   await t.step("returns proper type predicate", () => {
     const preds = [isNumber, isString, isBoolean];
     const a: unknown = [0, "a", true];
@@ -543,6 +605,15 @@ Deno.test("isOneOf<T>", async (t) => {
 });
 
 Deno.test("isAllOf<T>", async (t) => {
+  await t.step("returns properly named function", async (t) => {
+    await assertSnapshot(
+      t,
+      isAllOf([
+        is.ObjectOf({ a: is.Number }),
+        is.ObjectOf({ b: is.String }),
+      ]).name,
+    );
+  });
   await t.step("returns proper type predicate", () => {
     const preds = [
       is.ObjectOf({ a: is.Number }),
@@ -582,6 +653,9 @@ Deno.test("isAllOf<T>", async (t) => {
 });
 
 Deno.test("isOptionalOf<T>", async (t) => {
+  await t.step("returns properly named function", async (t) => {
+    await assertSnapshot(t, isOptionalOf(isNumber).name);
+  });
   await t.step("returns proper type predicate", () => {
     const a: unknown = undefined;
     if (isOptionalOf(isNumber)(a)) {
