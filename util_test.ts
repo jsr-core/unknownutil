@@ -34,13 +34,16 @@ Deno.test("assert", async (t) => {
     );
   });
 
-  await t.step("throws an `AssertError` on false predicate", () => {
-    assertThrows(
-      () => assert(x, falsePredicate),
-      AssertError,
-      `Expected a value that satisfies the predicate falsePredicate, got symbol: undefined`,
-    );
-  });
+  await t.step(
+    "throws an `AssertError` on false predicate with a custom name",
+    () => {
+      assertThrows(
+        () => assert(x, falsePredicate, { name: "hello world" }),
+        AssertError,
+        `Expected hello world that satisfies the predicate falsePredicate, got symbol: undefined`,
+      );
+    },
+  );
 
   await t.step(
     "throws an `AssertError` with a custom message on false predicate",
@@ -66,6 +69,17 @@ Deno.test("ensure", async (t) => {
       `Expected a value that satisfies the predicate falsePredicate, got symbol: undefined`,
     );
   });
+
+  await t.step(
+    "throws an `AssertError` on false predicate with a custom name",
+    () => {
+      assertThrows(
+        () => ensure(x, falsePredicate, { name: "hello world" }),
+        AssertError,
+        `Expected hello world that satisfies the predicate falsePredicate, got symbol: undefined`,
+      );
+    },
+  );
 
   await t.step(
     "throws an `AssertError` with a custom message on false predicate",

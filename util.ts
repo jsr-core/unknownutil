@@ -3,13 +3,20 @@ import type { Predicate } from "./is.ts";
 export type AssertMessageFactory = (
   x: unknown,
   pred: Predicate<unknown>,
+  name?: string,
 ) => string;
 
-export const defaultAssertMessageFactory: AssertMessageFactory = (x, pred) => {
+export const defaultAssertMessageFactory: AssertMessageFactory = (
+  x,
+  pred,
+  name,
+) => {
   const p = pred.name || "anonymous predicate";
   const t = typeof x;
   const v = JSON.stringify(x, null, 2);
-  return `Expected a value that satisfies the predicate ${p}, got ${t}: ${v}`;
+  return `Expected ${
+    name ?? "a value"
+  } that satisfies the predicate ${p}, got ${t}: ${v}`;
 };
 
 let assertMessageFactory = defaultAssertMessageFactory;
@@ -79,11 +86,11 @@ export function setAssertMessageFactory(factory: AssertMessageFactory): void {
 export function assert<T>(
   x: unknown,
   pred: Predicate<T>,
-  options: { message?: string } = {},
+  options: { message?: string; name?: string } = {},
 ): asserts x is T {
   if (!pred(x)) {
     throw new AssertError(
-      options.message ?? assertMessageFactory(x, pred),
+      options.message ?? assertMessageFactory(x, pred, options.name),
     );
   }
 }
@@ -108,7 +115,7 @@ export function assert<T>(
 export function ensure<T>(
   x: unknown,
   pred: Predicate<T>,
-  options: { message?: string } = {},
+  options: { message?: string; name?: string } = {},
 ): T {
   assert(x, pred, options);
   return x;
