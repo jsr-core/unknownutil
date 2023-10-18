@@ -278,7 +278,7 @@ function isObjectOfStrict<
  * Return `true` if the type of `x` is `function`.
  */
 export function isFunction(x: unknown): x is (...args: unknown[]) => unknown {
-  return Object.prototype.toString.call(x) === "[object Function]";
+  return x instanceof Function;
 }
 
 /**

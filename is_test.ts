@@ -45,7 +45,7 @@ const examples = {
   boolean: [true, false],
   array: [[], [0, 1, 2], ["a", "b", "c"], [0, "a", true]],
   record: [{}, { a: 0, b: 1, c: 2 }, { a: "a", b: "b", c: "c" }],
-  function: [function a() {}, () => {}],
+  function: [function a() {}, () => {}, async function b() {}, async () => {}],
   null: [null],
   undefined: [undefined],
   symbol: [Symbol("a"), Symbol("b"), Symbol("c")],
