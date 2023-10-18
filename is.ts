@@ -278,7 +278,25 @@ function isObjectOfStrict<
  * Return `true` if the type of `x` is `function`.
  */
 export function isFunction(x: unknown): x is (...args: unknown[]) => unknown {
+  return x instanceof Function;
+}
+
+/**
+ * Return `true` if the type of `x` is `function` (non async function).
+ */
+export function isSyncFunction(
+  x: unknown,
+): x is (...args: unknown[]) => unknown {
   return Object.prototype.toString.call(x) === "[object Function]";
+}
+
+/**
+ * Return `true` if the type of `x` is `function` (async function).
+ */
+export function isAsyncFunction(
+  x: unknown,
+): x is (...args: unknown[]) => unknown {
+  return Object.prototype.toString.call(x) === "[object AsyncFunction]";
 }
 
 /**
@@ -502,6 +520,8 @@ export default {
   RecordOf: isRecordOf,
   ObjectOf: isObjectOf,
   Function: isFunction,
+  SyncFunction: isSyncFunction,
+  AsyncFunction: isAsyncFunction,
   InstanceOf: isInstanceOf,
   Null: isNull,
   Undefined: isUndefined,
