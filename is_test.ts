@@ -14,6 +14,7 @@ import is, {
   isAny,
   isArray,
   isArrayOf,
+  isAsyncFunction,
   isBigInt,
   isBoolean,
   isFunction,
@@ -31,6 +32,7 @@ import is, {
   isRecordOf,
   isString,
   isSymbol,
+  isSyncFunction,
   isTupleOf,
   isUndefined,
   isUniformTupleOf,
@@ -45,7 +47,8 @@ const examples = {
   boolean: [true, false],
   array: [[], [0, 1, 2], ["a", "b", "c"], [0, "a", true]],
   record: [{}, { a: 0, b: 1, c: 2 }, { a: "a", b: "b", c: "c" }],
-  function: [function a() {}, () => {}, async function b() {}, async () => {}],
+  syncFunction: [function a() {}, () => {}],
+  asyncFunction: [async function b() {}, async () => {}],
   null: [null],
   undefined: [undefined],
   symbol: [Symbol("a"), Symbol("b"), Symbol("c")],
@@ -121,7 +124,8 @@ Deno.test("isAny", async (t) => {
       "boolean",
       "array",
       "record",
-      "function",
+      "syncFunction",
+      "asyncFunction",
       "null",
       "undefined",
       "symbol",
@@ -453,7 +457,21 @@ Deno.test("isObjectOf<T>", async (t) => {
 });
 
 Deno.test("isFunction", async (t) => {
-  await testWithExamples(t, isFunction, { validExamples: ["function"] });
+  await testWithExamples(t, isFunction, {
+    validExamples: ["syncFunction", "asyncFunction"],
+  });
+});
+
+Deno.test("isSyncFunction", async (t) => {
+  await testWithExamples(t, isSyncFunction, {
+    validExamples: ["syncFunction"],
+  });
+});
+
+Deno.test("isAsyncFunction", async (t) => {
+  await testWithExamples(t, isAsyncFunction, {
+    validExamples: ["asyncFunction"],
+  });
 });
 
 Deno.test("isInstanceOf<T>", async (t) => {
@@ -694,7 +712,17 @@ Deno.test("isOptionalOf<T>", async (t) => {
   });
   await t.step("with isFunction", async (t) => {
     await testWithExamples(t, isOptionalOf(isFunction), {
-      validExamples: ["function", "undefined"],
+      validExamples: ["syncFunction", "asyncFunction", "undefined"],
+    });
+  });
+  await t.step("with isSyncFunction", async (t) => {
+    await testWithExamples(t, isOptionalOf(isSyncFunction), {
+      validExamples: ["syncFunction", "undefined"],
+    });
+  });
+  await t.step("with isAsyncFunction", async (t) => {
+    await testWithExamples(t, isOptionalOf(isAsyncFunction), {
+      validExamples: ["asyncFunction", "undefined"],
     });
   });
   await t.step("with isNull", async (t) => {

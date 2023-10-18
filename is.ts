@@ -282,6 +282,24 @@ export function isFunction(x: unknown): x is (...args: unknown[]) => unknown {
 }
 
 /**
+ * Return `true` if the type of `x` is `function` (non async function).
+ */
+export function isSyncFunction(
+  x: unknown,
+): x is (...args: unknown[]) => unknown {
+  return Object.prototype.toString.call(x) === "[object Function]";
+}
+
+/**
+ * Return `true` if the type of `x` is `function` (async function).
+ */
+export function isAsyncFunction(
+  x: unknown,
+): x is (...args: unknown[]) => unknown {
+  return Object.prototype.toString.call(x) === "[object AsyncFunction]";
+}
+
+/**
  * Return `true` if the type of `x` is instance of `ctor`.
  *
  * ```ts
@@ -502,6 +520,8 @@ export default {
   RecordOf: isRecordOf,
   ObjectOf: isObjectOf,
   Function: isFunction,
+  SyncFunction: isSyncFunction,
+  AsyncFunction: isAsyncFunction,
   InstanceOf: isInstanceOf,
   Null: isNull,
   Undefined: isUndefined,
