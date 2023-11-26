@@ -36,6 +36,7 @@ import is, {
   isTupleOf,
   isUndefined,
   isUniformTupleOf,
+  isUnknown,
   Predicate,
   PredicateType,
 } from "./is.ts";
@@ -117,6 +118,26 @@ Deno.test("PredicateType", () => {
 
 Deno.test("isAny", async (t) => {
   await testWithExamples(t, isAny, {
+    validExamples: [
+      "string",
+      "number",
+      "bigint",
+      "boolean",
+      "array",
+      "record",
+      "syncFunction",
+      "asyncFunction",
+      "null",
+      "undefined",
+      "symbol",
+      "date",
+      "promise",
+    ],
+  });
+});
+
+Deno.test("isUnknown", async (t) => {
+  await testWithExamples(t, isUnknown, {
     validExamples: [
       "string",
       "number",
