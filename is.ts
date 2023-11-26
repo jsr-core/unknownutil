@@ -19,6 +19,13 @@ export function isAny(_x: unknown): _x is any {
 }
 
 /**
+ * Always return `true` regardless of the type of `x`.
+ */
+export function isUnknown(_x: unknown): _x is unknown {
+  return true;
+}
+
+/**
  * Return `true` if the type of `x` is `string`.
  */
 export function isString(x: unknown): x is string {
@@ -508,6 +515,7 @@ export function isOptionalOf<T>(
 
 export default {
   Any: isAny,
+  Unknown: isUnknown,
   String: isString,
   Number: isNumber,
   BigInt: isBigInt,
