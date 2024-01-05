@@ -1,14 +1,14 @@
 import {
   assertEquals,
   assertStrictEquals,
-} from "https://deno.land/std@0.204.0/assert/mod.ts";
+} from "https://deno.land/std@0.211.0/assert/mod.ts";
 import {
   assertSnapshot,
-} from "https://deno.land/std@0.204.0/testing/snapshot.ts";
+} from "https://deno.land/std@0.211.0/testing/snapshot.ts";
 import type {
   AssertTrue,
   IsExact,
-} from "https://deno.land/std@0.204.0/testing/types.ts";
+} from "https://deno.land/std@0.211.0/testing/types.ts";
 import is, {
   isAllOf,
   isAny,
