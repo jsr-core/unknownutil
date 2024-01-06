@@ -136,24 +136,6 @@ const a: unknown = "Hello";
 const _: string = maybe(a, is.String) ?? "default value";
 ```
 
-## Node.js (npm)
-
-To use `unknownutil` in [Node.js][nodejs], install `unknownutil` like
-
-```console
-npm i unknownutil
-```
-
-Then import `is`, `assert`, `ensure`, and `maybe` like:
-
-```typescript, ignore
-import { assert, ensure, is, maybe } from "unknownutil";
-
-// ...
-```
-
-[nodejs]: https://nodejs.org/
-
 ## Migration
 
 See [GitHub Wiki](https://github.com/lambdalisue/deno-unknownutil/wiki) for

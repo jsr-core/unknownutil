@@ -35,4 +35,15 @@ await build({
 
 // post build steps
 Deno.copyFileSync("LICENSE", "npm/LICENSE");
-Deno.copyFileSync("README.md", "npm/README.md");
+
+// build README for npm
+let readme = Deno.readTextFileSync("README.md");
+readme = readme.replaceAll(
+  "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts",
+  name,
+);
+readme = readme.replaceAll(
+  "## Usage",
+  `## Install\n\nInstall via npm:\n\n\`\`\`sh\nnpm install --save ${name}\n\`\`\`\n\n## Usage`,
+);
+Deno.writeTextFileSync("npm/README.md", readme);
