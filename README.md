@@ -5,6 +5,7 @@
 [![deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/unknownutil/mod.ts)
 [![Test](https://github.com/lambdalisue/deno-unknownutil/workflows/Test/badge.svg)](https://github.com/lambdalisue/deno-unknownutil/actions?query=workflow%3ATest)
 [![npm version](https://badge.fury.io/js/unknownutil.svg)](https://badge.fury.io/js/unknownutil)
+[![codecov](https://codecov.io/github/lambdalisue/deno-unknownutil/graph/badge.svg?token=pfbLRGU5AM)](https://codecov.io/github/lambdalisue/deno-unknownutil)
 
 A utility pack for handling `unknown` type.
 
@@ -15,7 +16,7 @@ A utility pack for handling `unknown` type.
 It provides `is` module for type predicate functions and `assert`, `ensure`, and
 `maybe` helper functions.
 
-### is*
+### is\*
 
 Type predicate function is a function which returns `true` if a given value is
 expected type. For example, `isString` (or `is.String`) returns `true` if a
@@ -39,13 +40,15 @@ import { is, PredicateType } from "./mod.ts";
 const isArticle = is.ObjectOf({
   title: is.String,
   body: is.String,
-  refs: is.ArrayOf(is.OneOf([
-    is.String,
-    is.ObjectOf({
-      name: is.String,
-      url: is.String,
-    }),
-  ])),
+  refs: is.ArrayOf(
+    is.OneOf([
+      is.String,
+      is.ObjectOf({
+        name: is.String,
+        url: is.String,
+      }),
+    ])
+  ),
 });
 
 type Article = PredicateType<typeof isArticle>;
@@ -53,10 +56,7 @@ type Article = PredicateType<typeof isArticle>;
 const a: unknown = {
   title: "Awesome article",
   body: "This is an awesome article",
-  refs: [
-    { name: "Deno", url: "https://deno.land/" },
-    "https://github.com",
-  ],
+  refs: [{ name: "Deno", url: "https://deno.land/" }, "https://github.com"],
 };
 if (isArticle(a)) {
   // a is narrowed to the type of `isArticle`
