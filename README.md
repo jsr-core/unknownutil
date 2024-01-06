@@ -5,6 +5,7 @@
 [![deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/unknownutil/mod.ts)
 [![Test](https://github.com/lambdalisue/deno-unknownutil/workflows/Test/badge.svg)](https://github.com/lambdalisue/deno-unknownutil/actions?query=workflow%3ATest)
 [![npm version](https://badge.fury.io/js/unknownutil.svg)](https://badge.fury.io/js/unknownutil)
+[![codecov](https://codecov.io/github/lambdalisue/deno-unknownutil/graph/badge.svg?token=pfbLRGU5AM)](https://codecov.io/github/lambdalisue/deno-unknownutil)
 
 A utility pack for handling `unknown` type.
 
@@ -15,14 +16,14 @@ A utility pack for handling `unknown` type.
 It provides `is` module for type predicate functions and `assert`, `ensure`, and
 `maybe` helper functions.
 
-### is*
+### is\*
 
 Type predicate function is a function which returns `true` if a given value is
 expected type. For example, `isString` (or `is.String`) returns `true` if a
 given value is `string`.
 
 ```typescript
-import { is } from "./mod.ts";
+import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
 
 const a: unknown = "Hello";
 if (is.String(a)) {
@@ -34,18 +35,23 @@ Additionally, `is*Of` (or `is.*Of`) functions return type predicate functions to
 predicate types of `x` more precisely like:
 
 ```typescript
-import { is, PredicateType } from "./mod.ts";
+import {
+  is,
+  PredicateType,
+} from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
 
 const isArticle = is.ObjectOf({
   title: is.String,
   body: is.String,
-  refs: is.ArrayOf(is.OneOf([
-    is.String,
-    is.ObjectOf({
-      name: is.String,
-      url: is.String,
-    }),
-  ])),
+  refs: is.ArrayOf(
+    is.OneOf([
+      is.String,
+      is.ObjectOf({
+        name: is.String,
+        url: is.String,
+      }),
+    ]),
+  ),
 });
 
 type Article = PredicateType<typeof isArticle>;
@@ -53,10 +59,7 @@ type Article = PredicateType<typeof isArticle>;
 const a: unknown = {
   title: "Awesome article",
   body: "This is an awesome article",
-  refs: [
-    { name: "Deno", url: "https://deno.land/" },
-    "https://github.com",
-  ],
+  refs: [{ name: "Deno", url: "https://deno.land/" }, "https://github.com"],
 };
 if (isArticle(a)) {
   // a is narrowed to the type of `isArticle`
@@ -79,7 +82,10 @@ The `assert` function does nothing if a given value is expected type. Otherwise,
 it throws an `AssertError` exception like:
 
 ```typescript
-import { assert, is } from "./mod.ts";
+import {
+  assert,
+  is,
+} from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
 
 const a: unknown = "Hello";
 
@@ -97,7 +103,10 @@ The `ensure` function return the value as-is if a given value is expected type.
 Otherwise, it throws an `AssertError` exception like:
 
 ```typescript
-import { ensure, is } from "./mod.ts";
+import {
+  ensure,
+  is,
+} from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
 
 const a: unknown = "Hello";
 
@@ -116,13 +125,34 @@ Otherwise, it returns `undefined` that suites with
 like:
 
 ```typescript
-import { is, maybe } from "./mod.ts";
+import {
+  is,
+  maybe,
+} from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
 
 const a: unknown = "Hello";
 
 // `maybe` returns `string | undefined` so it suites with `??`
 const _: string = maybe(a, is.String) ?? "default value";
 ```
+
+## Node.js (npm)
+
+To use `unknownutil` in [Node.js][nodejs], install `unknownutil` like
+
+```console
+npm i unknownutil
+```
+
+Then import `is`, `assert`, `ensure`, and `maybe` like:
+
+```typescript, ignore
+import { assert, ensure, is, maybe } from "unknownutil";
+
+// ...
+```
+
+[nodejs]: https://nodejs.org/
 
 ## Migration
 
