@@ -2,8 +2,11 @@
   "lock": false,
   "tasks": {
     "build-npm": "deno run -A scripts/build_npm.ts $(git describe --tags --always --dirty)",
-    "test": "deno test --unstable -A --parallel --doc",
-    "check": "deno check --unstable $(find . -name '*.ts')",
-    "upgrade": "deno run -A https://deno.land/x/udd/main.ts $(find . -name '*.ts' -not -path '*/npm/*')"
+    "test": "deno test -A --parallel --shuffle --doc",
+    "test:coverage": "deno task test --coverage=.coverage",
+    "check": "deno check ./**/*.ts",
+    "coverage": "deno coverage .coverage --exclude=is_bench.ts",
+    "upgrade": "deno run -q -A https://deno.land/x/molt@0.14.2/cli.ts ./**/*.ts",
+    "upgrade:commit": "deno task -q upgrade --commit --prefix :package: --pre-commit=fmt"
   }
 }
