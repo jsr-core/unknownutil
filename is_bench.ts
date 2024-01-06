@@ -22,6 +22,24 @@ Deno.bench({
 });
 
 Deno.bench({
+  name: "is.Any",
+  fn: () => {
+    for (const c of cs) {
+      is.Any(c);
+    }
+  },
+});
+
+Deno.bench({
+  name: "is.Unknown",
+  fn: () => {
+    for (const c of cs) {
+      is.Unknown(c);
+    }
+  },
+});
+
+Deno.bench({
   name: "is.String",
   fn: () => {
     for (const c of cs) {
@@ -67,7 +85,7 @@ Deno.bench({
 });
 
 Deno.bench({
-  name: "is.ArrayOf",
+  name: "is.ArrayOf<T>",
   fn: () => {
     const pred = is.ArrayOf(is.String);
     for (const c of cs) {
@@ -78,7 +96,7 @@ Deno.bench({
 
 const isArrayOfPred = is.ArrayOf(is.String);
 Deno.bench({
-  name: "is.ArrayOf (pre)",
+  name: "is.ArrayOf<T> (pre)",
   fn: () => {
     for (const c of cs) {
       isArrayOfPred(c);
@@ -88,7 +106,7 @@ Deno.bench({
 
 const predTup = [is.String, is.Number, is.Boolean] as const;
 Deno.bench({
-  name: "is.TupleOf",
+  name: "is.TupleOf<T>",
   fn: () => {
     const pred = is.TupleOf(predTup);
     for (const c of cs) {
@@ -99,7 +117,7 @@ Deno.bench({
 
 const isTupleOfPred = is.TupleOf(predTup);
 Deno.bench({
-  name: "is.TupleOf (pre)",
+  name: "is.TupleOf<T> (pre)",
   fn: () => {
     for (const c of cs) {
       isTupleOfPred(c);
@@ -108,7 +126,67 @@ Deno.bench({
 });
 
 Deno.bench({
-  name: "is.UniformTupleOf",
+  name: "is.TupleOf<T, E>",
+  fn: () => {
+    const pred = is.TupleOf(predTup, is.Array);
+    for (const c of cs) {
+      pred(c);
+    }
+  },
+});
+
+const isTupleOfElsePred = is.TupleOf(predTup, is.Array);
+Deno.bench({
+  name: "is.TupleOf<T, E> (pre)",
+  fn: () => {
+    for (const c of cs) {
+      isTupleOfElsePred(c);
+    }
+  },
+});
+
+Deno.bench({
+  name: "is.ReadonlyTupleOf<T>",
+  fn: () => {
+    const pred = is.ReadonlyTupleOf(predTup);
+    for (const c of cs) {
+      pred(c);
+    }
+  },
+});
+
+const isReadonlyTupleOfPred = is.ReadonlyTupleOf(predTup);
+Deno.bench({
+  name: "is.ReadonlyTupleOf<T> (pre)",
+  fn: () => {
+    for (const c of cs) {
+      isReadonlyTupleOfPred(c);
+    }
+  },
+});
+
+Deno.bench({
+  name: "is.ReadonlyTupleOf<T, E>",
+  fn: () => {
+    const pred = is.ReadonlyTupleOf(predTup, is.Array);
+    for (const c of cs) {
+      pred(c);
+    }
+  },
+});
+
+const isReadonlyTupleOfElsePred = is.ReadonlyTupleOf(predTup, is.Array);
+Deno.bench({
+  name: "is.ReadonlyTupleOf<T, E> (pre)",
+  fn: () => {
+    for (const c of cs) {
+      isReadonlyTupleOfElsePred(c);
+    }
+  },
+});
+
+Deno.bench({
+  name: "is.UniformTupleOf<N, T>",
   fn: () => {
     const pred = is.UniformTupleOf(3, is.String);
     for (const c of cs) {
@@ -119,10 +197,30 @@ Deno.bench({
 
 const isUniformTupleOfPred = is.UniformTupleOf(3, is.String);
 Deno.bench({
-  name: "is.UniformTupleOf (pre)",
+  name: "is.UniformTupleOf<N, T> (pre)",
   fn: () => {
     for (const c of cs) {
       isUniformTupleOfPred(c);
+    }
+  },
+});
+
+Deno.bench({
+  name: "is.ReadonlyUniformTupleOf<N, T>",
+  fn: () => {
+    const pred = is.ReadonlyUniformTupleOf(3, is.String);
+    for (const c of cs) {
+      pred(c);
+    }
+  },
+});
+
+const isReadonlyUniformTupleOfPred = is.ReadonlyUniformTupleOf(3, is.String);
+Deno.bench({
+  name: "is.ReadonlyUniformTupleOf<N, T> (pre)",
+  fn: () => {
+    for (const c of cs) {
+      isReadonlyUniformTupleOfPred(c);
     }
   },
 });
@@ -137,7 +235,7 @@ Deno.bench({
 });
 
 Deno.bench({
-  name: "is.RecordOf",
+  name: "is.RecordOf<T>",
   fn: () => {
     const pred = is.RecordOf(is.String);
     for (const c of cs) {
@@ -148,7 +246,7 @@ Deno.bench({
 
 const isRecordOfPred = is.RecordOf(is.String);
 Deno.bench({
-  name: "is.RecordOf (pre)",
+  name: "is.RecordOf<T> (pre)",
   fn: () => {
     for (const c of cs) {
       isRecordOfPred(c);
@@ -162,7 +260,7 @@ const predObj = {
   c: is.Boolean,
 } as const;
 Deno.bench({
-  name: "is.ObjectOf",
+  name: "is.ObjectOf<T>",
   fn: () => {
     const pred = is.ObjectOf(predObj);
     for (const c of cs) {
@@ -171,7 +269,7 @@ Deno.bench({
   },
 });
 Deno.bench({
-  name: "is.ObjectOf (strict)",
+  name: "is.ObjectOf<T> (strict)",
   fn: () => {
     const pred = is.ObjectOf(predObj, { strict: true });
     for (const c of cs) {
@@ -182,7 +280,7 @@ Deno.bench({
 
 const isObjectOfPred = is.ObjectOf(predObj);
 Deno.bench({
-  name: "is.ObjectOf (pre)",
+  name: "is.ObjectOf<T> (pre)",
   fn: () => {
     for (const c of cs) {
       isObjectOfPred(c);
@@ -192,7 +290,7 @@ Deno.bench({
 
 const isObjectOfStrictPred = is.ObjectOf(predObj, { strict: true });
 Deno.bench({
-  name: "is.ObjectOf (pre, strict)",
+  name: "is.ObjectOf<T> (pre, strict)",
   fn: () => {
     for (const c of cs) {
       isObjectOfStrictPred(c);
@@ -210,7 +308,25 @@ Deno.bench({
 });
 
 Deno.bench({
-  name: "is.InstanceOf",
+  name: "is.SyncFunction",
+  fn: () => {
+    for (const c of cs) {
+      is.SyncFunction(c);
+    }
+  },
+});
+
+Deno.bench({
+  name: "is.AsyncFunction",
+  fn: () => {
+    for (const c of cs) {
+      is.AsyncFunction(c);
+    }
+  },
+});
+
+Deno.bench({
+  name: "is.InstanceOf<T>",
   fn: () => {
     const pred = is.InstanceOf(Date);
     for (const c of cs) {
@@ -221,7 +337,7 @@ Deno.bench({
 
 const isInstanceOfPred = is.InstanceOf(Date);
 Deno.bench({
-  name: "is.InstanceOf (pre)",
+  name: "is.InstanceOf<T> (pre)",
   fn: () => {
     for (const c of cs) {
       isInstanceOfPred(c);
@@ -276,7 +392,7 @@ Deno.bench({
 
 const predLiteral = "hello";
 Deno.bench({
-  name: "is.LiteralOf",
+  name: "is.LiteralOf<T>",
   fn: () => {
     const pred = is.LiteralOf(predLiteral);
     for (const c of cs) {
@@ -287,7 +403,7 @@ Deno.bench({
 
 const isLiteralOfPred = is.LiteralOf(predLiteral);
 Deno.bench({
-  name: "is.LiteralOf (pre)",
+  name: "is.LiteralOf<T> (pre)",
   fn: () => {
     for (const c of cs) {
       isLiteralOfPred(c);
@@ -297,7 +413,7 @@ Deno.bench({
 
 const predLiteralOne = ["hello", "world"] as const;
 Deno.bench({
-  name: "is.LiteralOneOf",
+  name: "is.LiteralOneOf<T>",
   fn: () => {
     const pred = is.LiteralOneOf(predLiteralOne);
     for (const c of cs) {
@@ -308,7 +424,7 @@ Deno.bench({
 
 const isLiteralOneOfPred = is.LiteralOneOf(predLiteralOne);
 Deno.bench({
-  name: "is.LiteralOneOf (pre)",
+  name: "is.LiteralOneOf<T> (pre)",
   fn: () => {
     for (const c of cs) {
       isLiteralOneOfPred(c);
@@ -318,7 +434,7 @@ Deno.bench({
 
 const predsOne = [is.String, is.Number, is.Boolean] as const;
 Deno.bench({
-  name: "is.OneOf",
+  name: "is.OneOf<T>",
   fn: () => {
     const pred = is.OneOf(predsOne);
     for (const c of cs) {
@@ -329,7 +445,7 @@ Deno.bench({
 
 const isOneOfPred = is.OneOf(predsOne);
 Deno.bench({
-  name: "is.OneOf (pre)",
+  name: "is.OneOf<T> (pre)",
   fn: () => {
     for (const c of cs) {
       isOneOfPred(c);
@@ -339,7 +455,7 @@ Deno.bench({
 
 const predsAll = [is.String, is.Number, is.Boolean] as const;
 Deno.bench({
-  name: "is.AllOf",
+  name: "is.AllOf<T>",
   fn: () => {
     const pred = is.AllOf(predsAll);
     for (const c of cs) {
@@ -350,7 +466,7 @@ Deno.bench({
 
 const isAllOfPred = is.AllOf(predsAll);
 Deno.bench({
-  name: "is.AllOf (pre)",
+  name: "is.AllOf<T> (pre)",
   fn: () => {
     for (const c of cs) {
       isAllOfPred(c);
@@ -359,7 +475,7 @@ Deno.bench({
 });
 
 Deno.bench({
-  name: "is.OptionalOf",
+  name: "is.OptionalOf<T>",
   fn: () => {
     const pred = is.OptionalOf(is.String);
     for (const c of cs) {
@@ -370,7 +486,7 @@ Deno.bench({
 
 const isOptionalOfPred = is.OptionalOf(is.String);
 Deno.bench({
-  name: "is.OptionalOf (pre)",
+  name: "is.OptionalOf<T> (pre)",
   fn: () => {
     for (const c of cs) {
       isOptionalOfPred(c);
