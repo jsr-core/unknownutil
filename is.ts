@@ -86,7 +86,7 @@ export type TupleOf<T extends readonly Predicate<unknown>[]> = {
  * Return a type predicate function that returns `true` if the type of `x` is `TupleOf<T>`.
  *
  * ```ts
- * import is from "./is.ts";
+ * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
  *
  * const predTup = [is.Number, is.String, is.Boolean] as const;
  * const a: unknown = [0, "a", true];
@@ -129,7 +129,7 @@ export type UniformTupleOf<
  * Return a type predicate function that returns `true` if the type of `x` is `UniformTupleOf<T>`.
  *
  * ```ts
- * import is from "./is.ts";
+ * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
  *
  * const a: unknown = [0, 1, 2, 3, 4];
  * if (is.UniformTupleOf(5)(a)) {
@@ -223,7 +223,7 @@ export type ObjectOf<T extends RecordOf<Predicate<unknown>>> = FlatType<
  * Otherwise, the number of keys of `x` must be greater than or equal to the number of keys of `predObj`.
  *
  * ```ts
- * import is from "./is.ts";
+ * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
  *
  * const predObj = {
  *  a: is.Number,
@@ -310,7 +310,7 @@ export function isAsyncFunction(
  * Return `true` if the type of `x` is instance of `ctor`.
  *
  * ```ts
- * import is from "./is.ts";
+ * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
  *
  * const a: unknown = new Date();
  * if (is.InstanceOf(Date)(a)) {
@@ -396,7 +396,8 @@ export function isLiteralOf<T extends Primitive>(literal: T): Predicate<T> {
  * Return a type predicate function that returns `true` if the type of `x` is one of literal type in `preds`.
  *
  * ```ts
- * import is from "./is.ts";
+ * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ *
  * const a: unknown = "hello";
  * if (is.LiteralOneOf(["hello", "world"] as const)(a)) {
  *  // a is narrowed to "hello" | "world"
@@ -424,7 +425,7 @@ export type OneOf<T> = T extends Predicate<infer U>[] ? U : never;
  * Return a type predicate function that returns `true` if the type of `x` is `OneOf<T>`.
  *
  * ```ts
- * import is from "./is.ts";
+ * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
  *
  * const preds = [is.Number, is.String, is.Boolean];
  * const a: unknown = 0;
@@ -457,7 +458,7 @@ export type AllOf<T> = UnionToIntersection<OneOf<T>>;
  * Return a type predicate function that returns `true` if the type of `x` is `AllOf<T>`.
  *
  * ```ts
- * import is from "./is.ts";
+ * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
  *
  * const preds = [is.ObjectOf({ a: is.Number }), is.ObjectOf({ b: is.String })];
  * const a: unknown = { a: 0, b: "a" };
@@ -488,7 +489,7 @@ export type OptionalPredicate<T> = Predicate<T | undefined> & {
  * Return a type predicate function that returns `true` if the type of `x` is `T` or `undefined`.
  *
  * ```ts
- * import is from "./is.ts";
+ * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
  *
  * const a: unknown = "a";
  * if (is.OptionalOf(is.String)(a)) {

@@ -23,7 +23,7 @@ expected type. For example, `isString` (or `is.String`) returns `true` if a
 given value is `string`.
 
 ```typescript
-import { is } from "./mod.ts";
+import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
 
 const a: unknown = "Hello";
 if (is.String(a)) {
@@ -35,7 +35,10 @@ Additionally, `is*Of` (or `is.*Of`) functions return type predicate functions to
 predicate types of `x` more precisely like:
 
 ```typescript
-import { is, PredicateType } from "./mod.ts";
+import {
+  is,
+  PredicateType,
+} from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
 
 const isArticle = is.ObjectOf({
   title: is.String,
@@ -47,7 +50,7 @@ const isArticle = is.ObjectOf({
         name: is.String,
         url: is.String,
       }),
-    ])
+    ]),
   ),
 });
 
@@ -79,7 +82,10 @@ The `assert` function does nothing if a given value is expected type. Otherwise,
 it throws an `AssertError` exception like:
 
 ```typescript
-import { assert, is } from "./mod.ts";
+import {
+  assert,
+  is,
+} from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
 
 const a: unknown = "Hello";
 
@@ -97,7 +103,10 @@ The `ensure` function return the value as-is if a given value is expected type.
 Otherwise, it throws an `AssertError` exception like:
 
 ```typescript
-import { ensure, is } from "./mod.ts";
+import {
+  ensure,
+  is,
+} from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
 
 const a: unknown = "Hello";
 
@@ -116,7 +125,10 @@ Otherwise, it returns `undefined` that suites with
 like:
 
 ```typescript
-import { is, maybe } from "./mod.ts";
+import {
+  is,
+  maybe,
+} from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
 
 const a: unknown = "Hello";
 
