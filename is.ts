@@ -79,6 +79,10 @@ export function isArrayOf<T>(
 }
 
 export type TupleOf<T extends readonly Predicate<unknown>[]> = {
+  -readonly [P in keyof T]: T[P] extends Predicate<infer U> ? U : never;
+};
+
+export type ReadonlyTupleOf<T extends readonly Predicate<unknown>[]> = {
   [P in keyof T]: T[P] extends Predicate<infer U> ? U : never;
 };
 
@@ -92,7 +96,7 @@ export type TupleOf<T extends readonly Predicate<unknown>[]> = {
  * const a: unknown = [0, "a", true];
  * if (is.TupleOf(predTup)(a)) {
  *  // a is narrowed to [number, string, boolean]
- *  const _: readonly [number, string, boolean] = a;
+ *  const _: [number, string, boolean] = a;
  * }
  * ```
  *
@@ -118,12 +122,50 @@ export function isTupleOf<T extends readonly Predicate<unknown>[]>(
   );
 }
 
+/**
+ * Return a type predicate function that returns `true` if the type of `x` is `ReadonlyTupleOf<T>`.
+ *
+ * ```ts
+ * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ *
+ * const predTup = [is.Number, is.String, is.Boolean] as const;
+ * const a: unknown = [0, "a", true];
+ * if (is.ReadonlyTupleOf(predTup)(a)) {
+ *  // a is narrowed to readonly [number, string, boolean]
+ *  const _: readonly [number, string, boolean] = a;
+ * }
+ * ```
+ *
+ * Note that `predTup` must be `readonly` (`as const`) to infer the type of `a` correctly.
+ * TypeScript won't argues if `predTup` is not `readonly` because of its design limitation.
+ * https://github.com/microsoft/TypeScript/issues/34274#issuecomment-541691353
+ */
+export function isReadonlyTupleOf<T extends readonly Predicate<unknown>[]>(
+  predTup: T,
+): Predicate<ReadonlyTupleOf<T>> {
+  return Object.defineProperties(
+    isTupleOf(predTup) as Predicate<ReadonlyTupleOf<T>>,
+    {
+      name: {
+        get: () => `isReadonlyTupleOf(${inspect(predTup)})`,
+      },
+    },
+  );
+}
+
 // https://stackoverflow.com/a/71700658/1273406
 export type UniformTupleOf<
   T,
   N extends number,
   R extends readonly T[] = [],
-> = R["length"] extends N ? R : UniformTupleOf<T, N, readonly [T, ...R]>;
+> = R["length"] extends N ? R : UniformTupleOf<T, N, [T, ...R]>;
+
+export type ReadonlyUniformTupleOf<
+  T,
+  N extends number,
+  R extends readonly T[] = [],
+> = R["length"] extends N ? R
+  : ReadonlyUniformTupleOf<T, N, readonly [T, ...R]>;
 
 /**
  * Return a type predicate function that returns `true` if the type of `x` is `UniformTupleOf<T>`.
@@ -134,12 +176,12 @@ export type UniformTupleOf<
  * const a: unknown = [0, 1, 2, 3, 4];
  * if (is.UniformTupleOf(5)(a)) {
  *  // a is narrowed to [unknown, unknown, unknown, unknown, unknown]
- *  const _: readonly [unknown, unknown, unknown, unknown, unknown] = a;
+ *  const _: [unknown, unknown, unknown, unknown, unknown] = a;
  * }
  *
  * if (is.UniformTupleOf(5, is.Number)(a)) {
  *  // a is narrowed to [number, number, number, number, number]
- *  const _: readonly [number, number, number, number, number] = a;
+ *  const _: [number, number, number, number, number] = a;
  * }
  * ```
  */
@@ -159,9 +201,41 @@ export function isUniformTupleOf<T, N extends number>(
 }
 
 /**
- * Synonym of `Record<string | number | symbol, T>`
+ * Return a type predicate function that returns `true` if the type of `x` is `ReadonlyUniformTupleOf<T>`.
+ *
+ * ```ts
+ * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ *
+ * const a: unknown = [0, 1, 2, 3, 4];
+ * if (is.ReadonlyUniformTupleOf(5)(a)) {
+ *  // a is narrowed to readonly [unknown, unknown, unknown, unknown, unknown]
+ *  const _: readonly [unknown, unknown, unknown, unknown, unknown] = a;
+ * }
+ *
+ * if (is.ReadonlyUniformTupleOf(5, is.Number)(a)) {
+ *  // a is narrowed to readonly [number, number, number, number, number]
+ *  const _: readonly [number, number, number, number, number] = a;
+ * }
+ * ```
  */
-export type RecordOf<T> = Record<string | number | symbol, T>;
+export function isReadonlyUniformTupleOf<T, N extends number>(
+  n: N,
+  pred: Predicate<T> = isAny,
+): Predicate<ReadonlyUniformTupleOf<T, N>> {
+  return Object.defineProperties(
+    isUniformTupleOf(n, pred) as Predicate<ReadonlyUniformTupleOf<T, N>>,
+    {
+      name: {
+        get: () => `isReadonlyUniformTupleOf(${n}, ${inspect(pred)})`,
+      },
+    },
+  );
+}
+
+/**
+ * Synonym of `Record<PropertyKey, T>`
+ */
+export type RecordOf<T> = Record<PropertyKey, T>;
 
 /**
  * Return `true` if the type of `x` is `RecordOf<unknown>`.
@@ -524,7 +598,9 @@ export default {
   Array: isArray,
   ArrayOf: isArrayOf,
   TupleOf: isTupleOf,
+  ReadonlyTupleOf: isReadonlyTupleOf,
   UniformTupleOf: isUniformTupleOf,
+  ReadonlyUniformTupleOf: isReadonlyUniformTupleOf,
   Record: isRecord,
   RecordOf: isRecordOf,
   ObjectOf: isObjectOf,
