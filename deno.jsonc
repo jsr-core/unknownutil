@@ -1,5 +1,8 @@
 {
   "lock": false,
+  "imports": {
+    "https://deno.land/x/unknownutil@$MODULE_VERSION/": "./"
+  },
   "tasks": {
     "build-npm": "deno run -A scripts/build_npm.ts $(git describe --tags --always --dirty)",
     "test": "deno test -A --parallel --shuffle --doc",
