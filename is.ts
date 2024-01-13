@@ -504,9 +504,9 @@ export function isReadonlyUniformTupleOf<T, N extends number>(
 }
 
 /**
- * Synonym of `Record<PropertyKey, T>`
+ * Synonym of `Record<K, T>`
  */
-export type RecordOf<T> = Record<PropertyKey, T>;
+export type RecordOf<T, K extends PropertyKey = PropertyKey> = Record<K, T>;
 
 /**
  * Return `true` if the type of `x` is `Record<PropertyKey, unknown>`.
@@ -531,7 +531,7 @@ export function isRecord(
 }
 
 /**
- * Return a type predicate function that returns `true` if the type of `x` is `RecordOf<T>`.
+ * Return a type predicate function that returns `true` if the type of `x` is `Record<K, T>`.
  *
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
@@ -545,21 +545,38 @@ export function isRecord(
  *   const _: Record<PropertyKey, number> = a;
  * }
  * ```
+ *
+ * With predicate function for keys:
+ *
+ * ```ts
+ * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ *
+ * const isMyType = is.RecordOf(is.Number, is.String);
+ * const a: unknown = {"a": 0, "b": 1};
+ * if (isMyType(a)) {
+ *   // a is narrowed to Record<string, number>
+ *   const _: Record<string, number> = a;
+ * }
+ * ```
  */
-export function isRecordOf<T>(
+export function isRecordOf<T, K extends PropertyKey = PropertyKey>(
   pred: Predicate<T>,
-): Predicate<RecordOf<T>> {
+  predKey?: Predicate<K>,
+): Predicate<Record<K, T>> {
   return Object.defineProperties(
-    (x: unknown): x is RecordOf<T> => {
+    (x: unknown): x is Record<K, T> => {
       if (!isRecord(x)) return false;
       for (const k in x) {
         if (!pred(x[k])) return false;
+        if (predKey && !predKey(k)) return false;
       }
       return true;
     },
     {
       name: {
-        get: () => `isRecordOf(${inspect(pred)})`,
+        get: predKey
+          ? () => `isRecordOf(${inspect(pred)}, ${inspect(predKey)})`
+          : () => `isRecordOf(${inspect(pred)})`,
       },
     },
   );

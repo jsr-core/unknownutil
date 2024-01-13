@@ -635,6 +635,42 @@ Deno.test("isRecordOf<T>", async (t) => {
   });
 });
 
+Deno.test("isRecordOf<T, K>", async (t) => {
+  await t.step("returns properly named function", async (t) => {
+    await assertSnapshot(t, isRecordOf(isNumber, isString).name);
+    await assertSnapshot(
+      t,
+      isRecordOf((_x): _x is string => false, isString).name,
+    );
+  });
+  await t.step("returns proper type predicate", () => {
+    const a: unknown = { a: 0 };
+    if (isRecordOf(isNumber, isString)(a)) {
+      type _ = AssertTrue<
+        IsExact<typeof a, Record<string, number>>
+      >;
+    }
+  });
+  await t.step("returns true on T record", () => {
+    assertEquals(isRecordOf(isNumber, isString)({ a: 0 }), true);
+    assertEquals(isRecordOf(isString, isString)({ a: "a" }), true);
+    assertEquals(isRecordOf(isBoolean, isString)({ a: true }), true);
+  });
+  await t.step("returns false on non T record", () => {
+    assertEquals(isRecordOf(isString, isString)({ a: 0 }), false);
+    assertEquals(isRecordOf(isNumber, isString)({ a: "a" }), false);
+    assertEquals(isRecordOf(isString, isString)({ a: true }), false);
+  });
+  await t.step("returns false on non K record", () => {
+    assertEquals(isRecordOf(isNumber, isNumber)({ a: 0 }), false);
+    assertEquals(isRecordOf(isString, isNumber)({ a: "a" }), false);
+    assertEquals(isRecordOf(isBoolean, isNumber)({ a: true }), false);
+  });
+  await testWithExamples(t, isRecordOf((_: unknown): _ is unknown => true), {
+    excludeExamples: ["record", "date", "promise"],
+  });
+});
+
 Deno.test("ObjectOf<T>", () => {
   type _ = AssertTrue<
     IsExact<
