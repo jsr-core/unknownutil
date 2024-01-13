@@ -473,7 +473,7 @@ export function isSyncFunction(
  */
 export function isAsyncFunction(
   x: unknown,
-): x is (...args: unknown[]) => unknown {
+): x is (...args: unknown[]) => Promise<unknown> {
   return Object.prototype.toString.call(x) === "[object AsyncFunction]";
 }
 

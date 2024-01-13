@@ -759,18 +759,33 @@ Deno.test("isFunction", async (t) => {
   await testWithExamples(t, isFunction, {
     validExamples: ["syncFunction", "asyncFunction"],
   });
+  type _ = AssertTrue<
+    IsExact<PredicateType<typeof isFunction>, (...args: unknown[]) => unknown>
+  >;
 });
 
 Deno.test("isSyncFunction", async (t) => {
   await testWithExamples(t, isSyncFunction, {
     validExamples: ["syncFunction"],
   });
+  type _ = AssertTrue<
+    IsExact<
+      PredicateType<typeof isSyncFunction>,
+      (...args: unknown[]) => unknown
+    >
+  >;
 });
 
 Deno.test("isAsyncFunction", async (t) => {
   await testWithExamples(t, isAsyncFunction, {
     validExamples: ["asyncFunction"],
   });
+  type _ = AssertTrue<
+    IsExact<
+      PredicateType<typeof isAsyncFunction>,
+      (...args: unknown[]) => Promise<unknown>
+    >
+  >;
 });
 
 Deno.test("isInstanceOf<T>", async (t) => {
