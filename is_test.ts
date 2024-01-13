@@ -934,7 +934,7 @@ Deno.test("isOneOf<T>", async (t) => {
     await assertSnapshot(t, isOneOf([isNumber, isString, isBoolean]).name);
   });
   await t.step("returns proper type predicate", () => {
-    const preds = [isNumber, isString, isBoolean];
+    const preds = [isNumber, isString, isBoolean] as const;
     const a: unknown = [0, "a", true];
     if (isOneOf(preds)(a)) {
       assertType<Equal<typeof a, number | string | boolean>>(true);
@@ -945,20 +945,20 @@ Deno.test("isOneOf<T>", async (t) => {
     const isBar = isObjectOf({ foo: isString, bar: isNumber });
     type Foo = PredicateType<typeof isFoo>;
     type Bar = PredicateType<typeof isBar>;
-    const preds = [isFoo, isBar];
+    const preds = [isFoo, isBar] as const;
     const a: unknown = [0, "a", true];
     if (isOneOf(preds)(a)) {
       assertType<Equal<typeof a, Foo | Bar>>(true);
     }
   });
   await t.step("returns true on one of T", () => {
-    const preds = [isNumber, isString, isBoolean];
+    const preds = [isNumber, isString, isBoolean] as const;
     assertEquals(isOneOf(preds)(0), true);
     assertEquals(isOneOf(preds)("a"), true);
     assertEquals(isOneOf(preds)(true), true);
   });
   await t.step("returns false on non of T", async (t) => {
-    const preds = [isNumber, isString, isBoolean];
+    const preds = [isNumber, isString, isBoolean] as const;
     await testWithExamples(t, isOneOf(preds), {
       excludeExamples: ["number", "string", "boolean"],
     });
@@ -979,7 +979,7 @@ Deno.test("isAllOf<T>", async (t) => {
     const preds = [
       is.ObjectOf({ a: is.Number }),
       is.ObjectOf({ b: is.String }),
-    ];
+    ] as const;
     const a: unknown = { a: 0, b: "a" };
     if (isAllOf(preds)(a)) {
       assertType<Equal<typeof a, { a: number } & { b: string }>>(true);
@@ -989,14 +989,14 @@ Deno.test("isAllOf<T>", async (t) => {
     const preds = [
       is.ObjectOf({ a: is.Number }),
       is.ObjectOf({ b: is.String }),
-    ];
+    ] as const;
     assertEquals(isAllOf(preds)({ a: 0, b: "a" }), true);
   });
   await t.step("returns false on non of T", async (t) => {
     const preds = [
       is.ObjectOf({ a: is.Number }),
       is.ObjectOf({ b: is.String }),
-    ];
+    ] as const;
     assertEquals(
       isAllOf(preds)({ a: 0, b: 0 }),
       false,

@@ -958,7 +958,9 @@ export function isLiteralOneOf<T extends readonly Primitive[]>(
   );
 }
 
-export type OneOf<T> = T extends Predicate<infer U>[] ? U : never;
+export type OneOf<T> = T extends readonly [Predicate<infer U>, ...infer R]
+  ? U | OneOf<R>
+  : never;
 
 /**
  * Return a type predicate function that returns `true` if the type of `x` is `OneOf<T>`.
@@ -975,8 +977,25 @@ export type OneOf<T> = T extends Predicate<infer U>[] ? U : never;
  *   const _: number | string | boolean = a;
  * }
  * ```
+ *
+ * Depending on the version of TypeScript and how values are provided, it may be necessary to add `as const` to the array
+ * used as `preds`. If a type error occurs, try adding `as const` as follows:
+ *
+ * ```ts
+ * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ *
+ * const preds = [is.Number, is.String, is.Boolean] as const;
+ * const isMyType = is.OneOf(preds);
+ * const a: unknown = 0;
+ * if (isMyType(a)) {
+ *   // a is narrowed to number | string | boolean
+ *   const _: number | string | boolean = a;
+ * }
+ * ```
  */
-export function isOneOf<T extends readonly Predicate<unknown>[]>(
+export function isOneOf<
+  T extends readonly [Predicate<unknown>, ...Predicate<unknown>[]],
+>(
   preds: T,
 ): Predicate<OneOf<T>> {
   return Object.defineProperties(
@@ -1009,12 +1028,32 @@ export type AllOf<T> = UnionToIntersection<OneOf<T>>;
  * ]);
  * const a: unknown = { a: 0, b: "a" };
  * if (isMyType(a)) {
- *   // a is narrowed to { a: number; b: string }
- *   const _: { a: number; b: string } = a;
+ *   // a is narrowed to { a: number } & { b: string }
+ *   const _: { a: number } & { b: string } = a;
+ * }
+ * ```
+ *
+ * Depending on the version of TypeScript and how values are provided, it may be necessary to add `as const` to the array
+ * used as `preds`. If a type error occurs, try adding `as const` as follows:
+ *
+ * ```ts
+ * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ *
+ * const preds = [
+ *   is.ObjectOf({ a: is.Number }),
+ *   is.ObjectOf({ b: is.String }),
+ * ] as const
+ * const isMyType = is.AllOf(preds);
+ * const a: unknown = { a: 0, b: "a" };
+ * if (isMyType(a)) {
+ *   // a is narrowed to { a: number } & { b: string }
+ *   const _: { a: number } & { b: string } = a;
  * }
  * ```
  */
-export function isAllOf<T extends readonly Predicate<unknown>[]>(
+export function isAllOf<
+  T extends readonly [Predicate<unknown>, ...Predicate<unknown>[]],
+>(
   preds: T,
 ): Predicate<AllOf<T>> {
   return Object.defineProperties(
