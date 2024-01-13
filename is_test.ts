@@ -997,6 +997,17 @@ Deno.test("isOneOf<T>", async (t) => {
       assertType<Equal<typeof a, number | string | boolean>>(true);
     }
   });
+  await t.step("returns proper type predicate (#49)", () => {
+    const isFoo = isObjectOf({ foo: isString });
+    const isBar = isObjectOf({ foo: isString, bar: isNumber });
+    type Foo = PredicateType<typeof isFoo>;
+    type Bar = PredicateType<typeof isBar>;
+    const preds = [isFoo, isBar];
+    const a: unknown = [0, "a", true];
+    if (isOneOf(preds)(a)) {
+      assertType<Equal<typeof a, Foo | Bar>>(true);
+    }
+  });
   await t.step("returns true on one of T", () => {
     const preds = [isNumber, isString, isBoolean];
     assertEquals(isOneOf(preds)(0), true);
