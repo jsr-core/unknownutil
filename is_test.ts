@@ -39,8 +39,13 @@ import is, {
   isUndefined,
   isUniformTupleOf,
   isUnknown,
+  ObjectOf,
   Predicate,
   PredicateType,
+  ReadonlyTupleOf,
+  ReadonlyUniformTupleOf,
+  TupleOf,
+  UniformTupleOf,
 } from "./is.ts";
 
 const examples = {
@@ -202,6 +207,24 @@ Deno.test("isArrayOf<T>", async (t) => {
   await testWithExamples(t, isArrayOf((_: unknown): _ is unknown => true), {
     excludeExamples: ["array"],
   });
+});
+
+Deno.test("TupleOf<T>", () => {
+  type _ = AssertTrue<
+    IsExact<
+      TupleOf<readonly [typeof is.String, typeof is.Number]>,
+      [string, number]
+    >
+  >;
+});
+
+Deno.test("ReadonlyTupleOf<T>", () => {
+  type _ = AssertTrue<
+    IsExact<
+      ReadonlyTupleOf<readonly [typeof is.String, typeof is.Number]>,
+      readonly [string, number]
+    >
+  >;
 });
 
 Deno.test("isTupleOf<T>", async (t) => {
@@ -477,6 +500,24 @@ Deno.test("isReadonlyTupleOf<T, E>", async (t) => {
   );
 });
 
+Deno.test("UniformTupleOf<N, T>", () => {
+  type _ = AssertTrue<
+    IsExact<
+      UniformTupleOf<number, 5>,
+      [number, number, number, number, number]
+    >
+  >;
+});
+
+Deno.test("ReadonlyUniformTupleOf<N, T>", () => {
+  type _ = AssertTrue<
+    IsExact<
+      ReadonlyUniformTupleOf<number, 5>,
+      readonly [number, number, number, number, number]
+    >
+  >;
+});
+
 Deno.test("isUniformTupleOf<T>", async (t) => {
   await t.step("returns properly named function", async (t) => {
     await assertSnapshot(t, isUniformTupleOf(3).name);
@@ -592,6 +633,51 @@ Deno.test("isRecordOf<T>", async (t) => {
   await testWithExamples(t, isRecordOf((_: unknown): _ is unknown => true), {
     excludeExamples: ["record", "date", "promise"],
   });
+});
+
+Deno.test("isRecordOf<T, K>", async (t) => {
+  await t.step("returns properly named function", async (t) => {
+    await assertSnapshot(t, isRecordOf(isNumber, isString).name);
+    await assertSnapshot(
+      t,
+      isRecordOf((_x): _x is string => false, isString).name,
+    );
+  });
+  await t.step("returns proper type predicate", () => {
+    const a: unknown = { a: 0 };
+    if (isRecordOf(isNumber, isString)(a)) {
+      type _ = AssertTrue<
+        IsExact<typeof a, Record<string, number>>
+      >;
+    }
+  });
+  await t.step("returns true on T record", () => {
+    assertEquals(isRecordOf(isNumber, isString)({ a: 0 }), true);
+    assertEquals(isRecordOf(isString, isString)({ a: "a" }), true);
+    assertEquals(isRecordOf(isBoolean, isString)({ a: true }), true);
+  });
+  await t.step("returns false on non T record", () => {
+    assertEquals(isRecordOf(isString, isString)({ a: 0 }), false);
+    assertEquals(isRecordOf(isNumber, isString)({ a: "a" }), false);
+    assertEquals(isRecordOf(isString, isString)({ a: true }), false);
+  });
+  await t.step("returns false on non K record", () => {
+    assertEquals(isRecordOf(isNumber, isNumber)({ a: 0 }), false);
+    assertEquals(isRecordOf(isString, isNumber)({ a: "a" }), false);
+    assertEquals(isRecordOf(isBoolean, isNumber)({ a: true }), false);
+  });
+  await testWithExamples(t, isRecordOf((_: unknown): _ is unknown => true), {
+    excludeExamples: ["record", "date", "promise"],
+  });
+});
+
+Deno.test("ObjectOf<T>", () => {
+  type _ = AssertTrue<
+    IsExact<
+      ObjectOf<{ a: typeof is.Number; b: typeof is.String }>,
+      { a: number; b: string }
+    >
+  >;
 });
 
 Deno.test("isObjectOf<T>", async (t) => {
@@ -759,18 +845,33 @@ Deno.test("isFunction", async (t) => {
   await testWithExamples(t, isFunction, {
     validExamples: ["syncFunction", "asyncFunction"],
   });
+  type _ = AssertTrue<
+    IsExact<PredicateType<typeof isFunction>, (...args: unknown[]) => unknown>
+  >;
 });
 
 Deno.test("isSyncFunction", async (t) => {
   await testWithExamples(t, isSyncFunction, {
     validExamples: ["syncFunction"],
   });
+  type _ = AssertTrue<
+    IsExact<
+      PredicateType<typeof isSyncFunction>,
+      (...args: unknown[]) => unknown
+    >
+  >;
 });
 
 Deno.test("isAsyncFunction", async (t) => {
   await testWithExamples(t, isAsyncFunction, {
     validExamples: ["asyncFunction"],
   });
+  type _ = AssertTrue<
+    IsExact<
+      PredicateType<typeof isAsyncFunction>,
+      (...args: unknown[]) => Promise<unknown>
+    >
+  >;
 });
 
 Deno.test("isInstanceOf<T>", async (t) => {
