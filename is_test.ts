@@ -39,8 +39,13 @@ import is, {
   isUndefined,
   isUniformTupleOf,
   isUnknown,
+  ObjectOf,
   Predicate,
   PredicateType,
+  ReadonlyTupleOf,
+  ReadonlyUniformTupleOf,
+  TupleOf,
+  UniformTupleOf,
 } from "./is.ts";
 
 const examples = {
@@ -202,6 +207,24 @@ Deno.test("isArrayOf<T>", async (t) => {
   await testWithExamples(t, isArrayOf((_: unknown): _ is unknown => true), {
     excludeExamples: ["array"],
   });
+});
+
+Deno.test("TupleOf<T>", () => {
+  type _ = AssertTrue<
+    IsExact<
+      TupleOf<readonly [typeof is.String, typeof is.Number]>,
+      [string, number]
+    >
+  >;
+});
+
+Deno.test("ReadonlyTupleOf<T>", () => {
+  type _ = AssertTrue<
+    IsExact<
+      ReadonlyTupleOf<readonly [typeof is.String, typeof is.Number]>,
+      readonly [string, number]
+    >
+  >;
 });
 
 Deno.test("isTupleOf<T>", async (t) => {
@@ -477,6 +500,24 @@ Deno.test("isReadonlyTupleOf<T, E>", async (t) => {
   );
 });
 
+Deno.test("UniformTupleOf<N, T>", () => {
+  type _ = AssertTrue<
+    IsExact<
+      UniformTupleOf<number, 5>,
+      [number, number, number, number, number]
+    >
+  >;
+});
+
+Deno.test("ReadonlyUniformTupleOf<N, T>", () => {
+  type _ = AssertTrue<
+    IsExact<
+      ReadonlyUniformTupleOf<number, 5>,
+      readonly [number, number, number, number, number]
+    >
+  >;
+});
+
 Deno.test("isUniformTupleOf<T>", async (t) => {
   await t.step("returns properly named function", async (t) => {
     await assertSnapshot(t, isUniformTupleOf(3).name);
@@ -592,6 +633,15 @@ Deno.test("isRecordOf<T>", async (t) => {
   await testWithExamples(t, isRecordOf((_: unknown): _ is unknown => true), {
     excludeExamples: ["record", "date", "promise"],
   });
+});
+
+Deno.test("ObjectOf<T>", () => {
+  type _ = AssertTrue<
+    IsExact<
+      ObjectOf<{ a: typeof is.Number; b: typeof is.String }>,
+      { a: number; b: string }
+    >
+  >;
 });
 
 Deno.test("isObjectOf<T>", async (t) => {
