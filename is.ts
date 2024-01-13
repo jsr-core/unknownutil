@@ -189,7 +189,7 @@ export function isArrayOf<T>(
  * // type A = [string, number];
  * ```
  */
-export type TupleOf<T extends readonly Predicate<unknown>[]> = {
+export type TupleOf<T> = {
   -readonly [P in keyof T]: T[P] extends Predicate<infer U> ? U : never;
 };
 
@@ -204,19 +204,19 @@ export type TupleOf<T extends readonly Predicate<unknown>[]> = {
  * // type A = readonly [string, number];
  * ```
  */
-export type ReadonlyTupleOf<T extends readonly Predicate<unknown>[]> = {
+export type ReadonlyTupleOf<T> = {
   [P in keyof T]: T[P] extends Predicate<infer U> ? U : never;
 };
 
 /**
- * Return a type predicate function that returns `true` if the type of `x` is `TupleOf<T>`.
+ * Return a type predicate function that returns `true` if the type of `x` is `TupleOf<T>` or `TupleOf<T, E>`.
  *
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
  * ```ts
  * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
  *
- * const isMyType = is.TupleOf([is.Number, is.String, is.Boolean] as const);
+ * const isMyType = is.TupleOf([is.Number, is.String, is.Boolean]);
  * const a: unknown = [0, "a", true];
  * if (isMyType(a)) {
  *   // a is narrowed to [number, string, boolean]
@@ -224,17 +224,13 @@ export type ReadonlyTupleOf<T extends readonly Predicate<unknown>[]> = {
  * }
  * ```
  *
- * Note that `predTup` must be `readonly` (`as const`) to infer the type of `a` correctly.
- * TypeScript won't argues if `predTup` is not `readonly` because of its design limitation.
- * https://github.com/microsoft/TypeScript/issues/34274#issuecomment-541691353
- *
- * It can also be used to check the type of the rest of the tuple like:
+ * With `predElse`:
  *
  * ```ts
  * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
  *
  * const isMyType = is.TupleOf(
- *   [is.Number, is.String, is.Boolean] as const,
+ *   [is.Number, is.String, is.Boolean],
  *   is.ArrayOf(is.Number),
  * );
  * const a: unknown = [0, "a", true, 0, 1, 2];
@@ -243,33 +239,44 @@ export type ReadonlyTupleOf<T extends readonly Predicate<unknown>[]> = {
  *   const _: [number, string, boolean, ...number[]] = a;
  * }
  * ```
+ *
+ * Depending on the version of TypeScript and how values are provided, it may be necessary to add `as const` to the array
+ * used as `predTup`. If a type error occurs, try adding `as const` as follows:
+ *
+ * ```ts
+ * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ *
+ * const predTup = [is.Number, is.String, is.Boolean] as const;
+ * const isMyType = is.TupleOf(predTup);
+ * const a: unknown = [0, "a", true];
+ * if (isMyType(a)) {
+ *   // a is narrowed to [number, string, boolean]
+ *   const _: [number, string, boolean] = a;
+ * }
+ * ```
  */
 export function isTupleOf<
-  T extends readonly Predicate<unknown>[],
-  R extends TupleOf<T>,
+  T extends readonly [Predicate<unknown>, ...Predicate<unknown>[]],
 >(
   predTup: T,
-): Predicate<R>;
+): Predicate<TupleOf<T>>;
 export function isTupleOf<
-  T extends readonly Predicate<unknown>[],
+  T extends readonly [Predicate<unknown>, ...Predicate<unknown>[]],
   E extends Predicate<unknown[]>,
-  R extends [...TupleOf<T>, ...PredicateType<E>],
 >(
   predTup: T,
   predElse: E,
-): Predicate<R>;
+): Predicate<[...TupleOf<T>, ...PredicateType<E>]>;
 export function isTupleOf<
-  T extends readonly Predicate<unknown>[],
+  T extends readonly [Predicate<unknown>, ...Predicate<unknown>[]],
   E extends Predicate<unknown[]>,
-  R1 extends TupleOf<T>,
-  R2 extends [...TupleOf<T>, ...PredicateType<E>],
 >(
   predTup: T,
   predElse?: E,
-): Predicate<R1 | R2> {
+): Predicate<TupleOf<T> | [...TupleOf<T>, ...PredicateType<E>]> {
   if (!predElse) {
     return Object.defineProperties(
-      (x: unknown): x is R1 => {
+      (x: unknown): x is TupleOf<T> => {
         if (!isArray(x) || x.length !== predTup.length) {
           return false;
         }
@@ -283,7 +290,7 @@ export function isTupleOf<
     );
   } else {
     return Object.defineProperties(
-      (x: unknown): x is R2 => {
+      (x: unknown): x is [...TupleOf<T>, ...PredicateType<E>] => {
         if (!isArray(x) || x.length < predTup.length) {
           return false;
         }
@@ -308,7 +315,7 @@ export function isTupleOf<
  * ```ts
  * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
  *
- * const isMyType = is.ReadonlyTupleOf([is.Number, is.String, is.Boolean] as const);
+ * const isMyType = is.ReadonlyTupleOf([is.Number, is.String, is.Boolean]);
  * const a: unknown = [0, "a", true];
  * if (isMyType(a)) {
  *   // a is narrowed to readonly [number, string, boolean]
@@ -316,17 +323,13 @@ export function isTupleOf<
  * }
  * ```
  *
- * Note that `predTup` must be `readonly` (`as const`) to infer the type of `a` correctly.
- * TypeScript won't argues if `predTup` is not `readonly` because of its design limitation.
- * https://github.com/microsoft/TypeScript/issues/34274#issuecomment-541691353
- *
- * It can also be used to check the type of the rest of the tuple like:
+ * With `predElse`:
  *
  * ```ts
  * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
  *
  * const isMyType = is.ReadonlyTupleOf(
- *   [is.Number, is.String, is.Boolean] as const,
+ *   [is.Number, is.String, is.Boolean],
  *   is.ArrayOf(is.Number),
  * );
  * const a: unknown = [0, "a", true, 0, 1, 2];
@@ -334,33 +337,47 @@ export function isTupleOf<
  *   // a is narrowed to readonly [number, string, boolean, ...number[]]
  *   const _: readonly [number, string, boolean, ...number[]] = a;
  * }
+ * ```
+ *
+ * Depending on the version of TypeScript and how values are provided, it may be necessary to add `as const` to the array
+ * used as `predTup`. If a type error occurs, try adding `as const` as follows:
+ *
+ * ```ts
+ * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ *
+ * const predTup = [is.Number, is.String, is.Boolean] as const;
+ * const isMyType = is.ReadonlyTupleOf(predTup);
+ * const a: unknown = [0, "a", true];
+ * if (isMyType(a)) {
+ *   // a is narrowed to readonly [number, string, boolean]
+ *   const _: readonly [number, string, boolean] = a;
+ * }
+ * ```
  */
 export function isReadonlyTupleOf<
-  T extends readonly Predicate<unknown>[],
-  R extends ReadonlyTupleOf<T>,
+  T extends readonly [Predicate<unknown>, ...Predicate<unknown>[]],
 >(
   predTup: T,
-): Predicate<R>;
+): Predicate<ReadonlyTupleOf<T>>;
 export function isReadonlyTupleOf<
-  T extends readonly Predicate<unknown>[],
+  T extends readonly [Predicate<unknown>, ...Predicate<unknown>[]],
   E extends Predicate<unknown[]>,
-  R extends readonly [...ReadonlyTupleOf<T>, ...PredicateType<E>],
 >(
   predTup: T,
   predElse: E,
-): Predicate<R>;
+): Predicate<readonly [...ReadonlyTupleOf<T>, ...PredicateType<E>]>;
 export function isReadonlyTupleOf<
-  T extends readonly Predicate<unknown>[],
+  T extends readonly [Predicate<unknown>, ...Predicate<unknown>[]],
   E extends Predicate<unknown[]>,
-  R1 extends ReadonlyTupleOf<T>,
-  R2 extends readonly [...ReadonlyTupleOf<T>, ...PredicateType<E>],
 >(
   predTup: T,
   predElse?: E,
-): Predicate<R1 | R2> {
+): Predicate<
+  ReadonlyTupleOf<T> | readonly [...ReadonlyTupleOf<T>, ...PredicateType<E>]
+> {
   if (!predElse) {
     return Object.defineProperties(
-      isTupleOf(predTup) as Predicate<R1>,
+      isTupleOf(predTup) as Predicate<ReadonlyTupleOf<T>>,
       {
         name: {
           get: () => `isReadonlyTupleOf(${inspect(predTup)})`,
@@ -369,7 +386,9 @@ export function isReadonlyTupleOf<
     );
   } else {
     return Object.defineProperties(
-      isTupleOf(predTup, predElse) as unknown as Predicate<R2>,
+      isTupleOf(predTup, predElse) as unknown as Predicate<
+        readonly [...ReadonlyTupleOf<T>, ...PredicateType<E>]
+      >,
       {
         name: {
           get: () =>
@@ -449,9 +468,13 @@ export function isUniformTupleOf<T, N extends number>(
   n: N,
   pred: Predicate<T> = isAny,
 ): Predicate<UniformTupleOf<T, N>> {
-  const predInner = isTupleOf(Array(n).fill(pred));
   return Object.defineProperties(
-    (x: unknown): x is UniformTupleOf<T, N> => predInner(x),
+    (x: unknown): x is UniformTupleOf<T, N> => {
+      if (!isArray(x) || x.length !== n) {
+        return false;
+      }
+      return x.every((v) => pred(v));
+    },
     {
       name: {
         get: () => `isUniformTupleOf(${n}, ${inspect(pred)})`,

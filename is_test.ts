@@ -230,20 +230,16 @@ Deno.test("isTupleOf<T>", async (t) => {
   await t.step("returns properly named function", async (t) => {
     await assertSnapshot(
       t,
-      isTupleOf([isNumber, isString, isBoolean] as const).name,
+      isTupleOf([isNumber, isString, isBoolean]).name,
     );
     await assertSnapshot(
       t,
-      isTupleOf([(_x): _x is string => false] as const).name,
+      isTupleOf([(_x): _x is string => false]).name,
     );
     // Nested
     await assertSnapshot(
       t,
-      isTupleOf(
-        [isTupleOf(
-          [isTupleOf([isNumber, isString, isBoolean] as const)] as const,
-        )] as const,
-      ).name,
+      isTupleOf([isTupleOf([isTupleOf([isNumber, isString, isBoolean])])]).name,
     );
   });
   await t.step("returns proper type predicate", () => {
@@ -256,18 +252,12 @@ Deno.test("isTupleOf<T>", async (t) => {
   await t.step("returns true on T tuple", () => {
     const predTup = [isNumber, isString, isBoolean] as const;
     assertEquals(isTupleOf(predTup)([0, "a", true]), true);
-    assertEquals(isTupleOf([])([]), true, "Specify empty predicates");
   });
   await t.step("returns false on non T tuple", () => {
     const predTup = [isNumber, isString, isBoolean] as const;
     assertEquals(isTupleOf(predTup)([0, 1, 2]), false);
     assertEquals(isTupleOf(predTup)([0, "a"]), false);
     assertEquals(isTupleOf(predTup)([0, "a", true, 0]), false);
-    assertEquals(
-      isTupleOf([])([0]),
-      false,
-      "Specify empty predicates and value has entry",
-    );
   });
   await testWithExamples(t, isTupleOf([(_: unknown): _ is unknown => true]), {
     excludeExamples: ["array"],
@@ -278,27 +268,22 @@ Deno.test("isTupleOf<T, E>", async (t) => {
   await t.step("returns properly named function", async (t) => {
     await assertSnapshot(
       t,
-      isTupleOf([isNumber, isString, isBoolean] as const, is.Array).name,
+      isTupleOf([isNumber, isString, isBoolean], is.Array).name,
     );
     await assertSnapshot(
       t,
-      isTupleOf([(_x): _x is string => false] as const, is.ArrayOf(is.String))
+      isTupleOf([(_x): _x is string => false], is.ArrayOf(is.String))
         .name,
     );
     // Nested
     await assertSnapshot(
       t,
-      isTupleOf(
-        [
-          isTupleOf(
-            [isTupleOf(
-              [isNumber, isString, isBoolean] as const,
-              is.Array,
-            )] as const,
-            is.Array,
-          ),
-        ] as const,
-      ).name,
+      isTupleOf([
+        isTupleOf(
+          [isTupleOf([isNumber, isString, isBoolean], is.Array)],
+          is.Array,
+        ),
+      ]).name,
     );
   });
   await t.step("returns proper type predicate", () => {
@@ -315,12 +300,6 @@ Deno.test("isTupleOf<T, E>", async (t) => {
     const predTup = [isNumber, isString, isBoolean] as const;
     const predElse = is.ArrayOf(is.Number);
     assertEquals(isTupleOf(predTup, predElse)([0, "a", true, 0, 1, 2]), true);
-    assertEquals(isTupleOf([], predElse)([]), true, "Specify empty predicates");
-    assertEquals(
-      isTupleOf([], predElse)([0, 1, 2]),
-      true,
-      "Specify empty predicates",
-    );
   });
   await t.step("returns false on non T tuple", () => {
     const predTup = [isNumber, isString, isBoolean] as const;
@@ -330,11 +309,6 @@ Deno.test("isTupleOf<T, E>", async (t) => {
     assertEquals(
       isTupleOf(predTup, predElse)([0, "a", true, 0, 0, 1, 2]),
       false,
-    );
-    assertEquals(
-      isTupleOf([], predElse)([0]),
-      false,
-      "Specify empty predicates and value has entry",
     );
     assertEquals(isTupleOf(predTup, predElse)([0, "a", true, 0, 1, 2]), false);
   });
@@ -352,24 +326,18 @@ Deno.test("isReadonlyTupleOf<T>", async (t) => {
   await t.step("returns properly named function", async (t) => {
     await assertSnapshot(
       t,
-      isReadonlyTupleOf([isNumber, isString, isBoolean] as const).name,
+      isReadonlyTupleOf([isNumber, isString, isBoolean]).name,
     );
     await assertSnapshot(
       t,
-      isReadonlyTupleOf([(_x): _x is string => false] as const).name,
+      isReadonlyTupleOf([(_x): _x is string => false]).name,
     );
     // Nested
     await assertSnapshot(
       t,
-      isReadonlyTupleOf(
-        [
-          isReadonlyTupleOf(
-            [isReadonlyTupleOf(
-              [isNumber, isString, isBoolean] as const,
-            )] as const,
-          ),
-        ] as const,
-      ).name,
+      isReadonlyTupleOf([
+        isReadonlyTupleOf([isReadonlyTupleOf([isNumber, isString, isBoolean])]),
+      ]).name,
     );
   });
   await t.step("returns proper type predicate", () => {
@@ -382,18 +350,12 @@ Deno.test("isReadonlyTupleOf<T>", async (t) => {
   await t.step("returns true on T tuple", () => {
     const predTup = [isNumber, isString, isBoolean] as const;
     assertEquals(isReadonlyTupleOf(predTup)([0, "a", true]), true);
-    assertEquals(isReadonlyTupleOf([])([]), true, "Specify empty predicates");
   });
   await t.step("returns false on non T tuple", () => {
     const predTup = [isNumber, isString, isBoolean] as const;
     assertEquals(isReadonlyTupleOf(predTup)([0, 1, 2]), false);
     assertEquals(isReadonlyTupleOf(predTup)([0, "a"]), false);
     assertEquals(isReadonlyTupleOf(predTup)([0, "a", true, 0]), false);
-    assertEquals(
-      isReadonlyTupleOf([])([0]),
-      false,
-      "Specify empty predicates and value has entry",
-    );
   });
   await testWithExamples(
     t,
@@ -408,33 +370,24 @@ Deno.test("isReadonlyTupleOf<T, E>", async (t) => {
   await t.step("returns properly named function", async (t) => {
     await assertSnapshot(
       t,
-      isReadonlyTupleOf([isNumber, isString, isBoolean] as const, is.Array)
+      isReadonlyTupleOf([isNumber, isString, isBoolean], is.Array)
         .name,
     );
     await assertSnapshot(
       t,
       isReadonlyTupleOf(
-        [(_x): _x is string => false] as const,
+        [(_x): _x is string => false],
         is.ArrayOf(is.String),
       ).name,
     );
     // Nested
     await assertSnapshot(
       t,
-      isReadonlyTupleOf(
-        [
-          isReadonlyTupleOf(
-            [
-              isReadonlyTupleOf(
-                [isNumber, isString, isBoolean] as const,
-                is.Array,
-              ),
-            ] as const,
-            is.Array,
-          ),
-        ] as const,
-        is.Array,
-      ).name,
+      isReadonlyTupleOf([
+        isReadonlyTupleOf([
+          isReadonlyTupleOf([isNumber, isString, isBoolean], is.Array),
+        ], is.Array),
+      ], is.Array).name,
     );
   });
   await t.step("returns proper type predicate", () => {
@@ -454,11 +407,6 @@ Deno.test("isReadonlyTupleOf<T, E>", async (t) => {
       isReadonlyTupleOf(predTup, predElse)([0, "a", true, 0, 1, 2]),
       true,
     );
-    assertEquals(
-      isReadonlyTupleOf([], predElse)([0, 1, 2]),
-      true,
-      "Specify empty predicates",
-    );
   });
   await t.step("returns false on non T tuple", () => {
     const predTup = [isNumber, isString, isBoolean] as const;
@@ -474,11 +422,6 @@ Deno.test("isReadonlyTupleOf<T, E>", async (t) => {
     assertEquals(
       isReadonlyTupleOf(predTup, predElse)([0, "a", true, 0, 0, 1, 2]),
       false,
-    );
-    assertEquals(
-      isReadonlyTupleOf([], predElse)([0]),
-      false,
-      "Specify empty predicates and value has entry",
     );
     assertEquals(
       isReadonlyTupleOf(predTup, predElse)([0, "a", true, 0, 1, 2]),
