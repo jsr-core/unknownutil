@@ -1,27 +1,40 @@
 export const snapshot = {};
 
-snapshot[`isLiteralOf<T> > returns properly named function 1`] = `'isLiteralOf("hello")'`;
+snapshot[`isInstanceOf<T> > returns properly named function 1`] = `"isInstanceOf(Date)"`;
 
-snapshot[`isLiteralOf<T> > returns properly named function 2`] = `"isLiteralOf(100)"`;
+snapshot[`isInstanceOf<T> > returns properly named function 2`] = `"isInstanceOf((anonymous))"`;
 
-snapshot[`isLiteralOf<T> > returns properly named function 3`] = `"isLiteralOf(100n)"`;
+snapshot[`isMapOf<T> > returns properly named function 1`] = `"isMapOf(isNumber)"`;
 
-snapshot[`isLiteralOf<T> > returns properly named function 4`] = `"isLiteralOf(true)"`;
+snapshot[`isMapOf<T> > returns properly named function 2`] = `"isMapOf((anonymous))"`;
 
-snapshot[`isLiteralOf<T> > returns properly named function 5`] = `"isLiteralOf(null)"`;
+snapshot[`isTupleOf<T> > returns properly named function 1`] = `
+"isTupleOf([
+  isNumber,
+  isString,
+  isBoolean
+])"
+`;
 
-snapshot[`isLiteralOf<T> > returns properly named function 6`] = `"isLiteralOf(undefined)"`;
+snapshot[`isTupleOf<T> > returns properly named function 2`] = `"isTupleOf([(anonymous)])"`;
 
-snapshot[`isLiteralOf<T> > returns properly named function 7`] = `"isLiteralOf(Symbol(asdf))"`;
+snapshot[`isTupleOf<T> > returns properly named function 3`] = `
+"isTupleOf([
+  isTupleOf([
+    isTupleOf([
+      isNumber,
+      isString,
+      isBoolean
+    ])
+  ])
+])"
+`;
 
-snapshot[`isRecordOf<T, K> > returns properly named function 1`] = `"isRecordOf(isNumber, isString)"`;
-
-snapshot[`isRecordOf<T, K> > returns properly named function 2`] = `"isRecordOf((anonymous), isString)"`;
-
-snapshot[`isAllOf<T> > returns properly named function 1`] = `
-"isAllOf([
-  isObjectOf({a: isNumber}),
-  isObjectOf({b: isString})
+snapshot[`isOneOf<T> > returns properly named function 1`] = `
+"isOneOf([
+  isNumber,
+  isString,
+  isBoolean
 ])"
 `;
 
@@ -47,73 +60,11 @@ snapshot[`isReadonlyTupleOf<T, E> > returns properly named function 3`] = `
 ], isArray)"
 `;
 
-snapshot[`isUniformTupleOf<T> > returns properly named function 1`] = `"isUniformTupleOf(3, isAny)"`;
-
-snapshot[`isUniformTupleOf<T> > returns properly named function 2`] = `"isUniformTupleOf(3, isNumber)"`;
-
-snapshot[`isUniformTupleOf<T> > returns properly named function 3`] = `"isUniformTupleOf(3, (anonymous))"`;
-
-snapshot[`isTupleOf<T, E> > returns properly named function 1`] = `
-"isTupleOf([
-  isNumber,
-  isString,
-  isBoolean
-], isArray)"
-`;
-
-snapshot[`isTupleOf<T, E> > returns properly named function 2`] = `"isTupleOf([(anonymous)], isArrayOf(isString))"`;
-
-snapshot[`isTupleOf<T, E> > returns properly named function 3`] = `
-"isTupleOf([
-  isTupleOf([
-    isTupleOf([
-      isNumber,
-      isString,
-      isBoolean
-    ], isArray)
-  ], isArray)
-])"
-`;
-
-snapshot[`isReadonlyUniformTupleOf<T> > returns properly named function 1`] = `"isReadonlyUniformTupleOf(3, isAny)"`;
-
-snapshot[`isReadonlyUniformTupleOf<T> > returns properly named function 2`] = `"isReadonlyUniformTupleOf(3, isNumber)"`;
-
-snapshot[`isReadonlyUniformTupleOf<T> > returns properly named function 3`] = `"isReadonlyUniformTupleOf(3, (anonymous))"`;
-
-snapshot[`isRecordOf<T> > returns properly named function 1`] = `"isRecordOf(isNumber)"`;
-
-snapshot[`isRecordOf<T> > returns properly named function 2`] = `"isRecordOf((anonymous))"`;
-
 snapshot[`isOptionalOf<T> > returns properly named function 1`] = `"isOptionalOf(isNumber)"`;
 
-snapshot[`isLiteralOneOf<T> > returns properly named function 1`] = `'isLiteralOneOf(["hello", "world"])'`;
+snapshot[`isSetOf<T> > returns properly named function 1`] = `"isSetOf(isNumber)"`;
 
-snapshot[`isTupleOf<T> > returns properly named function 1`] = `
-"isTupleOf([
-  isNumber,
-  isString,
-  isBoolean
-])"
-`;
-
-snapshot[`isTupleOf<T> > returns properly named function 2`] = `"isTupleOf([(anonymous)])"`;
-
-snapshot[`isTupleOf<T> > returns properly named function 3`] = `
-"isTupleOf([
-  isTupleOf([
-    isTupleOf([
-      isNumber,
-      isString,
-      isBoolean
-    ])
-  ])
-])"
-`;
-
-snapshot[`isArrayOf<T> > returns properly named function 1`] = `"isArrayOf(isNumber)"`;
-
-snapshot[`isArrayOf<T> > returns properly named function 2`] = `"isArrayOf((anonymous))"`;
+snapshot[`isSetOf<T> > returns properly named function 2`] = `"isSetOf((anonymous))"`;
 
 snapshot[`isReadonlyTupleOf<T> > returns properly named function 1`] = `
 "isReadonlyTupleOf([
@@ -137,17 +88,51 @@ snapshot[`isReadonlyTupleOf<T> > returns properly named function 3`] = `
 ])"
 `;
 
-snapshot[`isOneOf<T> > returns properly named function 1`] = `
-"isOneOf([
+snapshot[`isRecordOf<T, K> > returns properly named function 1`] = `"isRecordOf(isNumber, isString)"`;
+
+snapshot[`isRecordOf<T, K> > returns properly named function 2`] = `"isRecordOf((anonymous), isString)"`;
+
+snapshot[`isMapOf<T, K> > returns properly named function 1`] = `"isMapOf(isNumber, isString)"`;
+
+snapshot[`isMapOf<T, K> > returns properly named function 2`] = `"isMapOf((anonymous), isString)"`;
+
+snapshot[`isRecordOf<T> > returns properly named function 1`] = `"isRecordOf(isNumber)"`;
+
+snapshot[`isRecordOf<T> > returns properly named function 2`] = `"isRecordOf((anonymous))"`;
+
+snapshot[`isArrayOf<T> > returns properly named function 1`] = `"isArrayOf(isNumber)"`;
+
+snapshot[`isArrayOf<T> > returns properly named function 2`] = `"isArrayOf((anonymous))"`;
+
+snapshot[`isLiteralOneOf<T> > returns properly named function 1`] = `'isLiteralOneOf(["hello", "world"])'`;
+
+snapshot[`isReadonlyUniformTupleOf<T> > returns properly named function 1`] = `"isReadonlyUniformTupleOf(3, isAny)"`;
+
+snapshot[`isReadonlyUniformTupleOf<T> > returns properly named function 2`] = `"isReadonlyUniformTupleOf(3, isNumber)"`;
+
+snapshot[`isReadonlyUniformTupleOf<T> > returns properly named function 3`] = `"isReadonlyUniformTupleOf(3, (anonymous))"`;
+
+snapshot[`isTupleOf<T, E> > returns properly named function 1`] = `
+"isTupleOf([
   isNumber,
   isString,
   isBoolean
-])"
+], isArray)"
 `;
 
-snapshot[`isSetOf<T> > returns properly named function 1`] = `"isSetOf(isNumber)"`;
+snapshot[`isTupleOf<T, E> > returns properly named function 2`] = `"isTupleOf([(anonymous)], isArrayOf(isString))"`;
 
-snapshot[`isSetOf<T> > returns properly named function 2`] = `"isSetOf((anonymous))"`;
+snapshot[`isTupleOf<T, E> > returns properly named function 3`] = `
+"isTupleOf([
+  isTupleOf([
+    isTupleOf([
+      isNumber,
+      isString,
+      isBoolean
+    ], isArray)
+  ], isArray)
+])"
+`;
 
 snapshot[`isObjectOf<T> > returns properly named function 1`] = `
 "isObjectOf({
@@ -167,6 +152,29 @@ snapshot[`isObjectOf<T> > returns properly named function 3`] = `
 })"
 `;
 
-snapshot[`isInstanceOf<T> > returns properly named function 1`] = `"isInstanceOf(Date)"`;
+snapshot[`isLiteralOf<T> > returns properly named function 1`] = `'isLiteralOf("hello")'`;
 
-snapshot[`isInstanceOf<T> > returns properly named function 2`] = `"isInstanceOf((anonymous))"`;
+snapshot[`isLiteralOf<T> > returns properly named function 2`] = `"isLiteralOf(100)"`;
+
+snapshot[`isLiteralOf<T> > returns properly named function 3`] = `"isLiteralOf(100n)"`;
+
+snapshot[`isLiteralOf<T> > returns properly named function 4`] = `"isLiteralOf(true)"`;
+
+snapshot[`isLiteralOf<T> > returns properly named function 5`] = `"isLiteralOf(null)"`;
+
+snapshot[`isLiteralOf<T> > returns properly named function 6`] = `"isLiteralOf(undefined)"`;
+
+snapshot[`isLiteralOf<T> > returns properly named function 7`] = `"isLiteralOf(Symbol(asdf))"`;
+
+snapshot[`isUniformTupleOf<T> > returns properly named function 1`] = `"isUniformTupleOf(3, isAny)"`;
+
+snapshot[`isUniformTupleOf<T> > returns properly named function 2`] = `"isUniformTupleOf(3, isNumber)"`;
+
+snapshot[`isUniformTupleOf<T> > returns properly named function 3`] = `"isUniformTupleOf(3, (anonymous))"`;
+
+snapshot[`isAllOf<T> > returns properly named function 1`] = `
+"isAllOf([
+  isObjectOf({a: isNumber}),
+  isObjectOf({b: isString})
+])"
+`;

@@ -10,6 +10,7 @@ const cs: unknown[] = [
   new Set(["a", "b", "c"]),
   { a: "a", b: "b", c: "c" },
   { a: "a", b: 1, c: true },
+  new Map([["a", 1], ["b", 2], ["c", 3]]),
   () => {},
   new Date(),
   null,
@@ -280,6 +281,35 @@ Deno.bench({
   fn: () => {
     for (const c of cs) {
       isRecordOfPred(c);
+    }
+  },
+});
+
+Deno.bench({
+  name: "is.Map",
+  fn: () => {
+    for (const c of cs) {
+      is.Map(c);
+    }
+  },
+});
+
+Deno.bench({
+  name: "is.MapOf<T>",
+  fn: () => {
+    const pred = is.MapOf(is.String);
+    for (const c of cs) {
+      pred(c);
+    }
+  },
+});
+
+const isMapOfPred = is.MapOf(is.String);
+Deno.bench({
+  name: "is.MapOf<T> (pre)",
+  fn: () => {
+    for (const c of cs) {
+      isMapOfPred(c);
     }
   },
 });
