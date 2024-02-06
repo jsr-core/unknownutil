@@ -7,8 +7,10 @@ const cs: unknown[] = [
   true,
   ["a", 1, true],
   ["a", "b", "c"],
+  new Set(["a", "b", "c"]),
   { a: "a", b: "b", c: "c" },
   { a: "a", b: 1, c: true },
+  new Map([["a", 1], ["b", 2], ["c", 3]]),
   () => {},
   new Date(),
   null,
@@ -100,6 +102,35 @@ Deno.bench({
   fn: () => {
     for (const c of cs) {
       isArrayOfPred(c);
+    }
+  },
+});
+
+Deno.bench({
+  name: "is.Set",
+  fn: () => {
+    for (const c of cs) {
+      is.Set(c);
+    }
+  },
+});
+
+Deno.bench({
+  name: "is.SetOf<T>",
+  fn: () => {
+    const pred = is.SetOf(is.String);
+    for (const c of cs) {
+      pred(c);
+    }
+  },
+});
+
+const isSetOfPred = is.SetOf(is.String);
+Deno.bench({
+  name: "is.SetOf<T> (pre)",
+  fn: () => {
+    for (const c of cs) {
+      isSetOfPred(c);
     }
   },
 });
@@ -250,6 +281,35 @@ Deno.bench({
   fn: () => {
     for (const c of cs) {
       isRecordOfPred(c);
+    }
+  },
+});
+
+Deno.bench({
+  name: "is.Map",
+  fn: () => {
+    for (const c of cs) {
+      is.Map(c);
+    }
+  },
+});
+
+Deno.bench({
+  name: "is.MapOf<T>",
+  fn: () => {
+    const pred = is.MapOf(is.String);
+    for (const c of cs) {
+      pred(c);
+    }
+  },
+});
+
+const isMapOfPred = is.MapOf(is.String);
+Deno.bench({
+  name: "is.MapOf<T> (pre)",
+  fn: () => {
+    for (const c of cs) {
+      isMapOfPred(c);
     }
   },
 });

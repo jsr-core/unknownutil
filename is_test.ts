@@ -18,6 +18,8 @@ import is, {
   isInstanceOf,
   isLiteralOf,
   isLiteralOneOf,
+  isMap,
+  isMapOf,
   isNull,
   isNullish,
   isNumber,
@@ -29,6 +31,8 @@ import is, {
   isReadonlyUniformTupleOf,
   isRecord,
   isRecordOf,
+  isSet,
+  isSetOf,
   isString,
   isSymbol,
   isSyncFunction,
@@ -56,7 +60,13 @@ const examples = {
   bigint: [0n, 1234567890n],
   boolean: [true, false],
   array: [[], [0, 1, 2], ["a", "b", "c"], [0, "a", true]],
+  set: [new Set(), new Set([0, 1, 2]), new Set(["a", "b", "c"])],
   record: [{}, { a: 0, b: 1, c: 2 }, { a: "a", b: "b", c: "c" }],
+  map: [
+    new Map(),
+    new Map([["a", 0], ["b", 1], ["c", 2]]),
+    new Map([["a", "a"], ["b", "b"], ["c", "c"]]),
+  ],
   syncFunction: [function a() {}, () => {}],
   asyncFunction: [async function b() {}, async () => {}],
   null: [null],
@@ -130,7 +140,9 @@ Deno.test("isAny", async (t) => {
       "bigint",
       "boolean",
       "array",
+      "set",
       "record",
+      "map",
       "syncFunction",
       "asyncFunction",
       "null",
@@ -150,7 +162,9 @@ Deno.test("isUnknown", async (t) => {
       "bigint",
       "boolean",
       "array",
+      "set",
       "record",
+      "map",
       "syncFunction",
       "asyncFunction",
       "null",
@@ -205,6 +219,36 @@ Deno.test("isArrayOf<T>", async (t) => {
   });
   await testWithExamples(t, isArrayOf((_: unknown): _ is unknown => true), {
     excludeExamples: ["array"],
+  });
+});
+
+Deno.test("isSet", async (t) => {
+  await testWithExamples(t, isSet, { validExamples: ["set"] });
+});
+
+Deno.test("isSetOf<T>", async (t) => {
+  await t.step("returns properly named function", async (t) => {
+    await assertSnapshot(t, isSetOf(isNumber).name);
+    await assertSnapshot(t, isSetOf((_x): _x is string => false).name);
+  });
+  await t.step("returns proper type predicate", () => {
+    const a: unknown = new Set([0, 1, 2]);
+    if (isSetOf(isNumber)(a)) {
+      assertType<Equal<typeof a, Set<number>>>(true);
+    }
+  });
+  await t.step("returns true on T set", () => {
+    assertEquals(isSetOf(isNumber)(new Set([0, 1, 2])), true);
+    assertEquals(isSetOf(isString)(new Set(["a", "b", "c"])), true);
+    assertEquals(isSetOf(isBoolean)(new Set([true, false, true])), true);
+  });
+  await t.step("returns false on non T set", () => {
+    assertEquals(isSetOf(isString)(new Set([0, 1, 2])), false);
+    assertEquals(isSetOf(isNumber)(new Set(["a", "b", "c"])), false);
+    assertEquals(isSetOf(isString)(new Set([true, false, true])), false);
+  });
+  await testWithExamples(t, isSetOf((_: unknown): _ is unknown => true), {
+    excludeExamples: ["set"],
   });
 });
 
@@ -602,6 +646,72 @@ Deno.test("isRecordOf<T, K>", async (t) => {
   });
   await testWithExamples(t, isRecordOf((_: unknown): _ is unknown => true), {
     excludeExamples: ["record", "date", "promise"],
+  });
+});
+
+Deno.test("isMap", async (t) => {
+  await testWithExamples(t, isMap, {
+    validExamples: ["map"],
+  });
+});
+
+Deno.test("isMapOf<T>", async (t) => {
+  await t.step("returns properly named function", async (t) => {
+    await assertSnapshot(t, isMapOf(isNumber).name);
+    await assertSnapshot(t, isMapOf((_x): _x is string => false).name);
+  });
+  await t.step("returns proper type predicate", () => {
+    const a: unknown = new Map([["a", 0]]);
+    if (isMapOf(isNumber)(a)) {
+      assertType<Equal<typeof a, Map<unknown, number>>>(true);
+    }
+  });
+  await t.step("returns true on T map", () => {
+    assertEquals(isMapOf(isNumber)(new Map([["a", 0]])), true);
+    assertEquals(isMapOf(isString)(new Map([["a", "a"]])), true);
+    assertEquals(isMapOf(isBoolean)(new Map([["a", true]])), true);
+  });
+  await t.step("returns false on non T map", () => {
+    assertEquals(isMapOf(isString)(new Map([["a", 0]])), false);
+    assertEquals(isMapOf(isNumber)(new Map([["a", "a"]])), false);
+    assertEquals(isMapOf(isString)(new Map([["a", true]])), false);
+  });
+  await testWithExamples(t, isMapOf((_: unknown): _ is unknown => true), {
+    excludeExamples: ["map"],
+  });
+});
+
+Deno.test("isMapOf<T, K>", async (t) => {
+  await t.step("returns properly named function", async (t) => {
+    await assertSnapshot(t, isMapOf(isNumber, isString).name);
+    await assertSnapshot(
+      t,
+      isMapOf((_x): _x is string => false, isString).name,
+    );
+  });
+  await t.step("returns proper type predicate", () => {
+    const a: unknown = new Map([["a", 0]]);
+    if (isMapOf(isNumber, isString)(a)) {
+      assertType<Equal<typeof a, Map<string, number>>>(true);
+    }
+  });
+  await t.step("returns true on T map", () => {
+    assertEquals(isMapOf(isNumber, isString)(new Map([["a", 0]])), true);
+    assertEquals(isMapOf(isString, isString)(new Map([["a", "a"]])), true);
+    assertEquals(isMapOf(isBoolean, isString)(new Map([["a", true]])), true);
+  });
+  await t.step("returns false on non T map", () => {
+    assertEquals(isMapOf(isString, isString)(new Map([["a", 0]])), false);
+    assertEquals(isMapOf(isNumber, isString)(new Map([["a", "a"]])), false);
+    assertEquals(isMapOf(isString, isString)(new Map([["a", true]])), false);
+  });
+  await t.step("returns false on non K map", () => {
+    assertEquals(isMapOf(isNumber, isNumber)(new Map([["a", 0]])), false);
+    assertEquals(isMapOf(isString, isNumber)(new Map([["a", "a"]])), false);
+    assertEquals(isMapOf(isBoolean, isNumber)(new Map([["a", true]])), false);
+  });
+  await testWithExamples(t, isMapOf((_: unknown): _ is unknown => true), {
+    excludeExamples: ["map"],
   });
 });
 
@@ -1046,6 +1156,11 @@ Deno.test("isOptionalOf<T>", async (t) => {
   await t.step("with isArray", async (t) => {
     await testWithExamples(t, isOptionalOf(isArray), {
       validExamples: ["array", "undefined"],
+    });
+  });
+  await t.step("with isSet", async (t) => {
+    await testWithExamples(t, isOptionalOf(isSet), {
+      validExamples: ["set", "undefined"],
     });
   });
   await t.step("with isRecord", async (t) => {
