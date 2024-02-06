@@ -29,6 +29,8 @@ import is, {
   isReadonlyUniformTupleOf,
   isRecord,
   isRecordOf,
+  isSet,
+  isSetOf,
   isString,
   isSymbol,
   isSyncFunction,
@@ -56,6 +58,7 @@ const examples = {
   bigint: [0n, 1234567890n],
   boolean: [true, false],
   array: [[], [0, 1, 2], ["a", "b", "c"], [0, "a", true]],
+  set: [new Set(), new Set([0, 1, 2]), new Set(["a", "b", "c"])],
   record: [{}, { a: 0, b: 1, c: 2 }, { a: "a", b: "b", c: "c" }],
   syncFunction: [function a() {}, () => {}],
   asyncFunction: [async function b() {}, async () => {}],
@@ -130,6 +133,7 @@ Deno.test("isAny", async (t) => {
       "bigint",
       "boolean",
       "array",
+      "set",
       "record",
       "syncFunction",
       "asyncFunction",
@@ -150,6 +154,7 @@ Deno.test("isUnknown", async (t) => {
       "bigint",
       "boolean",
       "array",
+      "set",
       "record",
       "syncFunction",
       "asyncFunction",
@@ -205,6 +210,36 @@ Deno.test("isArrayOf<T>", async (t) => {
   });
   await testWithExamples(t, isArrayOf((_: unknown): _ is unknown => true), {
     excludeExamples: ["array"],
+  });
+});
+
+Deno.test("isSet", async (t) => {
+  await testWithExamples(t, isSet, { validExamples: ["set"] });
+});
+
+Deno.test("isSetOf<T>", async (t) => {
+  await t.step("returns properly named function", async (t) => {
+    await assertSnapshot(t, isSetOf(isNumber).name);
+    await assertSnapshot(t, isSetOf((_x): _x is string => false).name);
+  });
+  await t.step("returns proper type predicate", () => {
+    const a: unknown = new Set([0, 1, 2]);
+    if (isSetOf(isNumber)(a)) {
+      assertType<Equal<typeof a, Set<number>>>(true);
+    }
+  });
+  await t.step("returns true on T set", () => {
+    assertEquals(isSetOf(isNumber)(new Set([0, 1, 2])), true);
+    assertEquals(isSetOf(isString)(new Set(["a", "b", "c"])), true);
+    assertEquals(isSetOf(isBoolean)(new Set([true, false, true])), true);
+  });
+  await t.step("returns false on non T set", () => {
+    assertEquals(isSetOf(isString)(new Set([0, 1, 2])), false);
+    assertEquals(isSetOf(isNumber)(new Set(["a", "b", "c"])), false);
+    assertEquals(isSetOf(isString)(new Set([true, false, true])), false);
+  });
+  await testWithExamples(t, isSetOf((_: unknown): _ is unknown => true), {
+    excludeExamples: ["set"],
   });
 });
 
@@ -1046,6 +1081,11 @@ Deno.test("isOptionalOf<T>", async (t) => {
   await t.step("with isArray", async (t) => {
     await testWithExamples(t, isOptionalOf(isArray), {
       validExamples: ["array", "undefined"],
+    });
+  });
+  await t.step("with isSet", async (t) => {
+    await testWithExamples(t, isOptionalOf(isSet), {
+      validExamples: ["set", "undefined"],
     });
   });
   await t.step("with isRecord", async (t) => {

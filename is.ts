@@ -179,6 +179,60 @@ export function isArrayOf<T>(
 }
 
 /**
+ * Return `true` if the type of `x` is `Set<unknown>`.
+ *
+ * ```ts
+ * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ *
+ * const a: unknown = new Set([0, 1, 2]);
+ * if (is.Set(a)) {
+ *   // a is narrowed to Set<unknown>
+ *   const _: Set<unknown> = a;
+ * }
+ * ```
+ */
+export const isSet = Object.defineProperties(isInstanceOf(Set), {
+  name: {
+    value: "isSet",
+  },
+});
+
+/**
+ * Return a type predicate function that returns `true` if the type of `x` is `Set<T>`.
+ *
+ * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
+ *
+ * ```ts
+ * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ *
+ * const isMyType = is.SetOf(is.String);
+ * const a: unknown = new Set(["a", "b", "c"]);
+ * if (isMyType(a)) {
+ *   // a is narrowed to Set<string>
+ *   const _: Set<string> = a;
+ * }
+ * ```
+ */
+export function isSetOf<T>(
+  pred: Predicate<T>,
+): Predicate<Set<T>> {
+  return Object.defineProperties(
+    (x: unknown): x is Set<T> => {
+      if (!isSet(x)) return false;
+      for (const v of x.values()) {
+        if (!pred(v)) return false;
+      }
+      return true;
+    },
+    {
+      name: {
+        get: () => `isSetOf(${inspect(pred)})`,
+      },
+    },
+  );
+}
+
+/**
  * Tuple type of types that are predicated by an array of predicate functions.
  *
  * ```ts
@@ -547,7 +601,7 @@ export type RecordOf<T, K extends PropertyKey = PropertyKey> = Record<K, T>;
 export function isRecord(
   x: unknown,
 ): x is Record<PropertyKey, unknown> {
-  if (isNullish(x) || isArray(x)) {
+  if (isNullish(x) || isArray(x) || isSet(x)) {
     return false;
   }
   return typeof x === "object";
@@ -1111,6 +1165,8 @@ export default {
   Boolean: isBoolean,
   Array: isArray,
   ArrayOf: isArrayOf,
+  Set: isSet,
+  SetOf: isSetOf,
   TupleOf: isTupleOf,
   ReadonlyTupleOf: isReadonlyTupleOf,
   UniformTupleOf: isUniformTupleOf,

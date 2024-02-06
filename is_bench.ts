@@ -7,6 +7,7 @@ const cs: unknown[] = [
   true,
   ["a", 1, true],
   ["a", "b", "c"],
+  new Set(["a", "b", "c"]),
   { a: "a", b: "b", c: "c" },
   { a: "a", b: 1, c: true },
   () => {},
@@ -100,6 +101,35 @@ Deno.bench({
   fn: () => {
     for (const c of cs) {
       isArrayOfPred(c);
+    }
+  },
+});
+
+Deno.bench({
+  name: "is.Set",
+  fn: () => {
+    for (const c of cs) {
+      is.Set(c);
+    }
+  },
+});
+
+Deno.bench({
+  name: "is.SetOf<T>",
+  fn: () => {
+    const pred = is.SetOf(is.String);
+    for (const c of cs) {
+      pred(c);
+    }
+  },
+});
+
+const isSetOfPred = is.SetOf(is.String);
+Deno.bench({
+  name: "is.SetOf<T> (pre)",
+  fn: () => {
+    for (const c of cs) {
+      isSetOfPred(c);
     }
   },
 });
