@@ -1,5 +1,9 @@
 import type { FlatType, UnionToIntersection } from "./_typeutil.ts";
-import { setPredicateMetadata, type WithMetadata } from "./metadata.ts";
+import {
+  getPredicateMetadata,
+  setPredicateMetadata,
+  type WithMetadata,
+} from "./metadata.ts";
 
 const toString = Object.prototype.toString;
 
@@ -759,8 +763,7 @@ type IsMapOfMetadata = {
  *
  * If `is.OptionalOf()` is specified in the predicate function, the property becomes optional.
  *
- * When `options.strict` is `true`, the number of keys of `x` must be equal to the number of keys of `predObj`.
- * Otherwise, the number of keys of `x` must be greater than or equal to the number of keys of `predObj`.
+ * The number of keys of `x` must be greater than or equal to the number of keys of `predObj`.
  *
  * ```ts
  * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
@@ -772,64 +775,40 @@ type IsMapOfMetadata = {
  * });
  * const a: unknown = { a: 0, b: "a", other: "other" };
  * if (isMyType(a)) {
- *   // "other" key in `a` is ignored because of `options.strict` is `false`.
+ *   // "other" key in `a` is ignored.
  *   // a is narrowed to { a: number; b: string; c?: boolean | undefined }
  *   const _: { a: number; b: string; c?: boolean | undefined } = a;
  * }
  * ```
  *
- * With `options.strict`:
- *
- * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
- *
- * const isMyType = is.ObjectOf({
- *   a: is.Number,
- *   b: is.String,
- *   c: is.OptionalOf(is.Boolean),
- * }, { strict: true });
- * const a: unknown = { a: 0, b: "a", other: "other" };
- * if (isMyType(a)) {
- *   // This block will not be executed because of "other" key in `a`.
- * }
- * ```
+ * The `options.strict` is deprecated. Use `isStrictOf()` instead.
  */
 export function isObjectOf<
   T extends Record<PropertyKey, Predicate<unknown>>,
 >(
   predObj: T,
-  options?: { strict?: boolean },
-):
-  & Predicate<ObjectOf<T>>
-  & WithMetadata<IsObjectOfMetadata> {
-  if (options?.strict) {
-    const keys = new Set(Object.keys(predObj));
-    const pred = isObjectOf(predObj);
-    return setPredicateMetadata(
-      (x: unknown): x is ObjectOf<T> => {
-        if (!pred(x)) return false;
-        const ks = Object.keys(x);
-        return ks.length <= keys.size && ks.every((k) => keys.has(k));
-      },
-      { name: "isObjectOf", args: [predObj, options] },
-    );
-  } else {
-    return setPredicateMetadata(
-      (x: unknown): x is ObjectOf<T> => {
-        if (!isRecord(x)) return false;
-        for (const k in predObj) {
-          if (!predObj[k](x[k])) return false;
-        }
-        return true;
-      },
-      { name: "isObjectOf", args: [predObj, options] },
-    );
+  { strict }: { strict?: boolean } = {},
+): Predicate<ObjectOf<T>> & WithMetadata<IsObjectOfMetadata> {
+  if (strict) {
+    // For backward compatibility
+    // deno-lint-ignore no-explicit-any
+    return isStrictOf(isObjectOf(predObj)) as any;
   }
+  return setPredicateMetadata(
+    (x: unknown): x is ObjectOf<T> => {
+      if (!isRecord(x)) return false;
+      for (const k in predObj) {
+        if (!predObj[k](x[k])) return false;
+      }
+      return true;
+    },
+    { name: "isObjectOf", args: [predObj] },
+  );
 }
 
 type IsObjectOfMetadata = {
   name: "isObjectOf";
-  args: Parameters<typeof isObjectOf>;
+  args: [Parameters<typeof isObjectOf>[0]];
 };
 
 /**
@@ -856,6 +835,55 @@ export type ObjectOf<T extends Record<PropertyKey, Predicate<unknown>>> =
         Predicate<infer U> ? U : never;
     }
   >;
+
+/**
+ * Return a type predicate function that returns `true` if the type of `x` is strictly follow the `ObjectOf<T>`.
+ *
+ * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
+ *
+ * If `is.OptionalOf()` is specified in the predicate function, the property becomes optional.
+ *
+ * The number of keys of `x` must be equal to the number of non optional keys of `predObj`. This is equivalent to
+ * the deprecated `options.strict` in `isObjectOf()`.
+ *
+ * ```ts
+ * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ *
+ * const isMyType = is.StrictOf(is.ObjectOf({
+ *   a: is.Number,
+ *   b: is.String,
+ *   c: is.OptionalOf(is.Boolean),
+ * }));
+ * const a: unknown = { a: 0, b: "a", other: "other" };
+ * if (isMyType(a)) {
+ *   // This block will not be executed because of "other" key in `a`.
+ * }
+ * ```
+ */
+export function isStrictOf<T extends Record<PropertyKey, unknown>>(
+  pred:
+    & Predicate<T>
+    & WithMetadata<IsObjectOfMetadata>,
+):
+  & Predicate<T>
+  & WithMetadata<IsStrictOfMetadata> {
+  const { args } = getPredicateMetadata(pred);
+  const s = new Set(Object.keys(args[0]));
+  return setPredicateMetadata(
+    (x: unknown): x is T => {
+      if (!pred(x)) return false;
+      // deno-lint-ignore no-explicit-any
+      const ks = Object.keys(x as any);
+      return ks.length <= s.size && ks.every((k) => s.has(k));
+    },
+    { name: "isStrictOf", args: [pred] },
+  );
+}
+
+type IsStrictOfMetadata = {
+  name: "isStrictOf";
+  args: Parameters<typeof isStrictOf>;
+};
 
 /**
  * Return a type predicate function that returns `true` if the type of `x` is `T` or `undefined`.
@@ -1296,6 +1324,7 @@ export default {
   RecordOf: isRecordOf,
   Set: isSet,
   SetOf: isSetOf,
+  StrictOf: isStrictOf,
   String: isString,
   Symbol: isSymbol,
   SyncFunction: isSyncFunction,

@@ -329,9 +329,9 @@ Deno.bench({
   },
 });
 Deno.bench({
-  name: "is.ObjectOf<T> (strict)",
+  name: "is.StrictOf<is.ObjectOf<T>>",
   fn: () => {
-    const pred = is.ObjectOf(predObj, { strict: true });
+    const pred = is.StrictOf(is.ObjectOf(predObj));
     for (const c of cs) {
       pred(c);
     }
@@ -348,12 +348,12 @@ Deno.bench({
   },
 });
 
-const isObjectOfStrictPred = is.ObjectOf(predObj, { strict: true });
+const isStrictOfObjectOfPred = is.StrictOf(is.ObjectOf(predObj));
 Deno.bench({
-  name: "is.ObjectOf<T> (pre, strict)",
+  name: "is.StrictOf<ObjectOf<T>> (pre)",
   fn: () => {
     for (const c of cs) {
-      isObjectOfStrictPred(c);
+      isStrictOfObjectOfPred(c);
     }
   },
 });
