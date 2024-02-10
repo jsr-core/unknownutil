@@ -1,3 +1,4 @@
+import type { FlatType, UnionToIntersection } from "./_typeutil.ts";
 import { inspect } from "./inspect.ts";
 
 /**
@@ -731,10 +732,6 @@ export function isMapOf<T, K>(
   );
 }
 
-type FlatType<T> = T extends RecordOf<unknown>
-  ? { [K in keyof T]: FlatType<T[K]> }
-  : T;
-
 type OptionalPredicateKeys<T extends RecordOf<unknown>> = {
   [K in keyof T]: T[K] extends OptionalPredicate<unknown> ? K : never;
 }[keyof T];
@@ -1134,10 +1131,6 @@ export function isOneOf<
   );
 }
 
-type UnionToIntersection<U> =
-  (U extends unknown ? (k: U) => void : never) extends ((k: infer I) => void)
-    ? I
-    : never;
 export type AllOf<T> = UnionToIntersection<OneOf<T>>;
 
 /**
