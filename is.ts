@@ -907,6 +907,13 @@ export function isOptionalOf<T>(
   & Predicate<T | undefined>
   & Optional
   & WithMetadata<IsOptionalOfMetadata> {
+  // Avoid duplicate wrapping
+  if ((pred as Partial<Optional>).optional) {
+    return pred as
+      & Predicate<T | undefined>
+      & Optional
+      & WithMetadata<IsOptionalOfMetadata>;
+  }
   return setPredicateMetadata(
     Object.defineProperties(
       (x: unknown): x is Predicate<T | undefined> => isUndefined(x) || pred(x),
