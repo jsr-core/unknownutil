@@ -337,6 +337,33 @@ Deno.bench({
     }
   },
 });
+Deno.bench({
+  name: "is.PartialOf<is.ObjectOf<T>>",
+  fn: () => {
+    const pred = is.PartialOf(is.ObjectOf(predObj));
+    for (const c of cs) {
+      pred(c);
+    }
+  },
+});
+Deno.bench({
+  name: "is.PickOf<is.ObjectOf<T>, K>",
+  fn: () => {
+    const pred = is.PickOf(is.ObjectOf(predObj), ["a", "c"]);
+    for (const c of cs) {
+      pred(c);
+    }
+  },
+});
+Deno.bench({
+  name: "is.OmitOf<is.ObjectOf<T>, K>",
+  fn: () => {
+    const pred = is.OmitOf(is.ObjectOf(predObj), ["b"]);
+    for (const c of cs) {
+      pred(c);
+    }
+  },
+});
 
 const isObjectOfPred = is.ObjectOf(predObj);
 Deno.bench({
@@ -354,6 +381,36 @@ Deno.bench({
   fn: () => {
     for (const c of cs) {
       isStrictOfObjectOfPred(c);
+    }
+  },
+});
+
+const isPartialOfObjectOfPred = is.PartialOf(is.ObjectOf(predObj));
+Deno.bench({
+  name: "is.PartialOf<ObjectOf<T>> (pre)",
+  fn: () => {
+    for (const c of cs) {
+      isPartialOfObjectOfPred(c);
+    }
+  },
+});
+
+const isPickOfObjectOfPred = is.PickOf(is.ObjectOf(predObj), ["a", "c"]);
+Deno.bench({
+  name: "is.PickOf<ObjectOf<T>, K> (pre)",
+  fn: () => {
+    for (const c of cs) {
+      isPickOfObjectOfPred(c);
+    }
+  },
+});
+
+const isOmitOfObjectOfPred = is.OmitOf(is.ObjectOf(predObj), ["a", "c"]);
+Deno.bench({
+  name: "is.OmitOf<ObjectOf<T>, K> (pre)",
+  fn: () => {
+    for (const c of cs) {
+      isOmitOfObjectOfPred(c);
     }
   },
 });

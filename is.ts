@@ -886,6 +886,123 @@ type IsStrictOfMetadata = {
 };
 
 /**
+ * Return a type predicate function that returns `true` if the type of `x` is `Partial<ObjectOf<T>>`.
+ *
+ * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
+ *
+ * ```typescript
+ * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ *
+ * const isMyType = is.PartialOf(is.ObjectOf({
+ *   a: is.Number,
+ *   b: is.String,
+ *   c: is.OptionalOf(is.Boolean),
+ * }));
+ * const a: unknown = { a: undefined, other: "other" };
+ * if (isMyType(a)) {
+ *   // The "other" key in `a` is ignored.
+ *   // 'a' is narrowed to { a?: number | undefined; b?: string | undefined; c?: boolean | undefined }
+ *   const _: { a?: number | undefined; b?: string | undefined; c?: boolean | undefined } = a;
+ * }
+ * ```
+ */
+export function isPartialOf<
+  T extends Record<PropertyKey, unknown>,
+>(
+  pred: Predicate<T> & WithMetadata<IsObjectOfMetadata>,
+):
+  & Predicate<FlatType<Partial<T>>>
+  & WithMetadata<IsObjectOfMetadata> {
+  const { args } = getPredicateMetadata(pred);
+  const predObj = Object.fromEntries(
+    Object.entries(args[0]).map(([k, v]) => [k, isOptionalOf(v)]),
+  );
+  return isObjectOf(predObj) as
+    & Predicate<FlatType<Partial<T>>>
+    & WithMetadata<IsObjectOfMetadata>;
+}
+
+/**
+ * Return a type predicate function that returns `true` if the type of `x` is `Pick<ObjectOf<T>, K>`.
+ *
+ * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
+ *
+ * ```typescript
+ * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ *
+ * const isMyType = is.PickOf(is.ObjectOf({
+ *   a: is.Number,
+ *   b: is.String,
+ *   c: is.OptionalOf(is.Boolean),
+ * }), ["a", "c"]);
+ * const a: unknown = { a: 0, b: "a", other: "other" };
+ * if (isMyType(a)) {
+ *   // The "b" and "other" key in `a` is ignored.
+ *   // 'a' is narrowed to { a: number; c?: boolean | undefined }
+ *   const _: { a: number; c?: boolean | undefined } = a;
+ * }
+ * ```
+ */
+export function isPickOf<
+  T extends Record<PropertyKey, unknown>,
+  K extends keyof T,
+>(
+  pred: Predicate<T> & WithMetadata<IsObjectOfMetadata>,
+  keys: K[],
+):
+  & Predicate<FlatType<Pick<T, K>>>
+  & WithMetadata<IsObjectOfMetadata> {
+  const s = new Set(keys);
+  const { args } = getPredicateMetadata(pred);
+  const predObj = Object.fromEntries(
+    Object.entries(args[0]).filter(([k]) => s.has(k as K)),
+  );
+  return isObjectOf(predObj) as
+    & Predicate<FlatType<Pick<T, K>>>
+    & WithMetadata<IsObjectOfMetadata>;
+}
+
+/**
+ * Return a type predicate function that returns `true` if the type of `x` is `Omit<ObjectOf<T>, K>`.
+ *
+ * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
+ *
+ * ```typescript
+ * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ *
+ * const isMyType = is.OmitOf(is.ObjectOf({
+ *   a: is.Number,
+ *   b: is.String,
+ *   c: is.OptionalOf(is.Boolean),
+ * }), ["a", "c"]);
+ * const a: unknown = { a: 0, b: "a", other: "other" };
+ * if (isMyType(a)) {
+ *   // The "a", "c", and "other" key in `a` is ignored.
+ *   // 'a' is narrowed to { b: string }
+ *   const _: { b: string } = a;
+ * }
+ * ```
+ */
+export function isOmitOf<
+  T extends Record<PropertyKey, unknown>,
+  K extends keyof T,
+>(
+  pred: Predicate<T> & WithMetadata<IsObjectOfMetadata>,
+  keys: K[],
+):
+  & Predicate<FlatType<Omit<T, K>>>
+  & WithMetadata<IsObjectOfMetadata> {
+  const s = new Set(keys);
+  const { args } = getPredicateMetadata(pred);
+  const predObj = Object.fromEntries(
+    Object.entries(args[0]).filter(([k]) => !s.has(k as K)),
+  );
+  return isObjectOf(predObj) as
+    & Predicate<FlatType<Omit<T, K>>>
+    & WithMetadata<IsObjectOfMetadata>;
+}
+
+/**
  * Return a type predicate function that returns `true` if the type of `x` is `T` or `undefined`.
  *
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
@@ -1322,8 +1439,11 @@ export default {
   Nullish: isNullish,
   Number: isNumber,
   ObjectOf: isObjectOf,
+  OmitOf: isOmitOf,
   OneOf: isOneOf,
   OptionalOf: isOptionalOf,
+  PartialOf: isPartialOf,
+  PickOf: isPickOf,
   Primitive: isPrimitive,
   ReadonlyTupleOf: isReadonlyTupleOf,
   ReadonlyUniformTupleOf: isReadonlyUniformTupleOf,
