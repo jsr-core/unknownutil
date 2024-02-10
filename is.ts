@@ -1208,6 +1208,8 @@ export type AllOf<T> = UnionToIntersection<OneOf<T>>;
 
 /**
  * Synonym of `Record<K, T>`
+ *
+ * @deprecated Use `Record<K, T>` instead.
  */
 export type RecordOf<T, K extends PropertyKey = PropertyKey> = Record<K, T>;
 
