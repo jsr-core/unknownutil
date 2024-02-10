@@ -1,6 +1,8 @@
 import type { FlatType, UnionToIntersection } from "./_typeutil.ts";
 import { inspect } from "./inspect.ts";
 
+const toString = Object.prototype.toString;
+
 /**
  * A type predicate function.
  */
@@ -896,7 +898,7 @@ export function isFunction(x: unknown): x is (...args: unknown[]) => unknown {
 export function isSyncFunction(
   x: unknown,
 ): x is (...args: unknown[]) => unknown {
-  return Object.prototype.toString.call(x) === "[object Function]";
+  return toString.call(x) === "[object Function]";
 }
 
 /**
@@ -915,7 +917,7 @@ export function isSyncFunction(
 export function isAsyncFunction(
   x: unknown,
 ): x is (...args: unknown[]) => Promise<unknown> {
-  return Object.prototype.toString.call(x) === "[object AsyncFunction]";
+  return toString.call(x) === "[object AsyncFunction]";
 }
 
 /**
@@ -1030,9 +1032,16 @@ export function isSymbol(x: unknown): x is symbol {
  * ```
  */
 export function isPrimitive(x: unknown): x is Primitive {
-  return x == null ||
-    ["string", "number", "bigint", "boolean", "symbol"].includes(typeof x);
+  return x == null || primitiveSet.has(typeof x);
 }
+
+const primitiveSet = new Set([
+  "string",
+  "number",
+  "bigint",
+  "boolean",
+  "symbol",
+]);
 
 export type Primitive =
   | string
@@ -1089,9 +1098,9 @@ export function isLiteralOf<T extends Primitive>(literal: T): Predicate<T> {
 export function isLiteralOneOf<T extends readonly Primitive[]>(
   literals: T,
 ): Predicate<T[number]> {
+  const s = new Set(literals);
   return Object.defineProperties(
-    (x: unknown): x is T[number] =>
-      literals.includes(x as unknown as T[number]),
+    (x: unknown): x is T[number] => s.has(x as Primitive),
     {
       name: {
         get: () => `isLiteralOneOf(${inspect(literals)})`,
