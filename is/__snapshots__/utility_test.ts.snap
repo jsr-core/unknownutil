@@ -1,7 +1,5 @@
 export const snapshot = {};
 
-snapshot[`isOptionalOf<T> > returns properly named function 1`] = `"isOptionalOf(isNumber)"`;
-
 snapshot[`isOneOf<T> > returns properly named function 1`] = `
 "isOneOf([
   isNumber,
@@ -10,9 +8,11 @@ snapshot[`isOneOf<T> > returns properly named function 1`] = `
 ])"
 `;
 
+snapshot[`isOptionalOf<T> > returns properly named function 1`] = `"isOptionalOf(isNumber)"`;
+
 snapshot[`isAllOf<T> > returns properly named function 1`] = `
 "isAllOf([
-  isObjectOf({a: isNumber}),
-  isObjectOf({b: isString})
+  isObjectOf({a: isNumber}, undefined),
+  isObjectOf({b: isString}, undefined)
 ])"
 `;

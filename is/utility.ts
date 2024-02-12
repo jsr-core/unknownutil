@@ -2,11 +2,7 @@ import type { UnionToIntersection } from "../_typeutil.ts";
 import type { Predicate } from "./type.ts";
 import { isUndefined } from "./core.ts";
 import { type Optional } from "./factory.ts";
-import { inspect } from "../inspect.ts";
-
-type OneOf<T> = T extends readonly [Predicate<infer U>, ...infer R]
-  ? U | OneOf<R>
-  : never;
+import { setPredicateMetadata, type WithMetadata } from "../metadata.ts";
 
 /**
  * Return a type predicate function that returns `true` if the type of `x` is `OneOf<T>`.
@@ -43,18 +39,21 @@ export function isOneOf<
   T extends readonly [Predicate<unknown>, ...Predicate<unknown>[]],
 >(
   preds: T,
-): Predicate<OneOf<T>> {
-  return Object.defineProperties(
+): Predicate<OneOf<T>> & WithMetadata<IsOneOfMetadata> {
+  return setPredicateMetadata(
     (x: unknown): x is OneOf<T> => preds.some((pred) => pred(x)),
-    {
-      name: {
-        get: () => `isOneOf(${inspect(preds)})`,
-      },
-    },
+    { name: "isOneOf", args: [preds] },
   );
 }
 
-type AllOf<T> = UnionToIntersection<OneOf<T>>;
+type OneOf<T> = T extends readonly [Predicate<infer U>, ...infer R]
+  ? U | OneOf<R>
+  : never;
+
+type IsOneOfMetadata = {
+  name: "isOneOf";
+  args: Parameters<typeof isOneOf>;
+};
 
 /**
  * Return a type predicate function that returns `true` if the type of `x` is `AllOf<T>`.
@@ -97,16 +96,19 @@ export function isAllOf<
   T extends readonly [Predicate<unknown>, ...Predicate<unknown>[]],
 >(
   preds: T,
-): Predicate<AllOf<T>> {
-  return Object.defineProperties(
+): Predicate<AllOf<T>> & WithMetadata<IsAllOfMetadata> {
+  return setPredicateMetadata(
     (x: unknown): x is AllOf<T> => preds.every((pred) => pred(x)),
-    {
-      name: {
-        get: () => `isAllOf(${inspect(preds)})`,
-      },
-    },
+    { name: "isAllOf", args: [preds] },
   );
 }
+
+type AllOf<T> = UnionToIntersection<OneOf<T>>;
+
+type IsAllOfMetadata = {
+  name: "isAllOf";
+  args: Parameters<typeof isAllOf>;
+};
 
 /**
  * Return a type predicate function that returns `true` if the type of `x` is `T` or `undefined`.
@@ -126,19 +128,20 @@ export function isAllOf<
  */
 export function isOptionalOf<T>(
   pred: Predicate<T>,
-): Predicate<T | undefined> & Optional {
+): Predicate<T | undefined> & Optional & WithMetadata<IsOptionalOfMetadata> {
   return Object.defineProperties(
-    (x: unknown): x is Predicate<T | undefined> => isUndefined(x) || pred(x),
-    {
-      optional: {
-        value: true as const,
-      },
-      name: {
-        get: () => `isOptionalOf(${inspect(pred)})`,
-      },
-    },
-  ) as Predicate<T | undefined> & Optional;
+    setPredicateMetadata(
+      (x: unknown): x is Predicate<T | undefined> => isUndefined(x) || pred(x),
+      { name: "isOptionalOf", args: [pred] },
+    ),
+    { optional: { value: true as const } },
+  ) as Predicate<T | undefined> & Optional & WithMetadata<IsOptionalOfMetadata>;
 }
+
+type IsOptionalOfMetadata = {
+  name: "isOptionalOf";
+  args: Parameters<typeof isOptionalOf>;
+};
 
 export default {
   AllOf: isAllOf,
