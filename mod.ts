@@ -21,8 +21,7 @@
  * }
  * ```
  *
- * Additionally, `is*Of` (or `is.*Of`) functions return type predicate functions to
- * predicate types of `x` more precisely like:
+ * For more complex types, you can use `is*Of` (or `is.*Of`) functions like:
  *
  * ```typescript
  * import {
@@ -34,7 +33,7 @@
  *   title: is.String,
  *   body: is.String,
  *   refs: is.ArrayOf(
- *     is.OneOf([
+ *     is.UnionOf([
  *       is.String,
  *       is.ObjectOf({
  *         name: is.String,
@@ -42,8 +41,11 @@
  *       }),
  *     ]),
  *   ),
+ *   createTime: is.OptionalOf(is.InstanceOf(Date)),
+ *   updateTime: is.OptionalOf(is.InstanceOf(Date)),
  * });
  *
+ * // Infer the type of `Article` from the definition of `isArticle`
  * type Article = PredicateType<typeof isArticle>;
  *
  * const a: unknown = {
@@ -64,6 +66,114 @@
  *     }
  *   }
  * }
+ * ```
+ *
+ * Additionally, you can manipulate the predicate function returned from
+ * `isObjectOf` with `isPickOf`, `isOmitOf`, `isPartialOf`, and `isRequiredOf`
+ * similar to TypeScript's `Pick`, `Omit`, `Partial`, `Required` utility types.
+ *
+ * ```typescript
+ * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ *
+ * const isArticle = is.ObjectOf({
+ *   title: is.String,
+ *   body: is.String,
+ *   refs: is.ArrayOf(
+ *     is.UnionOf([
+ *       is.String,
+ *       is.ObjectOf({
+ *         name: is.String,
+ *         url: is.String,
+ *       }),
+ *     ]),
+ *   ),
+ *   createTime: is.OptionalOf(is.InstanceOf(Date)),
+ *   updateTime: is.OptionalOf(is.InstanceOf(Date)),
+ * });
+ *
+ * const isArticleCreateParams = is.PickOf(isArticle, ["title", "body", "refs"]);
+ * // is equivalent to
+ * //const isArticleCreateParams = is.ObjectOf({
+ * //  title: is.String,
+ * //  body: is.String,
+ * //  refs: is.ArrayOf(
+ * //    is.UnionOf([
+ * //      is.String,
+ * //      is.ObjectOf({
+ * //        name: is.String,
+ * //        url: is.String,
+ * //      }),
+ * //    ]),
+ * //  ),
+ * //});
+ *
+ * const isArticleUpdateParams = is.OmitOf(isArticleCreateParams, ["title"]);
+ * // is equivalent to
+ * //const isArticleUpdateParams = is.ObjectOf({
+ * //  body: is.String,
+ * //  refs: is.ArrayOf(
+ * //    is.UnionOf([
+ * //      is.String,
+ * //      is.ObjectOf({
+ * //        name: is.String,
+ * //        url: is.String,
+ * //      }),
+ * //    ]),
+ * //  ),
+ * //});
+ *
+ * const isArticlePatchParams = is.PartialOf(isArticleUpdateParams);
+ * // is equivalent to
+ * //const isArticlePatchParams = is.ObjectOf({
+ * //  body: is.OptionalOf(is.String),
+ * //  refs: is.OptionalOf(is.ArrayOf(
+ * //    is.UnionOf([
+ * //      is.String,
+ * //      is.ObjectOf({
+ * //        name: is.String,
+ * //        url: is.String,
+ * //      }),
+ * //    ]),
+ * //  )),
+ * //});
+ *
+ * const isArticleAvailableParams = is.RequiredOf(isArticle);
+ * // is equivalent to
+ * //const isArticlePutParams = is.ObjectOf({
+ * //  body: is.String,
+ * //  refs: is.ArrayOf(
+ * //    is.UnionOf([
+ * //      is.String,
+ * //      is.ObjectOf({
+ * //        name: is.String,
+ * //        url: is.String,
+ * //      }),
+ * //    ]),
+ * //  ),
+ * //  createTime: is.InstanceOf(Date),
+ * //  updateTime: is.InstanceOf(Date),
+ * //});
+ * ```
+ *
+ * If you need an union type or an intersection type, use `isUnionOf` and `isIntersectionOf`
+ * like:
+ *
+ * ```typescript
+ * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ *
+ * const isFoo = is.ObjectOf({
+ *   foo: is.String,
+ * });
+ *
+ * const isBar = is.ObjectOf({
+ *   bar: is.String,
+ * });
+ *
+ * const isFooOrBar = is.UnionOf([isFoo, isBar]);
+ * // { foo: string } | { bar: string }
+ *
+ * const isFooAndBar = is.IntersectionOf([isFoo, isBar]);
+ * // { foo: string } & { bar: string }
  * ```
  *
  * ### assert
