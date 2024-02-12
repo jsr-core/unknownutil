@@ -1,7 +1,11 @@
-import type { UnionToIntersection } from "../_typeutil.ts";
+import type { FlatType, UnionToIntersection } from "../_typeutil.ts";
 import type { Predicate } from "./type.ts";
 import { isUndefined } from "./core.ts";
-import { type IsObjectOfMetadata, type Optional } from "./factory.ts";
+import {
+  isObjectOf,
+  type IsObjectOfMetadata,
+  type Optional,
+} from "./factory.ts";
 import {
   getPredicateMetadata,
   setPredicateMetadata,
@@ -202,9 +206,47 @@ type IsStrictOfMetadata = {
   args: Parameters<typeof isStrictOf>;
 };
 
+/**
+ * Return a type predicate function that returns `true` if the type of `x` is `Partial<ObjectOf<T>>`.
+ *
+ * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
+ *
+ * ```typescript
+ * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ *
+ * const isMyType = is.PartialOf(is.ObjectOf({
+ *   a: is.Number,
+ *   b: is.String,
+ *   c: is.OptionalOf(is.Boolean),
+ * }));
+ * const a: unknown = { a: undefined, other: "other" };
+ * if (isMyType(a)) {
+ *   // The "other" key in `a` is ignored.
+ *   // 'a' is narrowed to { a?: number | undefined; b?: string | undefined; c?: boolean | undefined }
+ *   const _: { a?: number | undefined; b?: string | undefined; c?: boolean | undefined } = a;
+ * }
+ * ```
+ */
+export function isPartialOf<
+  T extends Record<PropertyKey, unknown>,
+>(
+  pred: Predicate<T> & WithMetadata<IsObjectOfMetadata>,
+):
+  & Predicate<FlatType<Partial<T>>>
+  & WithMetadata<IsObjectOfMetadata> {
+  const { args } = getPredicateMetadata(pred);
+  const predObj = Object.fromEntries(
+    Object.entries(args[0]).map(([k, v]) => [k, isOptionalOf(v)]),
+  );
+  return isObjectOf(predObj) as
+    & Predicate<FlatType<Partial<T>>>
+    & WithMetadata<IsObjectOfMetadata>;
+}
+
 export default {
   AllOf: isAllOf,
   OneOf: isOneOf,
   OptionalOf: isOptionalOf,
+  PartialOf: isPartialOf,
   StrictOf: isStrictOf,
 };

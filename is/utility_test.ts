@@ -24,7 +24,13 @@ import {
   isUndefined,
 } from "./core.ts";
 import { isObjectOf } from "./factory.ts";
-import is, { isAllOf, isOneOf, isOptionalOf, isStrictOf } from "./utility.ts";
+import is, {
+  isAllOf,
+  isOneOf,
+  isOptionalOf,
+  isPartialOf,
+  isStrictOf,
+} from "./utility.ts";
 
 const examples = {
   string: ["", "Hello world"],
@@ -384,6 +390,42 @@ Deno.test("isStrictOf<T>", async (t) => {
         "Object have the same number of properties but an unknown property exists",
       );
     });
+  });
+});
+
+Deno.test("isPartialOf<T>", async (t) => {
+  const pred = isObjectOf({
+    a: isNumber,
+    b: isString,
+    c: isBoolean,
+  });
+  await t.step("returns properly named function", async (t) => {
+    await assertSnapshot(t, isPartialOf(pred).name);
+    // Nestable (no effect)
+    await assertSnapshot(t, isPartialOf(isPartialOf(pred)).name);
+  });
+  await t.step("returns proper type predicate", () => {
+    const a: unknown = { a: 0, b: "a", c: true };
+    if (isPartialOf(pred)(a)) {
+      assertType<
+        Equal<typeof a, Partial<{ a: number; b: string; c: boolean }>>
+      >(true);
+    }
+  });
+  await t.step("returns true on Partial<T> object", () => {
+    assertEquals(
+      isPartialOf(pred)({ a: undefined, b: undefined, c: undefined }),
+      true,
+    );
+    assertEquals(isPartialOf(pred)({}), true);
+  });
+  await t.step("returns false on non Partial<T> object", () => {
+    assertEquals(isPartialOf(pred)("a"), false, "Value is not an object");
+    assertEquals(
+      isPartialOf(pred)({ a: 0, b: "a", c: "" }),
+      false,
+      "Object have a different type property",
+    );
   });
 });
 
