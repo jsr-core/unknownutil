@@ -233,33 +233,11 @@ export function isSetOf<T>(
   );
 }
 
-/**
- * Tuple type of types that are predicated by an array of predicate functions.
- *
- * ```ts
- * import { is, TupleOf } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
- *
- * type A = TupleOf<readonly [typeof is.String, typeof is.Number]>;
- * // Above is equivalent to the following type
- * // type A = [string, number];
- * ```
- */
-export type TupleOf<T> = {
+type TupleOf<T> = {
   -readonly [P in keyof T]: T[P] extends Predicate<infer U> ? U : never;
 };
 
-/**
- * Readonly tuple type of types that are predicated by an array of predicate functions.
- *
- * ```ts
- * import { is, ReadonlyTupleOf } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
- *
- * type A = ReadonlyTupleOf<readonly [typeof is.String, typeof is.Number]>;
- * // Above is equivalent to the following type
- * // type A = readonly [string, number];
- * ```
- */
-export type ReadonlyTupleOf<T> = {
+type ReadonlyTupleOf<T> = {
   [P in keyof T]: T[P] extends Predicate<infer U> ? U : never;
 };
 
@@ -454,36 +432,14 @@ export function isReadonlyTupleOf<
   }
 }
 
-/**
- * Uniform tuple type of types that are predicated by a predicate function and the length is `N`.
- *
- * ```ts
- * import { is, UniformTupleOf } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
- *
- * type A = UniformTupleOf<number, 5>;
- * // Above is equivalent to the following type
- * // type A = [number, number, number, number, number];
- * ```
- */
 // https://stackoverflow.com/a/71700658/1273406
-export type UniformTupleOf<
+type UniformTupleOf<
   T,
   N extends number,
   R extends readonly T[] = [],
 > = R["length"] extends N ? R : UniformTupleOf<T, N, [T, ...R]>;
 
-/**
- * Readonly uniform tuple type of types that are predicated by a predicate function `T` and the length is `N`.
- *
- * ```ts
- * import { is, ReadonlyUniformTupleOf } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
- *
- * type A = ReadonlyUniformTupleOf<number, 5>;
- * // Above is equivalent to the following type
- * // type A = readonly [number, number, number, number, number];
- * ```
- */
-export type ReadonlyUniformTupleOf<
+type ReadonlyUniformTupleOf<
   T,
   N extends number,
   R extends readonly T[] = [],
@@ -580,11 +536,6 @@ export function isReadonlyUniformTupleOf<T, N extends number>(
     },
   );
 }
-
-/**
- * Synonym of `Record<K, T>`
- */
-export type RecordOf<T, K extends PropertyKey = PropertyKey> = Record<K, T>;
 
 /**
  * Return `true` if the type of `x` is `Record<PropertyKey, unknown>`.
@@ -732,22 +683,11 @@ export function isMapOf<T, K>(
   );
 }
 
-type OptionalPredicateKeys<T extends RecordOf<unknown>> = {
+type OptionalPredicateKeys<T extends Record<PropertyKey, unknown>> = {
   [K in keyof T]: T[K] extends OptionalPredicate<unknown> ? K : never;
 }[keyof T];
 
-/**
- * Object types that are predicated by predicate functions in the object `T`.
- *
- * ```ts
- * import { is, ObjectOf } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
- *
- * type A = ObjectOf<{ a: typeof is.Number, b: typeof is.String }>;
- * // Above is equivalent to the following type
- * // type A = { a: number; b: string };
- * ```
- */
-export type ObjectOf<T extends RecordOf<Predicate<unknown>>> = FlatType<
+type ObjectOf<T extends Record<PropertyKey, Predicate<unknown>>> = FlatType<
   & {
     [K in Exclude<keyof T, OptionalPredicateKeys<T>>]: T[K] extends
       Predicate<infer U> ? U : never;
@@ -801,7 +741,7 @@ export type ObjectOf<T extends RecordOf<Predicate<unknown>>> = FlatType<
  * ```
  */
 export function isObjectOf<
-  T extends RecordOf<Predicate<unknown>>,
+  T extends Record<PropertyKey, Predicate<unknown>>,
 >(
   predObj: T,
   { strict }: { strict?: boolean } = {},
@@ -817,7 +757,7 @@ export function isObjectOf<
 }
 
 function isObjectOfLoose<
-  T extends RecordOf<Predicate<unknown>>,
+  T extends Record<PropertyKey, Predicate<unknown>>,
 >(
   predObj: T,
 ): Predicate<ObjectOf<T>> {
@@ -831,7 +771,7 @@ function isObjectOfLoose<
 }
 
 function isObjectOfStrict<
-  T extends RecordOf<Predicate<unknown>>,
+  T extends Record<PropertyKey, Predicate<unknown>>,
 >(
   predObj: T,
 ): Predicate<ObjectOf<T>> {
@@ -1081,7 +1021,7 @@ export function isLiteralOneOf<T extends readonly Primitive[]>(
   );
 }
 
-export type OneOf<T> = T extends readonly [Predicate<infer U>, ...infer R]
+type OneOf<T> = T extends readonly [Predicate<infer U>, ...infer R]
   ? U | OneOf<R>
   : never;
 
@@ -1131,7 +1071,7 @@ export function isOneOf<
   );
 }
 
-export type AllOf<T> = UnionToIntersection<OneOf<T>>;
+type AllOf<T> = UnionToIntersection<OneOf<T>>;
 
 /**
  * Return a type predicate function that returns `true` if the type of `x` is `AllOf<T>`.
@@ -1185,7 +1125,7 @@ export function isAllOf<
   );
 }
 
-export type OptionalPredicate<T> = Predicate<T | undefined> & {
+type OptionalPredicate<T> = Predicate<T | undefined> & {
   optional: true;
 };
 

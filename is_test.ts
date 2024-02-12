@@ -40,13 +40,8 @@ import is, {
   isUndefined,
   isUniformTupleOf,
   isUnknown,
-  ObjectOf,
   Predicate,
   PredicateType,
-  ReadonlyTupleOf,
-  ReadonlyUniformTupleOf,
-  TupleOf,
-  UniformTupleOf,
 } from "./is.ts";
 
 // It seems 'IsExact' in deno_std is false positive so use `Equal` in type-challenges
@@ -250,24 +245,6 @@ Deno.test("isSetOf<T>", async (t) => {
   await testWithExamples(t, isSetOf((_: unknown): _ is unknown => true), {
     excludeExamples: ["set"],
   });
-});
-
-Deno.test("TupleOf<T>", () => {
-  assertType<
-    Equal<
-      TupleOf<readonly [typeof is.String, typeof is.Number]>,
-      [string, number]
-    >
-  >(true);
-});
-
-Deno.test("ReadonlyTupleOf<T>", () => {
-  assertType<
-    Equal<
-      ReadonlyTupleOf<readonly [typeof is.String, typeof is.Number]>,
-      readonly [string, number]
-    >
-  >(true);
 });
 
 Deno.test("isTupleOf<T>", async (t) => {
@@ -482,27 +459,6 @@ Deno.test("isReadonlyTupleOf<T, E>", async (t) => {
   );
 });
 
-Deno.test("UniformTupleOf<N, T>", () => {
-  assertType<
-    Equal<UniformTupleOf<number, 5>, [number, number, number, number, number]>
-  >(true);
-});
-
-Deno.test("ReadonlyUniformTupleOf<N, T>", () => {
-  assertType<
-    Equal<
-      ReadonlyUniformTupleOf<number, 5>,
-      readonly [
-        number,
-        number,
-        number,
-        number,
-        number,
-      ]
-    >
-  >(true);
-});
-
 Deno.test("isUniformTupleOf<T>", async (t) => {
   await t.step("returns properly named function", async (t) => {
     await assertSnapshot(t, isUniformTupleOf(3).name);
@@ -713,15 +669,6 @@ Deno.test("isMapOf<T, K>", async (t) => {
   await testWithExamples(t, isMapOf((_: unknown): _ is unknown => true), {
     excludeExamples: ["map"],
   });
-});
-
-Deno.test("ObjectOf<T>", () => {
-  assertType<
-    Equal<
-      ObjectOf<{ a: typeof is.Number; b: typeof is.String }>,
-      { a: number; b: string }
-    >
-  >(true);
 });
 
 Deno.test("isObjectOf<T>", async (t) => {
