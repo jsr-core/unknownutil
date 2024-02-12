@@ -12,14 +12,14 @@ import {
 } from "../metadata.ts";
 
 /**
- * Return a type predicate function that returns `true` if the type of `x` is `OneOf<T>`.
+ * Return a type predicate function that returns `true` if the type of `x` is `UnionOf<T>`.
  *
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
  * ```ts
  * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
  *
- * const isMyType = is.OneOf([is.Number, is.String, is.Boolean]);
+ * const isMyType = is.UnionOf([is.Number, is.String, is.Boolean]);
  * const a: unknown = 0;
  * if (isMyType(a)) {
  *   // a is narrowed to number | string | boolean
@@ -34,7 +34,7 @@ import {
  * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
  *
  * const preds = [is.Number, is.String, is.Boolean] as const;
- * const isMyType = is.OneOf(preds);
+ * const isMyType = is.UnionOf(preds);
  * const a: unknown = 0;
  * if (isMyType(a)) {
  *   // a is narrowed to number | string | boolean
@@ -42,35 +42,48 @@ import {
  * }
  * ```
  */
+export function isUnionOf<
+  T extends readonly [Predicate<unknown>, ...Predicate<unknown>[]],
+>(
+  preds: T,
+): Predicate<UnionOf<T>> & WithMetadata<IsUnionOfMetadata> {
+  return setPredicateMetadata(
+    (x: unknown): x is UnionOf<T> => preds.some((pred) => pred(x)),
+    { name: "isUnionOf", args: [preds] },
+  );
+}
+
+type UnionOf<T> = T extends readonly [Predicate<infer U>, ...infer R]
+  ? U | UnionOf<R>
+  : never;
+
+type IsUnionOfMetadata = {
+  name: "isUnionOf";
+  args: Parameters<typeof isUnionOf>;
+};
+
+/**
+ * Return a type predicate function that returns `true` if the type of `x` is `UnionOf<T>`.
+ *
+ * @deprecated Use `isUnionOf` instead.
+ */
 export function isOneOf<
   T extends readonly [Predicate<unknown>, ...Predicate<unknown>[]],
 >(
   preds: T,
-): Predicate<OneOf<T>> & WithMetadata<IsOneOfMetadata> {
-  return setPredicateMetadata(
-    (x: unknown): x is OneOf<T> => preds.some((pred) => pred(x)),
-    { name: "isOneOf", args: [preds] },
-  );
+): Predicate<UnionOf<T>> & WithMetadata<IsUnionOfMetadata> {
+  return isUnionOf(preds);
 }
 
-type OneOf<T> = T extends readonly [Predicate<infer U>, ...infer R]
-  ? U | OneOf<R>
-  : never;
-
-type IsOneOfMetadata = {
-  name: "isOneOf";
-  args: Parameters<typeof isOneOf>;
-};
-
 /**
- * Return a type predicate function that returns `true` if the type of `x` is `AllOf<T>`.
+ * Return a type predicate function that returns `true` if the type of `x` is `IntersectionOf<T>`.
  *
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
  * ```ts
  * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
  *
- * const isMyType = is.AllOf([
+ * const isMyType = is.IntersectionOf([
  *   is.ObjectOf({ a: is.Number }),
  *   is.ObjectOf({ b: is.String }),
  * ]);
@@ -91,13 +104,37 @@ type IsOneOfMetadata = {
  *   is.ObjectOf({ a: is.Number }),
  *   is.ObjectOf({ b: is.String }),
  * ] as const
- * const isMyType = is.AllOf(preds);
+ * const isMyType = is.IntersectionOf(preds);
  * const a: unknown = { a: 0, b: "a" };
  * if (isMyType(a)) {
  *   // a is narrowed to { a: number } & { b: string }
  *   const _: { a: number } & { b: string } = a;
  * }
  * ```
+ */
+export function isIntersectionOf<
+  T extends readonly [
+    Predicate<unknown> & WithMetadata<IsObjectOfMetadata>,
+    ...(Predicate<unknown> & WithMetadata<IsObjectOfMetadata>)[],
+  ],
+>(
+  preds: T,
+): Predicate<IntersectionOf<T>> & WithMetadata<IsObjectOfMetadata> {
+  const predObj = {};
+  preds.forEach((pred) => {
+    Object.assign(predObj, getPredicateMetadata(pred).args[0]);
+  });
+  return isObjectOf(predObj) as
+    & Predicate<IntersectionOf<T>>
+    & WithMetadata<IsObjectOfMetadata>;
+}
+
+type IntersectionOf<T> = UnionToIntersection<UnionOf<T>>;
+
+/**
+ * Return a type predicate function that returns `true` if the type of `x` is `IntersectionOf<T>`.
+ *
+ * @deprecated Use `isIntersectionOf` instead.
  */
 export function isAllOf<
   T extends readonly [
@@ -106,17 +143,9 @@ export function isAllOf<
   ],
 >(
   preds: T,
-): Predicate<AllOf<T>> & WithMetadata<IsObjectOfMetadata> {
-  const predObj = {};
-  preds.forEach((pred) => {
-    Object.assign(predObj, getPredicateMetadata(pred).args[0]);
-  });
-  return isObjectOf(predObj) as
-    & Predicate<AllOf<T>>
-    & WithMetadata<IsObjectOfMetadata>;
+): Predicate<IntersectionOf<T>> & WithMetadata<IsObjectOfMetadata> {
+  return isIntersectionOf(preds);
 }
-
-type AllOf<T> = UnionToIntersection<OneOf<T>>;
 
 /**
  * Return a type predicate function that returns `true` if the type of `x` is `Partial<ObjectOf<T>>`.
@@ -237,8 +266,10 @@ export function isOmitOf<
 
 export default {
   AllOf: isAllOf,
+  IntersectionOf: isIntersectionOf,
   OmitOf: isOmitOf,
   OneOf: isOneOf,
   PartialOf: isPartialOf,
   PickOf: isPickOf,
+  UnionOf: isUnionOf,
 };

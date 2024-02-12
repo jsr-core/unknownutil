@@ -39,7 +39,7 @@ import is, {
   isTupleOf,
   isUniformTupleOf,
 } from "./factory.ts";
-import { isOneOf } from "./utility.ts";
+import { isUnionOf } from "./utility.ts";
 
 const examples = {
   string: ["", "Hello world"],
@@ -792,7 +792,7 @@ Deno.test("isStrictOf<T>", async (t) => {
     await t.step("returns proper type predicate", () => {
       const predObj = {
         a: isNumber,
-        b: isOneOf([isString, isUndefined]),
+        b: isUnionOf([isString, isUndefined]),
         c: isOptionalOf(isBoolean),
       };
       const a: unknown = { a: 0, b: "a" };
@@ -805,7 +805,7 @@ Deno.test("isStrictOf<T>", async (t) => {
     await t.step("returns true on T object", () => {
       const predObj = {
         a: isNumber,
-        b: isOneOf([isString, isUndefined]),
+        b: isUnionOf([isString, isUndefined]),
         c: isOptionalOf(isBoolean),
       };
       assertEquals(
@@ -826,7 +826,7 @@ Deno.test("isStrictOf<T>", async (t) => {
     await t.step("returns false on non T object", () => {
       const predObj = {
         a: isNumber,
-        b: isOneOf([isString, isUndefined]),
+        b: isUnionOf([isString, isUndefined]),
         c: isOptionalOf(isBoolean),
       };
       assertEquals(

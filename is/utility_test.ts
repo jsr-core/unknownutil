@@ -11,11 +11,11 @@ import { type Predicate, type PredicateType } from "./type.ts";
 import { isBoolean, isNumber, isString } from "./core.ts";
 import { isObjectOf } from "./factory.ts";
 import is, {
-  isAllOf,
+  isIntersectionOf,
   isOmitOf,
-  isOneOf,
   isPartialOf,
   isPickOf,
+  isUnionOf,
 } from "./utility.ts";
 
 const examples = {
@@ -66,14 +66,14 @@ async function testWithExamples<T>(
   }
 }
 
-Deno.test("isOneOf<T>", async (t) => {
+Deno.test("isUnionOf<T>", async (t) => {
   await t.step("returns properly named function", async (t) => {
-    await assertSnapshot(t, isOneOf([isNumber, isString, isBoolean]).name);
+    await assertSnapshot(t, isUnionOf([isNumber, isString, isBoolean]).name);
   });
   await t.step("returns proper type predicate", () => {
     const preds = [isNumber, isString, isBoolean] as const;
     const a: unknown = [0, "a", true];
-    if (isOneOf(preds)(a)) {
+    if (isUnionOf(preds)(a)) {
       assertType<Equal<typeof a, number | string | boolean>>(true);
     }
   });
@@ -84,29 +84,29 @@ Deno.test("isOneOf<T>", async (t) => {
     type Bar = PredicateType<typeof isBar>;
     const preds = [isFoo, isBar] as const;
     const a: unknown = [0, "a", true];
-    if (isOneOf(preds)(a)) {
+    if (isUnionOf(preds)(a)) {
       assertType<Equal<typeof a, Foo | Bar>>(true);
     }
   });
   await t.step("returns true on one of T", () => {
     const preds = [isNumber, isString, isBoolean] as const;
-    assertEquals(isOneOf(preds)(0), true);
-    assertEquals(isOneOf(preds)("a"), true);
-    assertEquals(isOneOf(preds)(true), true);
+    assertEquals(isUnionOf(preds)(0), true);
+    assertEquals(isUnionOf(preds)("a"), true);
+    assertEquals(isUnionOf(preds)(true), true);
   });
   await t.step("returns false on non of T", async (t) => {
     const preds = [isNumber, isString, isBoolean] as const;
-    await testWithExamples(t, isOneOf(preds), {
+    await testWithExamples(t, isUnionOf(preds), {
       excludeExamples: ["number", "string", "boolean"],
     });
   });
 });
 
-Deno.test("isAllOf<T>", async (t) => {
+Deno.test("isIntersectionOf<T>", async (t) => {
   await t.step("returns properly named function", async (t) => {
     await assertSnapshot(
       t,
-      isAllOf([
+      isIntersectionOf([
         isObjectOf({ a: isNumber }),
         isObjectOf({ b: isString }),
       ]).name,
@@ -118,7 +118,7 @@ Deno.test("isAllOf<T>", async (t) => {
       isObjectOf({ b: isString }),
     ] as const;
     const a: unknown = { a: 0, b: "a" };
-    if (isAllOf(preds)(a)) {
+    if (isIntersectionOf(preds)(a)) {
       assertType<Equal<typeof a, { a: number } & { b: string }>>(true);
     }
   });
@@ -127,7 +127,7 @@ Deno.test("isAllOf<T>", async (t) => {
       isObjectOf({ a: isNumber }),
       isObjectOf({ b: isString }),
     ] as const;
-    assertEquals(isAllOf(preds)({ a: 0, b: "a" }), true);
+    assertEquals(isIntersectionOf(preds)({ a: 0, b: "a" }), true);
   });
   await t.step("returns false on non of T", async (t) => {
     const preds = [
@@ -135,16 +135,16 @@ Deno.test("isAllOf<T>", async (t) => {
       isObjectOf({ b: isString }),
     ] as const;
     assertEquals(
-      isAllOf(preds)({ a: 0, b: 0 }),
+      isIntersectionOf(preds)({ a: 0, b: 0 }),
       false,
       "Some properties has wrong type",
     );
     assertEquals(
-      isAllOf(preds)({ a: 0 }),
+      isIntersectionOf(preds)({ a: 0 }),
       false,
       "Some properties does not exists",
     );
-    await testWithExamples(t, isAllOf(preds), {
+    await testWithExamples(t, isIntersectionOf(preds), {
       excludeExamples: ["record"],
     });
   });
