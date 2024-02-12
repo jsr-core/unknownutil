@@ -533,9 +533,16 @@ export function isObjectOf<
     // deno-lint-ignore no-explicit-any
     return isStrictOf(isObjectOf(predObj)) as any;
   }
+  const requiredKeys = Object.entries(predObj)
+    .filter(([_, v]) => !isOptional(v))
+    .map(([k]) => k);
   return setPredicateMetadata(
     (x: unknown): x is ObjectOf<T> => {
       if (!isRecord(x)) return false;
+      // Check required keys
+      const s = new Set(Object.keys(x));
+      if (requiredKeys.some((k) => !s.has(k))) return false;
+      // Check each values
       for (const k in predObj) {
         if (!predObj[k](x[k])) return false;
       }
@@ -543,6 +550,10 @@ export function isObjectOf<
     },
     { name: "isObjectOf", args: [predObj] },
   );
+}
+
+function isOptional(x: unknown): x is Optional {
+  return (x as Partial<Optional>).optional === true;
 }
 
 type Optional = {
