@@ -1,49 +1,10 @@
 export const snapshot = {};
 
-snapshot[`isOneOf<T> > returns properly named function 1`] = `
-"isOneOf([
-  isNumber,
-  isString,
-  isBoolean
-])"
-`;
-
-snapshot[`isOmitOf<T, K> > returns properly named function 1`] = `
-"isObjectOf({
-  a: isNumber,
-  c: isBoolean
-})"
-`;
-
-snapshot[`isOmitOf<T, K> > returns properly named function 2`] = `"isObjectOf({a: isNumber})"`;
-
-snapshot[`isOptionalOf<T> > returns properly named function 1`] = `"isOptionalOf(isNumber)"`;
-
-snapshot[`isOptionalOf<T> > returns properly named function 2`] = `"isOptionalOf(isNumber)"`;
-
 snapshot[`isAllOf<T> > returns properly named function 1`] = `
 "isAllOf([
   isObjectOf({a: isNumber}),
   isObjectOf({b: isString})
 ])"
-`;
-
-snapshot[`isStrictOf<T> > returns properly named function 1`] = `
-"isStrictOf(isObjectOf({
-  a: isNumber,
-  b: isString,
-  c: isBoolean
-}))"
-`;
-
-snapshot[`isStrictOf<T> > returns properly named function 2`] = `"isStrictOf(isObjectOf({a: a}))"`;
-
-snapshot[`isStrictOf<T> > returns properly named function 3`] = `
-"isStrictOf(isObjectOf({
-  a: isStrictOf(isObjectOf({
-    b: isStrictOf(isObjectOf({c: isBoolean}))
-  }))
-}))"
 `;
 
 snapshot[`isPartialOf<T> > returns properly named function 1`] = `
@@ -61,6 +22,23 @@ snapshot[`isPartialOf<T> > returns properly named function 2`] = `
   c: isOptionalOf(isBoolean)
 })"
 `;
+
+snapshot[`isOneOf<T> > returns properly named function 1`] = `
+"isOneOf([
+  isNumber,
+  isString,
+  isBoolean
+])"
+`;
+
+snapshot[`isOmitOf<T, K> > returns properly named function 1`] = `
+"isObjectOf({
+  a: isNumber,
+  c: isBoolean
+})"
+`;
+
+snapshot[`isOmitOf<T, K> > returns properly named function 2`] = `"isObjectOf({a: isNumber})"`;
 
 snapshot[`isPickOf<T, K> > returns properly named function 1`] = `
 "isObjectOf({

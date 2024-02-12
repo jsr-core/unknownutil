@@ -1,10 +1,9 @@
 import type { FlatType, UnionToIntersection } from "../_typeutil.ts";
 import type { Predicate } from "./type.ts";
-import { isUndefined } from "./core.ts";
 import {
   isObjectOf,
   type IsObjectOfMetadata,
-  type Optional,
+  isOptionalOf,
 } from "./factory.ts";
 import {
   getPredicateMetadata,
@@ -116,94 +115,6 @@ type AllOf<T> = UnionToIntersection<OneOf<T>>;
 type IsAllOfMetadata = {
   name: "isAllOf";
   args: Parameters<typeof isAllOf>;
-};
-
-/**
- * Return a type predicate function that returns `true` if the type of `x` is `T` or `undefined`.
- *
- * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
- *
- * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
- *
- * const isMyType = is.OptionalOf(is.String);
- * const a: unknown = "a";
- * if (isMyType(a)) {
- *   // a is narrowed to string | undefined
- *   const _: string | undefined = a;
- * }
- * ```
- */
-export function isOptionalOf<T>(
-  pred: Predicate<T>,
-): Predicate<T | undefined> & Optional & WithMetadata<IsOptionalOfMetadata> {
-  if ((pred as Partial<Optional>).optional) {
-    return pred as
-      & Predicate<T | undefined>
-      & Optional
-      & WithMetadata<IsOptionalOfMetadata>;
-  }
-  return Object.defineProperties(
-    setPredicateMetadata(
-      (x: unknown): x is Predicate<T | undefined> => isUndefined(x) || pred(x),
-      { name: "isOptionalOf", args: [pred] },
-    ),
-    { optional: { value: true as const } },
-  ) as Predicate<T | undefined> & Optional & WithMetadata<IsOptionalOfMetadata>;
-}
-
-type IsOptionalOfMetadata = {
-  name: "isOptionalOf";
-  args: Parameters<typeof isOptionalOf>;
-};
-
-/**
- * Return a type predicate function that returns `true` if the type of `x` is strictly follow the `ObjectOf<T>`.
- *
- * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
- *
- * If `is.OptionalOf()` is specified in the predicate function, the property becomes optional.
- *
- * The number of keys of `x` must be equal to the number of non optional keys of `predObj`. This is equivalent to
- * the deprecated `options.strict` in `isObjectOf()`.
- *
- * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
- *
- * const isMyType = is.StrictOf(is.ObjectOf({
- *   a: is.Number,
- *   b: is.String,
- *   c: is.OptionalOf(is.Boolean),
- * }));
- * const a: unknown = { a: 0, b: "a", other: "other" };
- * if (isMyType(a)) {
- *   // This block will not be executed because of "other" key in `a`.
- * }
- * ```
- */
-export function isStrictOf<T extends Record<PropertyKey, unknown>>(
-  pred:
-    & Predicate<T>
-    & WithMetadata<IsObjectOfMetadata>,
-):
-  & Predicate<T>
-  & WithMetadata<IsStrictOfMetadata> {
-  const { args } = getPredicateMetadata(pred);
-  const s = new Set(Object.keys(args[0]));
-  return setPredicateMetadata(
-    (x: unknown): x is T => {
-      if (!pred(x)) return false;
-      // deno-lint-ignore no-explicit-any
-      const ks = Object.keys(x as any);
-      return ks.length <= s.size && ks.every((k) => s.has(k));
-    },
-    { name: "isStrictOf", args: [pred] },
-  );
-}
-
-type IsStrictOfMetadata = {
-  name: "isStrictOf";
-  args: Parameters<typeof isStrictOf>;
 };
 
 /**
@@ -327,8 +238,6 @@ export default {
   AllOf: isAllOf,
   OmitOf: isOmitOf,
   OneOf: isOneOf,
-  OptionalOf: isOptionalOf,
   PartialOf: isPartialOf,
   PickOf: isPickOf,
-  StrictOf: isStrictOf,
 };
