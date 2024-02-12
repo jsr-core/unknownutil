@@ -680,20 +680,22 @@ export function isMapOf<T, K>(
   );
 }
 
-type OptionalPredicateKeys<T extends Record<PropertyKey, unknown>> = {
-  [K in keyof T]: T[K] extends OptionalPredicate<unknown> ? K : never;
-}[keyof T];
-
 type ObjectOf<T extends Record<PropertyKey, Predicate<unknown>>> = FlatType<
+  // Non optional
   & {
-    [K in Exclude<keyof T, OptionalPredicateKeys<T>>]: T[K] extends
+    [K in keyof T as T[K] extends Optional ? never : K]: T[K] extends
       Predicate<infer U> ? U : never;
   }
+  // Optional
   & {
-    [K in OptionalPredicateKeys<T>]?: T[K] extends Predicate<infer U> ? U
-      : never;
+    [K in keyof T as T[K] extends Optional ? K : never]?: T[K] extends
+      Predicate<infer U> ? U : never;
   }
 >;
+
+type Optional = {
+  optional: true;
+};
 
 /**
  * Return a type predicate function that returns `true` if the type of `x` is `ObjectOf<T>`.
@@ -1122,10 +1124,6 @@ export function isAllOf<
   );
 }
 
-type OptionalPredicate<T> = Predicate<T | undefined> & {
-  optional: true;
-};
-
 /**
  * Return a type predicate function that returns `true` if the type of `x` is `T` or `undefined`.
  *
@@ -1144,7 +1142,7 @@ type OptionalPredicate<T> = Predicate<T | undefined> & {
  */
 export function isOptionalOf<T>(
   pred: Predicate<T>,
-): OptionalPredicate<T> {
+): Predicate<T | undefined> & Optional {
   return Object.defineProperties(
     (x: unknown): x is Predicate<T | undefined> => isUndefined(x) || pred(x),
     {
@@ -1155,7 +1153,7 @@ export function isOptionalOf<T>(
         get: () => `isOptionalOf(${inspect(pred)})`,
       },
     },
-  ) as OptionalPredicate<T>;
+  ) as Predicate<T | undefined> & Optional;
 }
 
 export default {
