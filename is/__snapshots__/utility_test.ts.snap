@@ -1,11 +1,8 @@
 export const snapshot = {};
 
-snapshot[`isAllOf<T> > returns properly named function 1`] = `
-"isAllOf([
-  isObjectOf({a: isNumber}),
-  isObjectOf({b: isString})
-])"
-`;
+snapshot[`isOptionalOf<T> > returns properly named function 1`] = `"isOptionalOf(isNumber)"`;
+
+snapshot[`isOptionalOf<T> > returns properly named function 2`] = `"isOptionalOf(isNumber)"`;
 
 snapshot[`isStrictOf<T> > returns properly named function 1`] = `
 "isStrictOf(isObjectOf({
@@ -25,12 +22,17 @@ snapshot[`isStrictOf<T> > returns properly named function 3`] = `
 }))"
 `;
 
-snapshot[`isOptionalOf<T> > returns properly named function 1`] = `"isOptionalOf(isNumber)"`;
-
 snapshot[`isOneOf<T> > returns properly named function 1`] = `
 "isOneOf([
   isNumber,
   isString,
   isBoolean
+])"
+`;
+
+snapshot[`isAllOf<T> > returns properly named function 1`] = `
+"isAllOf([
+  isObjectOf({a: isNumber}),
+  isObjectOf({b: isString})
 ])"
 `;

@@ -133,6 +133,12 @@ type IsAllOfMetadata = {
 export function isOptionalOf<T>(
   pred: Predicate<T>,
 ): Predicate<T | undefined> & Optional & WithMetadata<IsOptionalOfMetadata> {
+  if ((pred as Partial<Optional>).optional) {
+    return pred as
+      & Predicate<T | undefined>
+      & Optional
+      & WithMetadata<IsOptionalOfMetadata>;
+  }
   return Object.defineProperties(
     setPredicateMetadata(
       (x: unknown): x is Predicate<T | undefined> => isUndefined(x) || pred(x),

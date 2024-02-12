@@ -161,6 +161,8 @@ Deno.test("isAllOf<T>", async (t) => {
 Deno.test("isOptionalOf<T>", async (t) => {
   await t.step("returns properly named function", async (t) => {
     await assertSnapshot(t, isOptionalOf(isNumber).name);
+    // Nesting does nothing
+    await assertSnapshot(t, isOptionalOf(isOptionalOf(isNumber)).name);
   });
   await t.step("returns proper type predicate", () => {
     const a: unknown = undefined;
