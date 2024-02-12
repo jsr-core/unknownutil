@@ -1,6 +1,6 @@
 import type { FlatType, UnionToIntersection } from "../_typeutil.ts";
 import type { Predicate } from "./type.ts";
-import { isOptionalOf } from "./annotation.ts";
+import { isOptionalOf, isUnwrapOptionalOf } from "./annotation.ts";
 import { isObjectOf } from "./factory.ts";
 import {
   type GetMetadata,
@@ -148,6 +148,42 @@ export function isAllOf<
 }
 
 /**
+ * Return a type predicate function that returns `true` if the type of `x` is `Required<ObjectOf<T>>`.
+ *
+ * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
+ *
+ * ```typescript
+ * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ *
+ * const isMyType = is.RequiredOf(is.ObjectOf({
+ *   a: is.Number,
+ *   b: is.UnionOf([is.String, is.Undefined]),
+ *   c: is.OptionalOf(is.Boolean),
+ * }));
+ * const a: unknown = { a: 0, b: "b", c: true, other: "other" };
+ * if (isMyType(a)) {
+ *   // 'a' is narrowed to { a: number; b: string | undefined; c: boolean }
+ *   const _: { a: number; b: string | undefined; c: boolean } = a;
+ * }
+ * ```
+ */
+export function isRequiredOf<
+  T extends Record<PropertyKey, unknown>,
+>(
+  pred: Predicate<T> & WithMetadata<IsObjectOfMetadata>,
+):
+  & Predicate<FlatType<Required<T>>>
+  & WithMetadata<IsObjectOfMetadata> {
+  const { args } = getPredicateFactoryMetadata(pred);
+  const predObj = Object.fromEntries(
+    Object.entries(args[0]).map(([k, v]) => [k, isUnwrapOptionalOf(v)]),
+  );
+  return isObjectOf(predObj) as
+    & Predicate<FlatType<Required<T>>>
+    & WithMetadata<IsObjectOfMetadata>;
+}
+
+/**
  * Return a type predicate function that returns `true` if the type of `x` is `Partial<ObjectOf<T>>`.
  *
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
@@ -157,7 +193,7 @@ export function isAllOf<
  *
  * const isMyType = is.PartialOf(is.ObjectOf({
  *   a: is.Number,
- *   b: is.String,
+ *   b: is.UnionOf([is.String, is.Undefined]),
  *   c: is.OptionalOf(is.Boolean),
  * }));
  * const a: unknown = { a: undefined, other: "other" };
@@ -271,5 +307,6 @@ export default {
   OneOf: isOneOf,
   PartialOf: isPartialOf,
   PickOf: isPickOf,
+  RequiredOf: isRequiredOf,
   UnionOf: isUnionOf,
 };

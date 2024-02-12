@@ -8,13 +8,15 @@ import {
 import { assertType } from "https://deno.land/std@0.211.0/testing/types.ts";
 import { type Equal, stringify } from "./_testutil.ts";
 import { type Predicate, type PredicateType } from "./type.ts";
-import { isBoolean, isNumber, isString } from "./core.ts";
+import { isOptionalOf } from "./annotation.ts";
+import { isBoolean, isNumber, isString, isUndefined } from "./core.ts";
 import { isObjectOf } from "./factory.ts";
 import is, {
   isIntersectionOf,
   isOmitOf,
   isPartialOf,
   isPickOf,
+  isRequiredOf,
   isUnionOf,
 } from "./utility.ts";
 
@@ -150,11 +152,52 @@ Deno.test("isIntersectionOf<T>", async (t) => {
   });
 });
 
+Deno.test("isRequiredOf<T>", async (t) => {
+  const pred = isObjectOf({
+    a: isNumber,
+    b: isUnionOf([isString, isUndefined]),
+    c: isOptionalOf(isBoolean),
+  });
+  await t.step("returns properly named function", async (t) => {
+    await assertSnapshot(t, isRequiredOf(pred).name);
+    // Nestable (no effect)
+    await assertSnapshot(t, isRequiredOf(isRequiredOf(pred)).name);
+  });
+  await t.step("returns proper type predicate", () => {
+    const a: unknown = { a: 0, b: "a", c: true };
+    if (isRequiredOf(pred)(a)) {
+      assertType<
+        Equal<typeof a, { a: number; b: string | undefined; c: boolean }>
+      >(true);
+    }
+  });
+  await t.step("returns true on Required<T> object", () => {
+    assertEquals(
+      isRequiredOf(pred)({ a: undefined, b: undefined, c: undefined }),
+      false,
+      "Object does not have required properties",
+    );
+    assertEquals(
+      isRequiredOf(pred)({}),
+      false,
+      "Object does not have required properties",
+    );
+  });
+  await t.step("returns false on non Required<T> object", () => {
+    assertEquals(isRequiredOf(pred)("a"), false, "Value is not an object");
+    assertEquals(
+      isRequiredOf(pred)({ a: 0, b: "a", c: "" }),
+      false,
+      "Object have a different type property",
+    );
+  });
+});
+
 Deno.test("isPartialOf<T>", async (t) => {
   const pred = isObjectOf({
     a: isNumber,
-    b: isString,
-    c: isBoolean,
+    b: isUnionOf([isString, isUndefined]),
+    c: isOptionalOf(isBoolean),
   });
   await t.step("returns properly named function", async (t) => {
     await assertSnapshot(t, isPartialOf(pred).name);

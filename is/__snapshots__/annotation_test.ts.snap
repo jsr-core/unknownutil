@@ -10,10 +10,10 @@ snapshot[`isReadonlyOf<T> > returns properly named function 1`] = `"isReadonlyOf
 
 snapshot[`isReadonlyOf<T> > returns properly named function 2`] = `"isReadonlyOf(isReadonlyOf(isNumber))"`;
 
-snapshot[`isOptionalOf<T> > returns properly named function 1`] = `"isOptionalOf(isNumber)"`;
-
-snapshot[`isOptionalOf<T> > returns properly named function 2`] = `"isOptionalOf(isNumber)"`;
-
 snapshot[`isUnwrapReadonlyOf<T> > returns properly named function 1`] = `"isNumber"`;
 
 snapshot[`isUnwrapReadonlyOf<T> > returns properly named function 2`] = `"isReadonlyOf(isNumber)"`;
+
+snapshot[`isOptionalOf<T> > returns properly named function 1`] = `"isOptionalOf(isNumber)"`;
+
+snapshot[`isOptionalOf<T> > returns properly named function 2`] = `"isOptionalOf(isNumber)"`;
