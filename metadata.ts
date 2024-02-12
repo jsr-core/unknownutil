@@ -11,6 +11,20 @@ export type WithMetadata<T> = {
 };
 
 /**
+ * Get typeof the metadata
+ */
+export type GetMetadata<T> = T extends WithMetadata<infer M> ? M : never;
+
+/**
+ * Get metadata from the given value
+ */
+export function getMetadata<T>(v: unknown): T | undefined {
+  if (v == null) return undefined;
+  // deno-lint-ignore no-explicit-any
+  return (v as any)[metadataKey];
+}
+
+/**
  * Metadata of a predicate factory function.
  */
 export type PredicateFactoryMetadata = {
@@ -49,12 +63,7 @@ export function setPredicateFactoryMetadata<
  * Get metadata from a predicate factory function.
  */
 export function getPredicateFactoryMetadata<M extends PredicateFactoryMetadata>(
-  object: WithMetadata<M>,
+  v: WithMetadata<M>,
 ): M {
-  return object[metadataKey];
+  return getMetadata(v) as M;
 }
-
-/**
- * Get metadata type function
- */
-export type GetMetadata<T> = T extends WithMetadata<infer M> ? M : never;

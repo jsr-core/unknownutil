@@ -1,6 +1,7 @@
 import type { FlatType, UnionToIntersection } from "../_typeutil.ts";
 import type { Predicate } from "./type.ts";
-import { isObjectOf, isOptionalOf } from "./factory.ts";
+import { isOptionalOf } from "./annotation.ts";
+import { isObjectOf } from "./factory.ts";
 import {
   type GetMetadata,
   getPredicateFactoryMetadata,

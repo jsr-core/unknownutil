@@ -8,21 +8,8 @@ import {
 import { assertType } from "https://deno.land/std@0.211.0/testing/types.ts";
 import { type Equal, stringify } from "./_testutil.ts";
 import { type Predicate } from "./type.ts";
-import {
-  isArray,
-  isAsyncFunction,
-  isBigInt,
-  isBoolean,
-  isFunction,
-  isNull,
-  isNumber,
-  isRecord,
-  isSet,
-  isString,
-  isSymbol,
-  isSyncFunction,
-  isUndefined,
-} from "./core.ts";
+import { isOptionalOf } from "./annotation.ts";
+import { isArray, isBoolean, isNumber, isString, isUndefined } from "./core.ts";
 import is, {
   isArrayOf,
   isInstanceOf,
@@ -30,7 +17,6 @@ import is, {
   isLiteralOneOf,
   isMapOf,
   isObjectOf,
-  isOptionalOf,
   isReadonlyTupleOf,
   isReadonlyUniformTupleOf,
   isRecordOf,
@@ -631,85 +617,6 @@ Deno.test("isObjectOf<T>", async (t) => {
     isObjectOf({ a: (_: unknown): _ is unknown => false }),
     { excludeExamples: ["record"] },
   );
-});
-
-Deno.test("isOptionalOf<T>", async (t) => {
-  await t.step("returns properly named function", async (t) => {
-    await assertSnapshot(t, isOptionalOf(isNumber).name);
-    // Nesting does nothing
-    await assertSnapshot(t, isOptionalOf(isOptionalOf(isNumber)).name);
-  });
-  await t.step("returns proper type predicate", () => {
-    const a: unknown = undefined;
-    if (isOptionalOf(isNumber)(a)) {
-      assertType<Equal<typeof a, number | undefined>>(true);
-    }
-  });
-  await t.step("with isString", async (t) => {
-    await testWithExamples(t, isOptionalOf(isString), {
-      validExamples: ["string", "undefined"],
-    });
-  });
-  await t.step("with isNumber", async (t) => {
-    await testWithExamples(t, isOptionalOf(isNumber), {
-      validExamples: ["number", "undefined"],
-    });
-  });
-  await t.step("with isBigInt", async (t) => {
-    await testWithExamples(t, isOptionalOf(isBigInt), {
-      validExamples: ["bigint", "undefined"],
-    });
-  });
-  await t.step("with isBoolean", async (t) => {
-    await testWithExamples(t, isOptionalOf(isBoolean), {
-      validExamples: ["boolean", "undefined"],
-    });
-  });
-  await t.step("with isArray", async (t) => {
-    await testWithExamples(t, isOptionalOf(isArray), {
-      validExamples: ["array", "undefined"],
-    });
-  });
-  await t.step("with isSet", async (t) => {
-    await testWithExamples(t, isOptionalOf(isSet), {
-      validExamples: ["set", "undefined"],
-    });
-  });
-  await t.step("with isRecord", async (t) => {
-    await testWithExamples(t, isOptionalOf(isRecord), {
-      validExamples: ["record", "undefined"],
-    });
-  });
-  await t.step("with isFunction", async (t) => {
-    await testWithExamples(t, isOptionalOf(isFunction), {
-      validExamples: ["syncFunction", "asyncFunction", "undefined"],
-    });
-  });
-  await t.step("with isSyncFunction", async (t) => {
-    await testWithExamples(t, isOptionalOf(isSyncFunction), {
-      validExamples: ["syncFunction", "undefined"],
-    });
-  });
-  await t.step("with isAsyncFunction", async (t) => {
-    await testWithExamples(t, isOptionalOf(isAsyncFunction), {
-      validExamples: ["asyncFunction", "undefined"],
-    });
-  });
-  await t.step("with isNull", async (t) => {
-    await testWithExamples(t, isOptionalOf(isNull), {
-      validExamples: ["null", "undefined"],
-    });
-  });
-  await t.step("with isUndefined", async (t) => {
-    await testWithExamples(t, isOptionalOf(isUndefined), {
-      validExamples: ["undefined"],
-    });
-  });
-  await t.step("with isSymbol", async (t) => {
-    await testWithExamples(t, isOptionalOf(isSymbol), {
-      validExamples: ["symbol", "undefined"],
-    });
-  });
 });
 
 Deno.test("isStrictOf<T>", async (t) => {

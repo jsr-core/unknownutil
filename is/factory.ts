@@ -1,15 +1,16 @@
 import type { FlatType } from "../_typeutil.ts";
 import type { Predicate, PredicateType } from "./type.ts";
+import { isOptional, isOptionalOf } from "./annotation.ts";
 import {
   isAny,
   isArray,
   isMap,
   isRecord,
   isSet,
-  isUndefined,
   type Primitive,
 } from "./core.ts";
 import {
+  type GetMetadata,
   getPredicateFactoryMetadata,
   setPredicateFactoryMetadata,
   type WithMetadata,
@@ -534,7 +535,7 @@ export function isObjectOf<
     return isStrictOf(isObjectOf(predObj)) as any;
   }
   const requiredKeys = Object.entries(predObj)
-    .filter(([_, v]) => !isOptional(v))
+    .filter(([_, v]) => !isWithOptional(v))
     .map(([k]) => k);
   return setPredicateFactoryMetadata(
     (x: unknown): x is ObjectOf<T> => {
@@ -552,23 +553,26 @@ export function isObjectOf<
   );
 }
 
-function isOptional(x: unknown): x is Optional {
-  return (x as Partial<Optional>).optional === true;
-}
+type WithOptional =
+  | WithMetadata<GetMetadata<ReturnType<typeof isOptionalOf>>>
+  | { optional: true }; // For backward compatibility
 
-type Optional = {
-  optional: true;
-};
+function isWithOptional<T extends Predicate<unknown>>(
+  pred: T,
+): pred is T & WithOptional {
+  // deno-lint-ignore no-explicit-any
+  return isOptional(pred) || (pred as any).optional === true;
+}
 
 type ObjectOf<T extends Record<PropertyKey, Predicate<unknown>>> = FlatType<
   // Non optional
   & {
-    [K in keyof T as T[K] extends Optional ? never : K]: T[K] extends
+    [K in keyof T as T[K] extends WithOptional ? never : K]: T[K] extends
       Predicate<infer U> ? U : never;
   }
   // Optional
   & {
-    [K in keyof T as T[K] extends Optional ? K : never]?: T[K] extends
+    [K in keyof T as T[K] extends WithOptional ? K : never]?: T[K] extends
       Predicate<infer U> ? U : never;
   }
 >;
@@ -576,45 +580,6 @@ type ObjectOf<T extends Record<PropertyKey, Predicate<unknown>>> = FlatType<
 type IsObjectOfMetadata = {
   name: "isObjectOf";
   args: [Parameters<typeof isObjectOf>[0]];
-};
-
-/**
- * Return a type predicate function that returns `true` if the type of `x` is `T` or `undefined`.
- *
- * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
- *
- * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
- *
- * const isMyType = is.OptionalOf(is.String);
- * const a: unknown = "a";
- * if (isMyType(a)) {
- *   // a is narrowed to string | undefined
- *   const _: string | undefined = a;
- * }
- * ```
- */
-export function isOptionalOf<T>(
-  pred: Predicate<T>,
-): Predicate<T | undefined> & Optional & WithMetadata<IsOptionalOfMetadata> {
-  if ((pred as Partial<Optional>).optional) {
-    return pred as
-      & Predicate<T | undefined>
-      & Optional
-      & WithMetadata<IsOptionalOfMetadata>;
-  }
-  return Object.defineProperties(
-    setPredicateFactoryMetadata(
-      (x: unknown): x is Predicate<T | undefined> => isUndefined(x) || pred(x),
-      { name: "isOptionalOf", args: [pred] },
-    ),
-    { optional: { value: true as const } },
-  ) as Predicate<T | undefined> & Optional & WithMetadata<IsOptionalOfMetadata>;
-}
-
-type IsOptionalOfMetadata = {
-  name: "isOptionalOf";
-  args: Parameters<typeof isOptionalOf>;
 };
 
 /**
@@ -765,7 +730,6 @@ export default {
   LiteralOneOf: isLiteralOneOf,
   MapOf: isMapOf,
   ObjectOf: isObjectOf,
-  OptionalOf: isOptionalOf,
   ReadonlyTupleOf: isReadonlyTupleOf,
   ReadonlyUniformTupleOf: isReadonlyUniformTupleOf,
   RecordOf: isRecordOf,
