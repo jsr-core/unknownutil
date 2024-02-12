@@ -243,10 +243,51 @@ export function isPartialOf<
     & WithMetadata<IsObjectOfMetadata>;
 }
 
+/**
+ * Return a type predicate function that returns `true` if the type of `x` is `Pick<ObjectOf<T>, K>`.
+ *
+ * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
+ *
+ * ```typescript
+ * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ *
+ * const isMyType = is.PickOf(is.ObjectOf({
+ *   a: is.Number,
+ *   b: is.String,
+ *   c: is.OptionalOf(is.Boolean),
+ * }), ["a", "c"]);
+ * const a: unknown = { a: 0, b: "a", other: "other" };
+ * if (isMyType(a)) {
+ *   // The "b" and "other" key in `a` is ignored.
+ *   // 'a' is narrowed to { a: number; c?: boolean | undefined }
+ *   const _: { a: number; c?: boolean | undefined } = a;
+ * }
+ * ```
+ */
+export function isPickOf<
+  T extends Record<PropertyKey, unknown>,
+  K extends keyof T,
+>(
+  pred: Predicate<T> & WithMetadata<IsObjectOfMetadata>,
+  keys: K[],
+):
+  & Predicate<FlatType<Pick<T, K>>>
+  & WithMetadata<IsObjectOfMetadata> {
+  const s = new Set(keys);
+  const { args } = getPredicateMetadata(pred);
+  const predObj = Object.fromEntries(
+    Object.entries(args[0]).filter(([k]) => s.has(k as K)),
+  );
+  return isObjectOf(predObj) as
+    & Predicate<FlatType<Pick<T, K>>>
+    & WithMetadata<IsObjectOfMetadata>;
+}
+
 export default {
   AllOf: isAllOf,
   OneOf: isOneOf,
   OptionalOf: isOptionalOf,
   PartialOf: isPartialOf,
+  PickOf: isPickOf,
   StrictOf: isStrictOf,
 };
