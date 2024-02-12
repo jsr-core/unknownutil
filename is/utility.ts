@@ -100,22 +100,23 @@ type IsOneOfMetadata = {
  * ```
  */
 export function isAllOf<
-  T extends readonly [Predicate<unknown>, ...Predicate<unknown>[]],
+  T extends readonly [
+    Predicate<unknown> & WithMetadata<IsObjectOfMetadata>,
+    ...(Predicate<unknown> & WithMetadata<IsObjectOfMetadata>)[],
+  ],
 >(
   preds: T,
-): Predicate<AllOf<T>> & WithMetadata<IsAllOfMetadata> {
-  return setPredicateMetadata(
-    (x: unknown): x is AllOf<T> => preds.every((pred) => pred(x)),
-    { name: "isAllOf", args: [preds] },
-  );
+): Predicate<AllOf<T>> & WithMetadata<IsObjectOfMetadata> {
+  const predObj = {};
+  preds.forEach((pred) => {
+    Object.assign(predObj, getPredicateMetadata(pred).args[0]);
+  });
+  return isObjectOf(predObj) as
+    & Predicate<AllOf<T>>
+    & WithMetadata<IsObjectOfMetadata>;
 }
 
 type AllOf<T> = UnionToIntersection<OneOf<T>>;
-
-type IsAllOfMetadata = {
-  name: "isAllOf";
-  args: Parameters<typeof isAllOf>;
-};
 
 /**
  * Return a type predicate function that returns `true` if the type of `x` is `Partial<ObjectOf<T>>`.
