@@ -2,7 +2,7 @@ import core from "./is/core.ts";
 import factory from "./is/factory.ts";
 import utility from "./is/utility.ts";
 
-export * from "./is/type.ts";
+export type * from "./is/type.ts";
 export * from "./is/core.ts";
 export * from "./is/factory.ts";
 export * from "./is/utility.ts";
