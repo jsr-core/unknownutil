@@ -35,3 +35,9 @@ export function setPredicateMetadata<
     },
   }) as P & WithMetadata<M>;
 }
+
+export function getPredicateMetadata<M extends PredicateMetadata>(
+  object: WithMetadata<M>,
+): M {
+  return object[metadataKey];
+}

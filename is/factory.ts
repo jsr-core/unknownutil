@@ -498,8 +498,7 @@ type IsMapOfMetadata = {
  *
  * If `is.OptionalOf()` is specified in the predicate function, the property becomes optional.
  *
- * When `options.strict` is `true`, the number of keys of `x` must be equal to the number of keys of `predObj`.
- * Otherwise, the number of keys of `x` must be greater than or equal to the number of keys of `predObj`.
+ * The number of keys of `x` must be greater than or equal to the number of keys of `predObj`.
  *
  * ```ts
  * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
@@ -517,21 +516,7 @@ type IsMapOfMetadata = {
  * }
  * ```
  *
- * With `options.strict`:
- *
- * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
- *
- * const isMyType = is.ObjectOf({
- *   a: is.Number,
- *   b: is.String,
- *   c: is.OptionalOf(is.Boolean),
- * }, { strict: true });
- * const a: unknown = { a: 0, b: "a", other: "other" };
- * if (isMyType(a)) {
- *   // This block will not be executed because of "other" key in `a`.
- * }
- * ```
+ * The `option.strict` is deprecated. Use `isStrictOf()` instead.
  */
 export function isObjectOf<
   T extends Record<PropertyKey, Predicate<unknown>>,
@@ -548,7 +533,7 @@ export function isObjectOf<
         const ks = Object.keys(x);
         return ks.length <= keys.size && ks.every((k) => keys.has(k));
       },
-      { name: "isObjectOf", args: [predObj, options] },
+      { name: "isObjectOf", args: [predObj] },
     );
   }
   return setPredicateMetadata(
@@ -559,7 +544,7 @@ export function isObjectOf<
       }
       return true;
     },
-    { name: "isObjectOf", args: [predObj, options] },
+    { name: "isObjectOf", args: [predObj] },
   );
 }
 
@@ -580,9 +565,9 @@ type ObjectOf<T extends Record<PropertyKey, Predicate<unknown>>> = FlatType<
   }
 >;
 
-type IsObjectOfMetadata = {
+export type IsObjectOfMetadata = {
   name: "isObjectOf";
-  args: Parameters<typeof isObjectOf>;
+  args: [Parameters<typeof isObjectOf>[0]];
 };
 
 /**

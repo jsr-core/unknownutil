@@ -1,18 +1,36 @@
 export const snapshot = {};
 
+snapshot[`isAllOf<T> > returns properly named function 1`] = `
+"isAllOf([
+  isObjectOf({a: isNumber}),
+  isObjectOf({b: isString})
+])"
+`;
+
+snapshot[`isStrictOf<T> > returns properly named function 1`] = `
+"isStrictOf(isObjectOf({
+  a: isNumber,
+  b: isString,
+  c: isBoolean
+}))"
+`;
+
+snapshot[`isStrictOf<T> > returns properly named function 2`] = `"isStrictOf(isObjectOf({a: a}))"`;
+
+snapshot[`isStrictOf<T> > returns properly named function 3`] = `
+"isStrictOf(isObjectOf({
+  a: isStrictOf(isObjectOf({
+    b: isStrictOf(isObjectOf({c: isBoolean}))
+  }))
+}))"
+`;
+
+snapshot[`isOptionalOf<T> > returns properly named function 1`] = `"isOptionalOf(isNumber)"`;
+
 snapshot[`isOneOf<T> > returns properly named function 1`] = `
 "isOneOf([
   isNumber,
   isString,
   isBoolean
-])"
-`;
-
-snapshot[`isOptionalOf<T> > returns properly named function 1`] = `"isOptionalOf(isNumber)"`;
-
-snapshot[`isAllOf<T> > returns properly named function 1`] = `
-"isAllOf([
-  isObjectOf({a: isNumber}, undefined),
-  isObjectOf({b: isString}, undefined)
 ])"
 `;
