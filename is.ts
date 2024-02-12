@@ -1,6 +1,8 @@
 import type { FlatType, UnionToIntersection } from "./_typeutil.ts";
 import { inspect } from "./inspect.ts";
 
+const objectToString = Object.prototype.toString;
+
 /**
  * A type predicate function.
  */
@@ -812,7 +814,7 @@ export function isFunction(x: unknown): x is (...args: unknown[]) => unknown {
 export function isSyncFunction(
   x: unknown,
 ): x is (...args: unknown[]) => unknown {
-  return Object.prototype.toString.call(x) === "[object Function]";
+  return objectToString.call(x) === "[object Function]";
 }
 
 /**
@@ -831,7 +833,7 @@ export function isSyncFunction(
 export function isAsyncFunction(
   x: unknown,
 ): x is (...args: unknown[]) => Promise<unknown> {
-  return Object.prototype.toString.call(x) === "[object AsyncFunction]";
+  return objectToString.call(x) === "[object AsyncFunction]";
 }
 
 /**
