@@ -3,18 +3,27 @@ import { inspect } from "./inspect.ts";
 
 const metadataKey = "__unknownutil_metadata";
 
+/**
+ * A type that has metadata.
+ */
 export type WithMetadata<T> = {
   [metadataKey]: T;
 };
 
-export type PredicateMetadata = {
+/**
+ * Metadata of a predicate factory function.
+ */
+export type PredicateFactoryMetadata = {
   name: string;
   args: unknown[];
 };
 
-export function setPredicateMetadata<
+/**
+ * Set metadata to a predicate factory function.
+ */
+export function setPredicateFactoryMetadata<
   P extends Predicate<unknown>,
-  M extends PredicateMetadata,
+  M extends PredicateFactoryMetadata,
 >(
   pred: P,
   metadata: M,
@@ -36,10 +45,16 @@ export function setPredicateMetadata<
   }) as P & WithMetadata<M>;
 }
 
-export function getPredicateMetadata<M extends PredicateMetadata>(
+/**
+ * Get metadata from a predicate factory function.
+ */
+export function getPredicateFactoryMetadata<M extends PredicateFactoryMetadata>(
   object: WithMetadata<M>,
 ): M {
   return object[metadataKey];
 }
 
+/**
+ * Get metadata type function
+ */
 export type GetMetadata<T> = T extends WithMetadata<infer M> ? M : never;

@@ -3,8 +3,8 @@ import type { Predicate } from "./type.ts";
 import { isObjectOf, isOptionalOf } from "./factory.ts";
 import {
   type GetMetadata,
-  getPredicateMetadata,
-  setPredicateMetadata,
+  getPredicateFactoryMetadata,
+  setPredicateFactoryMetadata,
   type WithMetadata,
 } from "../metadata.ts";
 
@@ -46,7 +46,7 @@ export function isUnionOf<
 >(
   preds: T,
 ): Predicate<UnionOf<T>> & WithMetadata<IsUnionOfMetadata> {
-  return setPredicateMetadata(
+  return setPredicateFactoryMetadata(
     (x: unknown): x is UnionOf<T> => preds.some((pred) => pred(x)),
     { name: "isUnionOf", args: [preds] },
   );
@@ -121,7 +121,7 @@ export function isIntersectionOf<
 ): Predicate<IntersectionOf<T>> & WithMetadata<IsObjectOfMetadata> {
   const predObj = {};
   preds.forEach((pred) => {
-    Object.assign(predObj, getPredicateMetadata(pred).args[0]);
+    Object.assign(predObj, getPredicateFactoryMetadata(pred).args[0]);
   });
   return isObjectOf(predObj) as
     & Predicate<IntersectionOf<T>>
@@ -174,7 +174,7 @@ export function isPartialOf<
 ):
   & Predicate<FlatType<Partial<T>>>
   & WithMetadata<IsObjectOfMetadata> {
-  const { args } = getPredicateMetadata(pred);
+  const { args } = getPredicateFactoryMetadata(pred);
   const predObj = Object.fromEntries(
     Object.entries(args[0]).map(([k, v]) => [k, isOptionalOf(v)]),
   );
@@ -214,7 +214,7 @@ export function isPickOf<
   & Predicate<FlatType<Pick<T, K>>>
   & WithMetadata<IsObjectOfMetadata> {
   const s = new Set(keys);
-  const { args } = getPredicateMetadata(pred);
+  const { args } = getPredicateFactoryMetadata(pred);
   const predObj = Object.fromEntries(
     Object.entries(args[0]).filter(([k]) => s.has(k as K)),
   );
@@ -254,7 +254,7 @@ export function isOmitOf<
   & Predicate<FlatType<Omit<T, K>>>
   & WithMetadata<IsObjectOfMetadata> {
   const s = new Set(keys);
-  const { args } = getPredicateMetadata(pred);
+  const { args } = getPredicateFactoryMetadata(pred);
   const predObj = Object.fromEntries(
     Object.entries(args[0]).filter(([k]) => !s.has(k as K)),
   );

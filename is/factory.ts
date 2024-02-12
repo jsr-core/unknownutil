@@ -10,8 +10,8 @@ import {
   type Primitive,
 } from "./core.ts";
 import {
-  getPredicateMetadata,
-  setPredicateMetadata,
+  getPredicateFactoryMetadata,
+  setPredicateFactoryMetadata,
   type WithMetadata,
 } from "../metadata.ts";
 
@@ -34,7 +34,7 @@ import {
 export function isArrayOf<T>(
   pred: Predicate<T>,
 ): Predicate<T[]> & WithMetadata<IsArrayOfMetadata> {
-  return setPredicateMetadata(
+  return setPredicateFactoryMetadata(
     (x: unknown): x is T[] => isArray(x) && x.every(pred),
     { name: "isArrayOf", args: [pred] },
   );
@@ -64,7 +64,7 @@ type IsArrayOfMetadata = {
 export function isSetOf<T>(
   pred: Predicate<T>,
 ): Predicate<Set<T>> & WithMetadata<IsSetOfMetadata> {
-  return setPredicateMetadata(
+  return setPredicateFactoryMetadata(
     (x: unknown): x is Set<T> => {
       if (!isSet(x)) return false;
       for (const v of x.values()) {
@@ -152,7 +152,7 @@ export function isTupleOf<
   & Predicate<TupleOf<T> | [...TupleOf<T>, ...PredicateType<E>]>
   & WithMetadata<IsTupleOfMetadata> {
   if (!predElse) {
-    return setPredicateMetadata(
+    return setPredicateFactoryMetadata(
       (x: unknown): x is TupleOf<T> => {
         if (!isArray(x) || x.length !== predTup.length) {
           return false;
@@ -162,7 +162,7 @@ export function isTupleOf<
       { name: "isTupleOf", args: [predTup] },
     );
   } else {
-    return setPredicateMetadata(
+    return setPredicateFactoryMetadata(
       (x: unknown): x is [...TupleOf<T>, ...PredicateType<E>] => {
         if (!isArray(x) || x.length < predTup.length) {
           return false;
@@ -258,12 +258,12 @@ export function isReadonlyTupleOf<
   >
   & WithMetadata<IsReadonlyTupleOfMetadata> {
   if (!predElse) {
-    return setPredicateMetadata(
+    return setPredicateFactoryMetadata(
       isTupleOf(predTup) as Predicate<ReadonlyTupleOf<T>>,
       { name: "isReadonlyTupleOf", args: [predTup] },
     );
   } else {
-    return setPredicateMetadata(
+    return setPredicateFactoryMetadata(
       isTupleOf(predTup, predElse) as unknown as Predicate<
         readonly [...ReadonlyTupleOf<T>, ...PredicateType<E>]
       >,
@@ -317,7 +317,7 @@ export function isUniformTupleOf<T, N extends number>(
   n: N,
   pred: Predicate<T> = isAny,
 ): Predicate<UniformTupleOf<T, N>> & WithMetadata<IsUniformTupleOfMetadata> {
-  return setPredicateMetadata(
+  return setPredicateFactoryMetadata(
     (x: unknown): x is UniformTupleOf<T, N> => {
       if (!isArray(x) || x.length !== n) {
         return false;
@@ -375,7 +375,7 @@ export function isReadonlyUniformTupleOf<T, N extends number>(
 ):
   & Predicate<ReadonlyUniformTupleOf<T, N>>
   & WithMetadata<IsReadonlyUniformTupleOfMetadata> {
-  return setPredicateMetadata(
+  return setPredicateFactoryMetadata(
     isUniformTupleOf(n, pred) as Predicate<ReadonlyUniformTupleOf<T, N>>,
     { name: "isReadonlyUniformTupleOf", args: [n, pred] },
   );
@@ -426,7 +426,7 @@ export function isRecordOf<T, K extends PropertyKey = PropertyKey>(
   pred: Predicate<T>,
   predKey?: Predicate<K>,
 ): Predicate<Record<K, T>> & WithMetadata<IsRecordOfMetadata> {
-  return setPredicateMetadata(
+  return setPredicateFactoryMetadata(
     (x: unknown): x is Record<K, T> => {
       if (!isRecord(x)) return false;
       for (const k in x) {
@@ -477,7 +477,7 @@ export function isMapOf<T, K>(
   pred: Predicate<T>,
   predKey?: Predicate<K>,
 ): Predicate<Map<K, T>> & WithMetadata<IsMapOfMetadata> {
-  return setPredicateMetadata(
+  return setPredicateFactoryMetadata(
     (x: unknown): x is Map<K, T> => {
       if (!isMap(x)) return false;
       for (const entry of x.entries()) {
@@ -536,7 +536,7 @@ export function isObjectOf<
   const requiredKeys = Object.entries(predObj)
     .filter(([_, v]) => !isOptional(v))
     .map(([k]) => k);
-  return setPredicateMetadata(
+  return setPredicateFactoryMetadata(
     (x: unknown): x is ObjectOf<T> => {
       if (!isRecord(x)) return false;
       // Check required keys
@@ -604,7 +604,7 @@ export function isOptionalOf<T>(
       & WithMetadata<IsOptionalOfMetadata>;
   }
   return Object.defineProperties(
-    setPredicateMetadata(
+    setPredicateFactoryMetadata(
       (x: unknown): x is Predicate<T | undefined> => isUndefined(x) || pred(x),
       { name: "isOptionalOf", args: [pred] },
     ),
@@ -648,9 +648,9 @@ export function isStrictOf<T extends Record<PropertyKey, unknown>>(
 ):
   & Predicate<T>
   & WithMetadata<IsStrictOfMetadata> {
-  const { args } = getPredicateMetadata(pred);
+  const { args } = getPredicateFactoryMetadata(pred);
   const s = new Set(Object.keys(args[0]));
-  return setPredicateMetadata(
+  return setPredicateFactoryMetadata(
     (x: unknown): x is T => {
       if (!pred(x)) return false;
       // deno-lint-ignore no-explicit-any
@@ -686,7 +686,7 @@ type IsStrictOfMetadata = {
 export function isInstanceOf<T extends new (...args: any) => unknown>(
   ctor: T,
 ): Predicate<InstanceType<T>> & WithMetadata<IsInstanceOfMetadata> {
-  return setPredicateMetadata(
+  return setPredicateFactoryMetadata(
     (x: unknown): x is InstanceType<T> => x instanceof ctor,
     { name: "isInstanceOf", args: [ctor] },
   );
@@ -716,7 +716,7 @@ type IsInstanceOfMetadata = {
 export function isLiteralOf<T extends Primitive>(
   literal: T,
 ): Predicate<T> & WithMetadata<IsLiteralOfMetadata> {
-  return setPredicateMetadata(
+  return setPredicateFactoryMetadata(
     (x: unknown): x is T => x === literal,
     { name: "isLiteralOf", args: [literal] },
   );
@@ -747,7 +747,7 @@ export function isLiteralOneOf<T extends readonly Primitive[]>(
   literals: T,
 ): Predicate<T[number]> & WithMetadata<IsLiteralOneOfMetadata> {
   const s = new Set(literals);
-  return setPredicateMetadata(
+  return setPredicateFactoryMetadata(
     (x: unknown): x is T[number] => s.has(x as T[number]),
     { name: "isLiteralOneOf", args: [literals] },
   );
