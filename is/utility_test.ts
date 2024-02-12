@@ -26,6 +26,7 @@ import {
 import { isObjectOf } from "./factory.ts";
 import is, {
   isAllOf,
+  isOmitOf,
   isOneOf,
   isOptionalOf,
   isPartialOf,
@@ -469,6 +470,51 @@ Deno.test("isPickOf<T, K>", async (t) => {
     );
     assertEquals(
       isPickOf(pred, ["a", "c"])({ a: 0, b: "a", c: "" }),
+      false,
+      "Object have a different type property",
+    );
+  });
+});
+
+Deno.test("isOmitOf<T, K>", async (t) => {
+  const pred = isObjectOf({
+    a: isNumber,
+    b: isString,
+    c: isBoolean,
+  });
+  await t.step("returns properly named function", async (t) => {
+    await assertSnapshot(t, isOmitOf(pred, ["b"]).name);
+    // Nestable
+    await assertSnapshot(t, isOmitOf(isOmitOf(pred, ["b"]), ["c"]).name);
+  });
+  await t.step("returns proper type predicate", () => {
+    const a: unknown = { a: 0, b: "a", c: true };
+    if (isOmitOf(pred, ["b"])(a)) {
+      assertType<
+        Equal<typeof a, { a: number; c: boolean }>
+      >(true);
+    }
+    if (isOmitOf(isOmitOf(pred, ["b"]), ["c"])(a)) {
+      assertType<
+        Equal<typeof a, { a: number }>
+      >(true);
+    }
+  });
+  await t.step("returns true on Omit<T, K> object", () => {
+    assertEquals(
+      isOmitOf(pred, ["b"])({ a: 0, b: undefined, c: true }),
+      true,
+    );
+    assertEquals(isOmitOf(pred, ["b", "c"])({ a: 0 }), true);
+  });
+  await t.step("returns false on non Omit<T, K> object", () => {
+    assertEquals(
+      isOmitOf(pred, ["b"])("a"),
+      false,
+      "Value is not an object",
+    );
+    assertEquals(
+      isOmitOf(pred, ["b"])({ a: 0, b: "a", c: "" }),
       false,
       "Object have a different type property",
     );
