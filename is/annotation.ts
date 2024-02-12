@@ -59,7 +59,56 @@ type IsOptionalOfMetadata = {
   args: Parameters<typeof isOptionalOf>;
 };
 
+/**
+ * Return `true` if the type of predicate function `x` is annotated as `Readonly`
+ */
+export function isReadonly<P extends Predicate<unknown>>(
+  x: P,
+): x is P & WithMetadata<IsReadonlyOfMetadata> {
+  const m = getMetadata(x);
+  if (m == null) return false;
+  return (m as PredicateFactoryMetadata).name === "isReadonlyOf";
+}
+
+/**
+ * Return an `Readonly` annotated type predicate function that returns `true` if the type of `x` is `T`.
+ *
+ * Note that this function does nothing but annotate the predicate function as `Readonly`.
+ *
+ * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
+ *
+ * ```ts
+ * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ *
+ * const isMyType = is.ReadonlyOf(is.TupleOf([is.String, is.Number]));
+ * const a: unknown = ["a", 1];
+ * if (isMyType(a)) {
+ *   // a is narrowed to readonly [string, number]
+ *   const _: readonly [string, number] = a;
+ * }
+ * ```
+ */
+export function isReadonlyOf<T>(
+  pred: Predicate<T>,
+):
+  & Predicate<Readonly<T>>
+  & WithMetadata<IsReadonlyOfMetadata> {
+  return setPredicateFactoryMetadata(
+    (x: unknown): x is Readonly<T> => pred(x),
+    { name: "isReadonlyOf", args: [pred] },
+  ) as
+    & Predicate<Readonly<T>>
+    & WithMetadata<IsReadonlyOfMetadata>;
+}
+
+type IsReadonlyOfMetadata = {
+  name: "isReadonlyOf";
+  args: Parameters<typeof isReadonlyOf>;
+};
+
 export default {
   Optional: isOptional,
   OptionalOf: isOptionalOf,
+  Readonly: isReadonly,
+  ReadonlyOf: isReadonlyOf,
 };

@@ -23,7 +23,8 @@ import {
   isSyncFunction,
   isUndefined,
 } from "./core.ts";
-import is, { isOptionalOf } from "./annotation.ts";
+import { isObjectOf, isTupleOf, isUniformTupleOf } from "./factory.ts";
+import is, { isOptionalOf, isReadonlyOf } from "./annotation.ts";
 
 const examples = {
   string: ["", "Hello world"],
@@ -149,6 +150,33 @@ Deno.test("isOptionalOf<T>", async (t) => {
     await testWithExamples(t, isOptionalOf(isSymbol), {
       validExamples: ["symbol", "undefined"],
     });
+  });
+});
+
+Deno.test("isReadonlyOf<T>", async (t) => {
+  await t.step("returns properly named function", async (t) => {
+    await assertSnapshot(t, isReadonlyOf(isNumber).name);
+    // Nesting does nothing
+    await assertSnapshot(t, isReadonlyOf(isReadonlyOf(isNumber)).name);
+  });
+  await t.step("returns proper type predicate", () => {
+    const a: unknown = undefined;
+    if (isReadonlyOf(isNumber)(a)) {
+      assertType<Equal<typeof a, Readonly<number>>>(true);
+    }
+    if (isReadonlyOf(isTupleOf([isString, isNumber, isBoolean]))(a)) {
+      assertType<Equal<typeof a, Readonly<[string, number, boolean]>>>(true);
+    }
+    if (isReadonlyOf(isUniformTupleOf(3, isString))(a)) {
+      assertType<Equal<typeof a, Readonly<[string, string, string]>>>(true);
+    }
+    if (
+      isReadonlyOf(isObjectOf({ a: isString, b: isNumber, c: isBoolean }))(a)
+    ) {
+      assertType<
+        Equal<typeof a, Readonly<{ a: string; b: number; c: boolean }>>
+      >(true);
+    }
   });
 });
 
