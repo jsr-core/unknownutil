@@ -530,16 +530,8 @@ export function isObjectOf<
   options?: { strict?: boolean },
 ): Predicate<ObjectOf<T>> & WithMetadata<IsObjectOfMetadata> {
   if (options?.strict) {
-    const keys = new Set(Object.keys(predObj));
-    const pred = isObjectOf(predObj);
-    return setPredicateMetadata(
-      (x: unknown): x is ObjectOf<T> => {
-        if (!pred(x)) return false;
-        const ks = Object.keys(x);
-        return ks.length <= keys.size && ks.every((k) => keys.has(k));
-      },
-      { name: "isObjectOf", args: [predObj] },
-    );
+    // deno-lint-ignore no-explicit-any
+    return isStrictOf(isObjectOf(predObj)) as any;
   }
   return setPredicateMetadata(
     (x: unknown): x is ObjectOf<T> => {
