@@ -955,9 +955,16 @@ export type Primitive =
  * ```
  */
 export function isPrimitive(x: unknown): x is Primitive {
-  return x == null ||
-    ["string", "number", "bigint", "boolean", "symbol"].includes(typeof x);
+  return x == null || primitiveSet.has(typeof x);
 }
+
+const primitiveSet = new Set([
+  "string",
+  "number",
+  "bigint",
+  "boolean",
+  "symbol",
+]);
 
 /**
  * Return a type predicate function that returns `true` if the type of `x` is a literal type of `pred`.
@@ -1005,9 +1012,9 @@ export function isLiteralOf<T extends Primitive>(literal: T): Predicate<T> {
 export function isLiteralOneOf<T extends readonly Primitive[]>(
   literals: T,
 ): Predicate<T[number]> {
+  const s = new Set(literals);
   return Object.defineProperties(
-    (x: unknown): x is T[number] =>
-      literals.includes(x as unknown as T[number]),
+    (x: unknown): x is T[number] => s.has(x as T[number]),
     {
       name: {
         get: () => `isLiteralOneOf(${inspect(literals)})`,
