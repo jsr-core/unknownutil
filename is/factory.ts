@@ -573,7 +573,7 @@ type ObjectOf<T extends Record<PropertyKey, Predicate<unknown>>> = FlatType<
   }
 >;
 
-export type IsObjectOfMetadata = {
+type IsObjectOfMetadata = {
   name: "isObjectOf";
   args: [Parameters<typeof isObjectOf>[0]];
 };

@@ -41,3 +41,5 @@ export function getPredicateMetadata<M extends PredicateMetadata>(
 ): M {
   return object[metadataKey];
 }
+
+export type GetMetadata<T> = T extends WithMetadata<infer M> ? M : never;

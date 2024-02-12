@@ -1,15 +1,14 @@
 import type { FlatType, UnionToIntersection } from "../_typeutil.ts";
 import type { Predicate } from "./type.ts";
+import { isObjectOf, isOptionalOf } from "./factory.ts";
 import {
-  isObjectOf,
-  type IsObjectOfMetadata,
-  isOptionalOf,
-} from "./factory.ts";
-import {
+  type GetMetadata,
   getPredicateMetadata,
   setPredicateMetadata,
   type WithMetadata,
 } from "../metadata.ts";
+
+type IsObjectOfMetadata = GetMetadata<ReturnType<typeof isObjectOf>>;
 
 /**
  * Return a type predicate function that returns `true` if the type of `x` is `UnionOf<T>`.
