@@ -24,7 +24,12 @@ import {
   isUndefined,
 } from "./core.ts";
 import { isObjectOf, isTupleOf, isUniformTupleOf } from "./factory.ts";
-import is, { isOptionalOf, isReadonlyOf } from "./annotation.ts";
+import is, {
+  isOptionalOf,
+  isReadonlyOf,
+  isUnwrapOptionalOf,
+  isUnwrapReadonlyOf,
+} from "./annotation.ts";
 
 const examples = {
   string: ["", "Hello world"],
@@ -153,6 +158,101 @@ Deno.test("isOptionalOf<T>", async (t) => {
   });
 });
 
+Deno.test("isUnwrapOptionalOf<T>", async (t) => {
+  await t.step("returns properly named function", async (t) => {
+    await assertSnapshot(t, isUnwrapOptionalOf(isOptionalOf(isNumber)).name);
+    // Non optional does nothing
+    await assertSnapshot(t, isUnwrapOptionalOf(isNumber).name);
+    // Nesting does nothing
+    await assertSnapshot(
+      t,
+      isUnwrapOptionalOf(isUnwrapOptionalOf(isOptionalOf(isNumber))).name,
+    );
+  });
+  await t.step("returns proper type predicate", () => {
+    const a: unknown = undefined;
+    if (isUnwrapOptionalOf(isOptionalOf(isNumber))(a)) {
+      assertType<Equal<typeof a, number>>(true);
+    }
+    if (isUnwrapOptionalOf(isNumber)(a)) {
+      assertType<Equal<typeof a, number>>(true);
+    }
+  });
+  await t.step("with isString", async (t) => {
+    await testWithExamples(t, isUnwrapOptionalOf(isOptionalOf(isString)), {
+      validExamples: ["string"],
+    });
+  });
+  await t.step("with isNumber", async (t) => {
+    await testWithExamples(t, isUnwrapOptionalOf(isOptionalOf(isNumber)), {
+      validExamples: ["number"],
+    });
+  });
+  await t.step("with isBigInt", async (t) => {
+    await testWithExamples(t, isUnwrapOptionalOf(isOptionalOf(isBigInt)), {
+      validExamples: ["bigint"],
+    });
+  });
+  await t.step("with isBoolean", async (t) => {
+    await testWithExamples(t, isUnwrapOptionalOf(isOptionalOf(isBoolean)), {
+      validExamples: ["boolean"],
+    });
+  });
+  await t.step("with isArray", async (t) => {
+    await testWithExamples(t, isUnwrapOptionalOf(isOptionalOf(isArray)), {
+      validExamples: ["array"],
+    });
+  });
+  await t.step("with isSet", async (t) => {
+    await testWithExamples(t, isUnwrapOptionalOf(isOptionalOf(isSet)), {
+      validExamples: ["set"],
+    });
+  });
+  await t.step("with isRecord", async (t) => {
+    await testWithExamples(t, isUnwrapOptionalOf(isOptionalOf(isRecord)), {
+      validExamples: ["record"],
+    });
+  });
+  await t.step("with isFunction", async (t) => {
+    await testWithExamples(t, isUnwrapOptionalOf(isOptionalOf(isFunction)), {
+      validExamples: ["syncFunction", "asyncFunction"],
+    });
+  });
+  await t.step("with isSyncFunction", async (t) => {
+    await testWithExamples(
+      t,
+      isUnwrapOptionalOf(isOptionalOf(isSyncFunction)),
+      {
+        validExamples: ["syncFunction"],
+      },
+    );
+  });
+  await t.step("with isAsyncFunction", async (t) => {
+    await testWithExamples(
+      t,
+      isUnwrapOptionalOf(isOptionalOf(isAsyncFunction)),
+      {
+        validExamples: ["asyncFunction"],
+      },
+    );
+  });
+  await t.step("with isNull", async (t) => {
+    await testWithExamples(t, isUnwrapOptionalOf(isOptionalOf(isNull)), {
+      validExamples: ["null"],
+    });
+  });
+  await t.step("with isUndefined", async (t) => {
+    await testWithExamples(t, isUnwrapOptionalOf(isOptionalOf(isUndefined)), {
+      validExamples: ["undefined"],
+    });
+  });
+  await t.step("with isSymbol", async (t) => {
+    await testWithExamples(t, isUnwrapOptionalOf(isOptionalOf(isSymbol)), {
+      validExamples: ["symbol"],
+    });
+  });
+});
+
 Deno.test("isReadonlyOf<T>", async (t) => {
   await t.step("returns properly named function", async (t) => {
     await assertSnapshot(t, isReadonlyOf(isNumber).name);
@@ -175,6 +275,42 @@ Deno.test("isReadonlyOf<T>", async (t) => {
     ) {
       assertType<
         Equal<typeof a, Readonly<{ a: string; b: number; c: boolean }>>
+      >(true);
+    }
+  });
+});
+
+Deno.test("isUnwrapReadonlyOf<T>", async (t) => {
+  await t.step("returns properly named function", async (t) => {
+    await assertSnapshot(t, isUnwrapReadonlyOf(isReadonlyOf(isNumber)).name);
+    // Nesting does nothing
+    await assertSnapshot(
+      t,
+      isUnwrapReadonlyOf(isReadonlyOf(isReadonlyOf(isNumber))).name,
+    );
+  });
+  await t.step("returns proper type predicate", () => {
+    const a: unknown = undefined;
+    if (isUnwrapReadonlyOf(isReadonlyOf(isNumber))(a)) {
+      assertType<Equal<typeof a, number>>(true);
+    }
+    if (
+      isUnwrapReadonlyOf(
+        isReadonlyOf(isTupleOf([isString, isNumber, isBoolean])),
+      )(a)
+    ) {
+      assertType<Equal<typeof a, [string, number, boolean]>>(true);
+    }
+    if (isUnwrapReadonlyOf(isReadonlyOf(isUniformTupleOf(3, isString)))(a)) {
+      assertType<Equal<typeof a, [string, string, string]>>(true);
+    }
+    if (
+      isUnwrapReadonlyOf(
+        isReadonlyOf(isObjectOf({ a: isString, b: isNumber, c: isBoolean })),
+      )(a)
+    ) {
+      assertType<
+        Equal<typeof a, { a: string; b: number; c: boolean }>
       >(true);
     }
   });

@@ -1,6 +1,8 @@
 import type { Predicate } from "./type.ts";
+import type { Writable } from "../_typeutil.ts";
 import {
   getMetadata,
+  getPredicateFactoryMetadata,
   type PredicateFactoryMetadata,
   setPredicateFactoryMetadata,
   type WithMetadata,
@@ -60,6 +62,36 @@ type IsOptionalOfMetadata = {
 };
 
 /**
+ * Return an `Optional` un-annotated type predicate function that returns `true` if the type of `x` is `T`.
+ *
+ * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
+ *
+ * ```ts
+ * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ *
+ * const isMyType = is.UnwrapOptionalOf(is.OptionalOf(is.String));
+ * const a: unknown = "a";
+ * if (isMyType(a)) {
+ *   // a is narrowed to string
+ *   const _: string = a;
+ * }
+ * ```
+ */
+export function isUnwrapOptionalOf<P extends Predicate<unknown>>(
+  pred: P,
+): UnwrapOptionalOf<P> {
+  if (!isOptional(pred)) return pred as UnwrapOptionalOf<P>;
+  const { args } = getPredicateFactoryMetadata(pred);
+  return args[0] as UnwrapOptionalOf<P>;
+}
+
+type UnwrapOptionalOf<T> = T extends
+  Predicate<undefined | infer U> & WithMetadata<IsOptionalOfMetadata>
+  ? Predicate<U>
+  : T extends Predicate<unknown> ? T
+  : never;
+
+/**
  * Return `true` if the type of predicate function `x` is annotated as `Readonly`
  */
 export function isReadonly<P extends Predicate<unknown>>(
@@ -106,9 +138,41 @@ type IsReadonlyOfMetadata = {
   args: Parameters<typeof isReadonlyOf>;
 };
 
+/**
+ * Return an `Readonly` un-annotated type predicate function that returns `true` if the type of `x` is `T`.
+ *
+ * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
+ *
+ * ```ts
+ * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ *
+ * const isMyType = is.UnwrapReadonlyOf(is.ReadonlyOf(is.TupleOf([is.String, is.Number])));
+ * const a: unknown = ["a", 1];
+ * if (isMyType(a)) {
+ *   // a is narrowed to [string, number]
+ *   const _: [string, number] = a;
+ * }
+ * ```
+ */
+export function isUnwrapReadonlyOf<P extends Predicate<unknown>>(
+  pred: P,
+): UnwrapReadonlyOf<P> {
+  if (!isReadonly(pred)) return pred as UnwrapReadonlyOf<P>;
+  const { args } = getPredicateFactoryMetadata(pred);
+  return args[0] as UnwrapReadonlyOf<P>;
+}
+
+type UnwrapReadonlyOf<T> = T extends
+  Predicate<infer U> & WithMetadata<IsReadonlyOfMetadata>
+  ? Predicate<Writable<U>>
+  : T extends Predicate<unknown> ? T
+  : never;
+
 export default {
   Optional: isOptional,
   OptionalOf: isOptionalOf,
   Readonly: isReadonly,
   ReadonlyOf: isReadonlyOf,
+  UnwrapOptionalOf: isUnwrapOptionalOf,
+  UnwrapReadonlyOf: isUnwrapReadonlyOf,
 };
