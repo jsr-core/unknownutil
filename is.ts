@@ -192,11 +192,9 @@ export function isArrayOf<T>(
  * }
  * ```
  */
-export const isSet = Object.defineProperties(isInstanceOf(Set), {
-  name: {
-    value: "isSet",
-  },
-});
+export function isSet(x: unknown): x is Set<unknown> {
+  return x instanceof Set;
+}
 
 /**
  * Return a type predicate function that returns `true` if the type of `x` is `Set<T>`.
@@ -621,11 +619,9 @@ export function isRecordOf<T, K extends PropertyKey = PropertyKey>(
  * }
  * ```
  */
-export const isMap = Object.defineProperties(isInstanceOf(Map), {
-  name: {
-    value: "isMap",
-  },
-});
+export function isMap(x: unknown): x is Map<unknown, unknown> {
+  return x instanceof Map;
+}
 
 /**
  * Return a type predicate function that returns `true` if the type of `x` is `Map<K, T>`.
