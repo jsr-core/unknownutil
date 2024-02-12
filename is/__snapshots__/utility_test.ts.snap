@@ -1,13 +1,5 @@
 export const snapshot = {};
 
-snapshot[`isUnionOf<T> > returns properly named function 1`] = `
-"isUnionOf([
-  isNumber,
-  isString,
-  isBoolean
-])"
-`;
-
 snapshot[`isPartialOf<T> > returns properly named function 1`] = `
 "isObjectOf({
   a: isOptionalOf(isNumber),
@@ -24,12 +16,14 @@ snapshot[`isPartialOf<T> > returns properly named function 2`] = `
 })"
 `;
 
-snapshot[`isIntersectionOf<T> > returns properly named function 1`] = `
+snapshot[`isOmitOf<T, K> > returns properly named function 1`] = `
 "isObjectOf({
   a: isNumber,
-  b: isString
+  c: isBoolean
 })"
 `;
+
+snapshot[`isOmitOf<T, K> > returns properly named function 2`] = `"isObjectOf({a: isNumber})"`;
 
 snapshot[`isPickOf<T, K> > returns properly named function 1`] = `
 "isObjectOf({
@@ -40,11 +34,17 @@ snapshot[`isPickOf<T, K> > returns properly named function 1`] = `
 
 snapshot[`isPickOf<T, K> > returns properly named function 2`] = `"isObjectOf({a: isNumber})"`;
 
-snapshot[`isOmitOf<T, K> > returns properly named function 1`] = `
+snapshot[`isIntersectionOf<T> > returns properly named function 1`] = `
 "isObjectOf({
   a: isNumber,
-  c: isBoolean
+  b: isString
 })"
 `;
 
-snapshot[`isOmitOf<T, K> > returns properly named function 2`] = `"isObjectOf({a: isNumber})"`;
+snapshot[`isUnionOf<T> > returns properly named function 1`] = `
+"isUnionOf([
+  isNumber,
+  isString,
+  isBoolean
+])"
+`;

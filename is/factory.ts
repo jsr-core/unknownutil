@@ -1,6 +1,11 @@
 import type { FlatType } from "../_typeutil.ts";
 import type { Predicate, PredicateType } from "./type.ts";
-import { isOptional, isOptionalOf } from "./annotation.ts";
+import {
+  isOptional,
+  isOptionalOf,
+  isReadonly,
+  isReadonlyOf,
+} from "./annotation.ts";
 import {
   isAny,
   isArray,
@@ -15,6 +20,8 @@ import {
   setPredicateFactoryMetadata,
   type WithMetadata,
 } from "../metadata.ts";
+
+type IsReadonlyOfMetadata = GetMetadata<ReturnType<typeof isReadonlyOf>>;
 
 /**
  * Return a type predicate function that returns `true` if the type of `x` is `T[]`.
@@ -187,7 +194,9 @@ type IsTupleOfMetadata = {
 };
 
 /**
- * Return a type predicate function that returns `true` if the type of `x` is `ReadonlyTupleOf<T>`.
+ * Return a type predicate function that returns `true` if the type of `x` is `Readonly<TupleOf<T>>`.
+ *
+ * @deprecated Use `is.ReadonlyOf(is.TupleOf(...))` instead.
  *
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
@@ -237,7 +246,7 @@ export function isReadonlyTupleOf<
   T extends readonly [Predicate<unknown>, ...Predicate<unknown>[]],
 >(
   predTup: T,
-): Predicate<ReadonlyTupleOf<T>> & WithMetadata<IsReadonlyTupleOfMetadata>;
+): Predicate<Readonly<TupleOf<T>>> & WithMetadata<IsReadonlyOfMetadata>;
 export function isReadonlyTupleOf<
   T extends readonly [Predicate<unknown>, ...Predicate<unknown>[]],
   E extends Predicate<unknown[]>,
@@ -245,8 +254,8 @@ export function isReadonlyTupleOf<
   predTup: T,
   predElse: E,
 ):
-  & Predicate<readonly [...ReadonlyTupleOf<T>, ...PredicateType<E>]>
-  & WithMetadata<IsReadonlyTupleOfMetadata>;
+  & Predicate<Readonly<[...TupleOf<T>, ...PredicateType<E>]>>
+  & WithMetadata<IsReadonlyOfMetadata>;
 export function isReadonlyTupleOf<
   T extends readonly [Predicate<unknown>, ...Predicate<unknown>[]],
   E extends Predicate<unknown[]>,
@@ -255,35 +264,16 @@ export function isReadonlyTupleOf<
   predElse?: E,
 ):
   & Predicate<
-    ReadonlyTupleOf<T> | readonly [...ReadonlyTupleOf<T>, ...PredicateType<E>]
+    | Readonly<TupleOf<T>>
+    | Readonly<[...TupleOf<T>, ...PredicateType<E>]>
   >
-  & WithMetadata<IsReadonlyTupleOfMetadata> {
+  & WithMetadata<IsReadonlyOfMetadata> {
   if (!predElse) {
-    return setPredicateFactoryMetadata(
-      isTupleOf(predTup) as Predicate<ReadonlyTupleOf<T>>,
-      { name: "isReadonlyTupleOf", args: [predTup] },
-    );
+    return isReadonlyOf(isTupleOf(predTup));
   } else {
-    return setPredicateFactoryMetadata(
-      isTupleOf(predTup, predElse) as unknown as Predicate<
-        readonly [...ReadonlyTupleOf<T>, ...PredicateType<E>]
-      >,
-      { name: "isReadonlyTupleOf", args: [predTup, predElse] },
-    );
+    return isReadonlyOf(isTupleOf(predTup, predElse));
   }
 }
-
-type ReadonlyTupleOf<T> = {
-  [P in keyof T]: T[P] extends Predicate<infer U> ? U : never;
-};
-
-type IsReadonlyTupleOfMetadata = {
-  name: "isReadonlyTupleOf";
-  args: [
-    Parameters<typeof isReadonlyTupleOf>[0],
-    Parameters<typeof isReadonlyTupleOf>[1]?,
-  ];
-};
 
 /**
  * Return a type predicate function that returns `true` if the type of `x` is `UniformTupleOf<T>`.
@@ -342,7 +332,9 @@ type IsUniformTupleOfMetadata = {
 };
 
 /**
- * Return a type predicate function that returns `true` if the type of `x` is `ReadonlyUniformTupleOf<T>`.
+ * Return a type predicate function that returns `true` if the type of `x` is `Readonly<UniformTupleOf<T>>`.
+ *
+ * @deprecated Use `is.ReadonlyOf(is.UniformTupleOf(...))` instead.
  *
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
@@ -374,25 +366,10 @@ export function isReadonlyUniformTupleOf<T, N extends number>(
   n: N,
   pred: Predicate<T> = isAny,
 ):
-  & Predicate<ReadonlyUniformTupleOf<T, N>>
-  & WithMetadata<IsReadonlyUniformTupleOfMetadata> {
-  return setPredicateFactoryMetadata(
-    isUniformTupleOf(n, pred) as Predicate<ReadonlyUniformTupleOf<T, N>>,
-    { name: "isReadonlyUniformTupleOf", args: [n, pred] },
-  );
+  & Predicate<Readonly<UniformTupleOf<T, N>>>
+  & WithMetadata<IsReadonlyOfMetadata> {
+  return isReadonlyOf(isUniformTupleOf(n, pred));
 }
-
-type ReadonlyUniformTupleOf<
-  T,
-  N extends number,
-  R extends readonly T[] = [],
-> = R["length"] extends N ? R
-  : ReadonlyUniformTupleOf<T, N, readonly [T, ...R]>;
-
-type IsReadonlyUniformTupleOfMetadata = {
-  name: "isReadonlyUniformTupleOf";
-  args: Parameters<typeof isReadonlyUniformTupleOf>;
-};
 
 /**
  * Return a type predicate function that returns `true` if the type of `x` is `Record<K, T>`.
