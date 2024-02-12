@@ -541,7 +541,7 @@ Deno.test("isReadonlyUniformTupleOf<T>", async (t) => {
 
 Deno.test("isRecord", async (t) => {
   await testWithExamples(t, isRecord, {
-    validExamples: ["record", "date", "promise"],
+    validExamples: ["record"],
   });
 });
 
@@ -1112,7 +1112,7 @@ Deno.test("isOptionalOf<T>", async (t) => {
   });
   await t.step("with isRecord", async (t) => {
     await testWithExamples(t, isOptionalOf(isRecord), {
-      validExamples: ["record", "date", "promise", "undefined"],
+      validExamples: ["record", "undefined"],
     });
   });
   await t.step("with isFunction", async (t) => {

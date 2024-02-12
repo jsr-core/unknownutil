@@ -553,10 +553,7 @@ export function isReadonlyUniformTupleOf<T, N extends number>(
 export function isRecord(
   x: unknown,
 ): x is Record<PropertyKey, unknown> {
-  if (isNullish(x) || isArray(x) || isSet(x) || isMap(x)) {
-    return false;
-  }
-  return typeof x === "object";
+  return x != null && typeof x === "object" && x.constructor === Object;
 }
 
 /**
