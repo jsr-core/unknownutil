@@ -513,7 +513,10 @@ Deno.bench({
   },
 });
 
-const predsAll = [is.String, is.Number, is.Boolean] as const;
+const predsAll = [
+  is.ObjectOf({ a: is.Number }),
+  is.ObjectOf({ b: is.String }),
+] as const;
 Deno.bench({
   name: "is.AllOf<T>",
   fn: () => {
