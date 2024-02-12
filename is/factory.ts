@@ -179,7 +179,18 @@ export function isTupleOf<
   }
 }
 
-type TupleOf<T> = {
+/**
+ * Tuple type of types that are predicated by an array of predicate functions.
+ *
+ * ```ts
+ * import { is, TupleOf } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ *
+ * type A = TupleOf<readonly [typeof is.String, typeof is.Number]>;
+ * // Above is equivalent to the following type
+ * // type A = [string, number];
+ * ```
+ */
+export type TupleOf<T> = {
   -readonly [P in keyof T]: T[P] extends Predicate<infer U> ? U : never;
 };
 
@@ -314,8 +325,19 @@ export function isUniformTupleOf<T, N extends number>(
   );
 }
 
+/**
+ * Uniform tuple type of types that are predicated by a predicate function and the length is `N`.
+ *
+ * ```ts
+ * import { is, UniformTupleOf } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ *
+ * type A = UniformTupleOf<number, 5>;
+ * // Above is equivalent to the following type
+ * // type A = [number, number, number, number, number];
+ * ```
+ */
 // https://stackoverflow.com/a/71700658/1273406
-type UniformTupleOf<
+export type UniformTupleOf<
   T,
   N extends number,
   R extends readonly T[] = [],
@@ -536,18 +558,30 @@ function isWithOptional<T extends Predicate<unknown>>(
   return isOptional(pred) || (pred as any).optional === true;
 }
 
-type ObjectOf<T extends Record<PropertyKey, Predicate<unknown>>> = FlatType<
-  // Non optional
-  & {
-    [K in keyof T as T[K] extends WithOptional ? never : K]: T[K] extends
-      Predicate<infer U> ? U : never;
-  }
-  // Optional
-  & {
-    [K in keyof T as T[K] extends WithOptional ? K : never]?: T[K] extends
-      Predicate<infer U> ? U : never;
-  }
->;
+/**
+ * Object types that are predicated by predicate functions in the object `T`.
+ *
+ * ```ts
+ * import { is, ObjectOf } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ *
+ * type A = ObjectOf<{ a: typeof is.Number, b: typeof is.String }>;
+ * // Above is equivalent to the following type
+ * // type A = { a: number; b: string };
+ * ```
+ */
+export type ObjectOf<T extends Record<PropertyKey, Predicate<unknown>>> =
+  FlatType<
+    // Non optional
+    & {
+      [K in keyof T as T[K] extends WithOptional ? never : K]: T[K] extends
+        Predicate<infer U> ? U : never;
+    }
+    // Optional
+    & {
+      [K in keyof T as T[K] extends WithOptional ? K : never]?: T[K] extends
+        Predicate<infer U> ? U : never;
+    }
+  >;
 
 type IsObjectOfMetadata = {
   name: "isObjectOf";
