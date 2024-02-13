@@ -1,0 +1,16 @@
+export const snapshot = {};
+
+snapshot[`isAllOf<T> > returns properly named function 1`] = `
+"isObjectOf({
+  a: isNumber,
+  b: isString
+})"
+`;
+
+snapshot[`isOneOf<T> > returns properly named function 1`] = `
+"isUnionOf([
+  isNumber,
+  isString,
+  isBoolean
+])"
+`;
