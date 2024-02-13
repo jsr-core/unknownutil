@@ -63,19 +63,6 @@ type IsUnionOfMetadata = {
 };
 
 /**
- * Return a type predicate function that returns `true` if the type of `x` is `UnionOf<T>`.
- *
- * @deprecated Use `isUnionOf` instead.
- */
-export function isOneOf<
-  T extends readonly [Predicate<unknown>, ...Predicate<unknown>[]],
->(
-  preds: T,
-): Predicate<UnionOf<T>> & WithMetadata<IsUnionOfMetadata> {
-  return isUnionOf(preds);
-}
-
-/**
  * Return a type predicate function that returns `true` if the type of `x` is `IntersectionOf<T>`.
  *
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
@@ -130,22 +117,6 @@ export function isIntersectionOf<
 }
 
 type IntersectionOf<T> = UnionToIntersection<UnionOf<T>>;
-
-/**
- * Return a type predicate function that returns `true` if the type of `x` is `IntersectionOf<T>`.
- *
- * @deprecated Use `isIntersectionOf` instead.
- */
-export function isAllOf<
-  T extends readonly [
-    Predicate<unknown> & WithMetadata<IsObjectOfMetadata>,
-    ...(Predicate<unknown> & WithMetadata<IsObjectOfMetadata>)[],
-  ],
->(
-  preds: T,
-): Predicate<IntersectionOf<T>> & WithMetadata<IsObjectOfMetadata> {
-  return isIntersectionOf(preds);
-}
 
 /**
  * Return a type predicate function that returns `true` if the type of `x` is `Required<ObjectOf<T>>`.
@@ -301,10 +272,8 @@ export function isOmitOf<
 }
 
 export default {
-  AllOf: isAllOf,
   IntersectionOf: isIntersectionOf,
   OmitOf: isOmitOf,
-  OneOf: isOneOf,
   PartialOf: isPartialOf,
   PickOf: isPickOf,
   RequiredOf: isRequiredOf,

@@ -1,19 +1,19 @@
 export const snapshot = {};
 
+snapshot[`isOptionalOf<T> > returns properly named function 1`] = `"isOptionalOf(isNumber)"`;
+
+snapshot[`isOptionalOf<T> > returns properly named function 2`] = `"isOptionalOf(isNumber)"`;
+
 snapshot[`isUnwrapOptionalOf<T> > returns properly named function 1`] = `"isNumber"`;
 
 snapshot[`isUnwrapOptionalOf<T> > returns properly named function 2`] = `"isNumber"`;
 
 snapshot[`isUnwrapOptionalOf<T> > returns properly named function 3`] = `"isNumber"`;
 
-snapshot[`isOptionalOf<T> > returns properly named function 1`] = `"isOptionalOf(isNumber)"`;
+snapshot[`isUnwrapReadonlyOf<T> > returns properly named function 1`] = `"isNumber"`;
 
-snapshot[`isOptionalOf<T> > returns properly named function 2`] = `"isOptionalOf(isNumber)"`;
+snapshot[`isUnwrapReadonlyOf<T> > returns properly named function 2`] = `"isReadonlyOf(isNumber)"`;
 
 snapshot[`isReadonlyOf<T> > returns properly named function 1`] = `"isReadonlyOf(isNumber)"`;
 
 snapshot[`isReadonlyOf<T> > returns properly named function 2`] = `"isReadonlyOf(isReadonlyOf(isNumber))"`;
-
-snapshot[`isUnwrapReadonlyOf<T> > returns properly named function 1`] = `"isNumber"`;
-
-snapshot[`isUnwrapReadonlyOf<T> > returns properly named function 2`] = `"isReadonlyOf(isNumber)"`;
