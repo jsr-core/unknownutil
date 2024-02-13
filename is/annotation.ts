@@ -93,6 +93,8 @@ type UnwrapOptionalOf<T> = T extends
 
 /**
  * Return `true` if the type of predicate function `x` is annotated as `Readonly`
+ *
+ * **This is unstable and may be removed in the future.**
  */
 export function isReadonly<P extends Predicate<unknown>>(
   x: P,
@@ -104,6 +106,8 @@ export function isReadonly<P extends Predicate<unknown>>(
 
 /**
  * Return an `Readonly` annotated type predicate function that returns `true` if the type of `x` is `T`.
+ *
+ * **This is unstable and may be removed in the future.**
  *
  * Note that this function does nothing but annotate the predicate function as `Readonly`.
  *
@@ -140,6 +144,8 @@ type IsReadonlyOfMetadata = {
 
 /**
  * Return an `Readonly` un-annotated type predicate function that returns `true` if the type of `x` is `T`.
+ *
+ * **This is unstable and may be removed in the future.**
  *
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
