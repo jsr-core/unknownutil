@@ -687,6 +687,11 @@ Deno.test("isObjectOf<T>", async (t) => {
       false,
       "Specify `{ strict: true }` and object have an unknown property",
     );
+    assertEquals(
+      isObjectOf({ 0: isString })(["a"]),
+      false,
+      "Value is not an object",
+    );
   });
   await t.step("returns true on T instance", () => {
     const date = new Date();
