@@ -5,7 +5,7 @@
   },
   "tasks": {
     "build-npm": "deno run -A scripts/build_npm.ts $(git describe --tags --always --dirty)",
-    "test": "deno test -A --parallel --shuffle --doc",
+    "test": "deno test -A --parallel --doc",
     "test:coverage": "deno task test --coverage=.coverage",
     "check": "deno check ./**/*.ts",
     "coverage": "deno coverage .coverage --exclude=is_bench.ts",
