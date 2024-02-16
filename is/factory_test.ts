@@ -9,7 +9,14 @@ import { assertType } from "https://deno.land/std@0.211.0/testing/types.ts";
 import { type Equal, stringify } from "./_testutil.ts";
 import { type Predicate } from "./type.ts";
 import { isOptionalOf } from "./annotation.ts";
-import { isArray, isBoolean, isNumber, isString, isUndefined } from "./core.ts";
+import {
+  isArray,
+  isBoolean,
+  isFunction,
+  isNumber,
+  isString,
+  isUndefined,
+} from "./core.ts";
 import is, {
   isArrayOf,
   isInstanceOf,
@@ -611,6 +618,13 @@ Deno.test("isObjectOf<T>", async (t) => {
       false,
       "Specify `{ strict: true }` and object have an unknown property",
     );
+  });
+  await t.step("returns true on T instance", () => {
+    const date = new Date();
+    const predObj = {
+      getFullYear: isFunction,
+    };
+    assertEquals(isObjectOf(predObj)(date), true, "Value is not an object");
   });
   await testWithExamples(
     t,
