@@ -1,6 +1,6 @@
 import type { FlatType } from "../_typeutil.ts";
 import type { Predicate, PredicateType } from "./type.ts";
-import { isOptional, isOptionalOf, isReadonlyOf } from "./annotation.ts";
+import { isOptionalOf, isReadonlyOf } from "./annotation.ts";
 import {
   isAny,
   isArray,
@@ -506,18 +506,12 @@ export function isObjectOf<
     // deno-lint-ignore no-explicit-any
     return isStrictOf(isObjectOf(predObj)) as any;
   }
-  const requiredKeys = Object.entries(predObj)
-    .filter(([_, v]) => !isWithOptional(v))
-    .map(([k]) => k);
   return setPredicateFactoryMetadata(
     (x: unknown): x is ObjectOf<T> => {
-      if (!isRecord(x)) return false;
-      // Check required keys
-      const s = new Set(Object.keys(x));
-      if (requiredKeys.some((k) => !s.has(k))) return false;
+      if (x == null || typeof x !== "object") return false;
       // Check each values
       for (const k in predObj) {
-        if (!predObj[k](x[k])) return false;
+        if (!predObj[k]((x as T)[k])) return false;
       }
       return true;
     },
@@ -528,13 +522,6 @@ export function isObjectOf<
 type WithOptional =
   | WithMetadata<GetMetadata<ReturnType<typeof isOptionalOf>>>
   | { optional: true }; // For backward compatibility
-
-function isWithOptional<T extends Predicate<unknown>>(
-  pred: T,
-): pred is T & WithOptional {
-  // deno-lint-ignore no-explicit-any
-  return isOptional(pred) || (pred as any).optional === true;
-}
 
 type ObjectOf<T extends Record<PropertyKey, Predicate<unknown>>> = FlatType<
   // Non optional
