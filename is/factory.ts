@@ -511,7 +511,7 @@ export function isObjectOf<
     .map(([k]) => k);
   return setPredicateFactoryMetadata(
     (x: unknown): x is ObjectOf<T> => {
-      if (!isRecord(x)) return false;
+      if (x == null || typeof x !== "object") return false;
       // Check required keys
       const s = new Set(Object.keys(x));
       if (requiredKeys.some((k) => !s.has(k))) return false;
