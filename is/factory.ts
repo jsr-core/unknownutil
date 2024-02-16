@@ -6,6 +6,7 @@ import {
   isArray,
   isMap,
   isRecord,
+  isRecordLike,
   isSet,
   type Primitive,
 } from "./core.ts";
@@ -371,6 +372,9 @@ export function isReadonlyUniformTupleOf<T, N extends number>(
  *
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
+ * Note that this function check if the `x` is an instance of `Object`.
+ * Use `isRecordLikeOf` instead if you want to check if the `x` satisfies the `Record<K, T>` type.
+ *
  * ```ts
  * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
  *
@@ -415,6 +419,57 @@ export function isRecordOf<T, K extends PropertyKey = PropertyKey>(
 type IsRecordOfMetadata = {
   name: "isRecordOf";
   args: Parameters<typeof isRecordOf>;
+};
+
+/**
+ * Return a type predicate function that returns `true` if the type of `x` is like `Record<K, T>`.
+ *
+ * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
+ *
+ * ```ts
+ * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ *
+ * const isMyType = is.RecordLikeOf(is.Number);
+ * const a: unknown = {"a": 0, "b": 1};
+ * if (isMyType(a)) {
+ *   // a is narrowed to Record<PropertyKey, number>
+ *   const _: Record<PropertyKey, number> = a;
+ * }
+ * ```
+ *
+ * With predicate function for keys:
+ *
+ * ```ts
+ * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ *
+ * const isMyType = is.RecordOf(is.Number, is.String);
+ * const a: unknown = {"a": 0, "b": 1};
+ * if (isMyType(a)) {
+ *   // a is narrowed to Record<string, number>
+ *   const _: Record<string, number> = a;
+ * }
+ * ```
+ */
+export function isRecordLikeOf<T, K extends PropertyKey = PropertyKey>(
+  pred: Predicate<T>,
+  predKey?: Predicate<K>,
+): Predicate<Record<K, T>> & WithMetadata<IsRecordLikeOfMetadata> {
+  return setPredicateFactoryMetadata(
+    (x: unknown): x is Record<K, T> => {
+      if (!isRecordLike(x)) return false;
+      for (const k in x) {
+        if (!pred(x[k])) return false;
+        if (predKey && !predKey(k)) return false;
+      }
+      return true;
+    },
+    { name: "isRecordLikeOf", args: [pred, predKey] },
+  );
+}
+
+type IsRecordLikeOfMetadata = {
+  name: "isRecordLikeOf";
+  args: Parameters<typeof isRecordLikeOf>;
 };
 
 /**
@@ -691,6 +746,7 @@ export default {
   ObjectOf: isObjectOf,
   ReadonlyTupleOf: isReadonlyTupleOf,
   ReadonlyUniformTupleOf: isReadonlyUniformTupleOf,
+  RecordLikeOf: isRecordLikeOf,
   RecordOf: isRecordOf,
   SetOf: isSetOf,
   StrictOf: isStrictOf,

@@ -142,6 +142,9 @@ export function isSet(x: unknown): x is Set<unknown> {
 /**
  * Return `true` if the type of `x` is `Record<PropertyKey, unknown>`.
  *
+ * Note that this function check if the `x` is an instance of `Object`.
+ * Use `isRecordLike` instead if you want to check if the `x` satisfies the `Record<PropertyKey, unknown>` type.
+ *
  * ```ts
  * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
  *
@@ -156,6 +159,33 @@ export function isRecord(
   x: unknown,
 ): x is Record<PropertyKey, unknown> {
   return x != null && typeof x === "object" && x.constructor === Object;
+}
+
+/**
+ * Return `true` if the type of `x` is like `Record<PropertyKey, unknown>`.
+ *
+ * Note that this function returns `true` for ambiguous instances like `Set`, `Map`, `Date`, `Promise`, etc.
+ *
+ * ```ts
+ * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ *
+ * const a: unknown = {"a": 0, "b": 1};
+ * if (is.RecordLike(a)) {
+ *   // a is narrowed to Record<PropertyKey, unknown>
+ *   const _: Record<PropertyKey, unknown> = a;
+ * }
+ *
+ * const b: unknown = new Date();
+ * if (is.RecordLike(b)) {
+ *   // a is narrowed to Record<PropertyKey, unknown>
+ *   const _: Record<PropertyKey, unknown> = b;
+ * }
+ * ```
+ */
+export function isRecordLike(
+  x: unknown,
+): x is Record<PropertyKey, unknown> {
+  return x != null && !Array.isArray(x) && typeof x === "object";
 }
 
 /**
@@ -345,6 +375,7 @@ export default {
   Number: isNumber,
   Primitive: isPrimitive,
   Record: isRecord,
+  RecordLike: isRecordLike,
   Set: isSet,
   String: isString,
   Symbol: isSymbol,

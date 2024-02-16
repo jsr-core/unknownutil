@@ -26,6 +26,7 @@ import is, {
   isObjectOf,
   isReadonlyTupleOf,
   isReadonlyUniformTupleOf,
+  isRecordLikeOf,
   isRecordOf,
   isSetOf,
   isStrictOf,
@@ -448,7 +449,7 @@ Deno.test("isRecordOf<T>", async (t) => {
     assertEquals(isRecordOf(isString)({ a: true }), false);
   });
   await testWithExamples(t, isRecordOf((_: unknown): _ is unknown => true), {
-    excludeExamples: ["record", "date", "promise"],
+    excludeExamples: ["record"],
   });
 });
 
@@ -482,8 +483,76 @@ Deno.test("isRecordOf<T, K>", async (t) => {
     assertEquals(isRecordOf(isBoolean, isNumber)({ a: true }), false);
   });
   await testWithExamples(t, isRecordOf((_: unknown): _ is unknown => true), {
-    excludeExamples: ["record", "date", "promise"],
+    excludeExamples: ["record"],
   });
+});
+
+Deno.test("isRecordLikeOf<T>", async (t) => {
+  await t.step("returns properly named function", async (t) => {
+    await assertSnapshot(t, isRecordLikeOf(isNumber).name);
+    await assertSnapshot(t, isRecordLikeOf((_x): _x is string => false).name);
+  });
+  await t.step("returns proper type predicate", () => {
+    const a: unknown = { a: 0 };
+    if (isRecordLikeOf(isNumber)(a)) {
+      assertType<Equal<typeof a, Record<PropertyKey, number>>>(true);
+    }
+  });
+  await t.step("returns true on T record", () => {
+    assertEquals(isRecordLikeOf(isNumber)({ a: 0 }), true);
+    assertEquals(isRecordLikeOf(isString)({ a: "a" }), true);
+    assertEquals(isRecordLikeOf(isBoolean)({ a: true }), true);
+  });
+  await t.step("returns false on non T record", () => {
+    assertEquals(isRecordLikeOf(isString)({ a: 0 }), false);
+    assertEquals(isRecordLikeOf(isNumber)({ a: "a" }), false);
+    assertEquals(isRecordLikeOf(isString)({ a: true }), false);
+  });
+  await testWithExamples(
+    t,
+    isRecordLikeOf((_: unknown): _ is unknown => true),
+    {
+      excludeExamples: ["record", "date", "promise", "set", "map"],
+    },
+  );
+});
+
+Deno.test("isRecordLikeOf<T, K>", async (t) => {
+  await t.step("returns properly named function", async (t) => {
+    await assertSnapshot(t, isRecordLikeOf(isNumber, isString).name);
+    await assertSnapshot(
+      t,
+      isRecordLikeOf((_x): _x is string => false, isString).name,
+    );
+  });
+  await t.step("returns proper type predicate", () => {
+    const a: unknown = { a: 0 };
+    if (isRecordLikeOf(isNumber, isString)(a)) {
+      assertType<Equal<typeof a, Record<string, number>>>(true);
+    }
+  });
+  await t.step("returns true on T record", () => {
+    assertEquals(isRecordLikeOf(isNumber, isString)({ a: 0 }), true);
+    assertEquals(isRecordLikeOf(isString, isString)({ a: "a" }), true);
+    assertEquals(isRecordLikeOf(isBoolean, isString)({ a: true }), true);
+  });
+  await t.step("returns false on non T record", () => {
+    assertEquals(isRecordLikeOf(isString, isString)({ a: 0 }), false);
+    assertEquals(isRecordLikeOf(isNumber, isString)({ a: "a" }), false);
+    assertEquals(isRecordLikeOf(isString, isString)({ a: true }), false);
+  });
+  await t.step("returns false on non K record", () => {
+    assertEquals(isRecordLikeOf(isNumber, isNumber)({ a: 0 }), false);
+    assertEquals(isRecordLikeOf(isString, isNumber)({ a: "a" }), false);
+    assertEquals(isRecordLikeOf(isBoolean, isNumber)({ a: true }), false);
+  });
+  await testWithExamples(
+    t,
+    isRecordLikeOf((_: unknown): _ is unknown => true),
+    {
+      excludeExamples: ["record", "date", "promise", "set", "map"],
+    },
+  );
 });
 
 Deno.test("isMapOf<T>", async (t) => {
