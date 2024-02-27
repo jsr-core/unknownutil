@@ -1,4 +1,7 @@
 {
+  "name": "@core/unknownutil",
+  "version": "0.0.0",
+  "exports": "./mod.ts",
   "lock": false,
   "imports": {
     "https://deno.land/x/unknownutil@$MODULE_VERSION/": "./"
