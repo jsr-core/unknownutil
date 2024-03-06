@@ -108,6 +108,14 @@ snapshot[`isReadonlyUniformTupleOf<T> > returns properly named function 2`] = `"
 
 snapshot[`isReadonlyUniformTupleOf<T> > returns properly named function 3`] = `"isReadonlyOf(isUniformTupleOf(3, (anonymous)))"`;
 
+snapshot[`isRecordObjectOf<T> > returns properly named function 1`] = `"isRecordObjectOf(isNumber, undefined)"`;
+
+snapshot[`isRecordObjectOf<T> > returns properly named function 2`] = `"isRecordObjectOf((anonymous), undefined)"`;
+
+snapshot[`isRecordObjectOf<T, K> > returns properly named function 1`] = `"isRecordObjectOf(isNumber, isString)"`;
+
+snapshot[`isRecordObjectOf<T, K> > returns properly named function 2`] = `"isRecordObjectOf((anonymous), isString)"`;
+
 snapshot[`isRecordOf<T> > returns properly named function 1`] = `"isRecordOf(isNumber, undefined)"`;
 
 snapshot[`isRecordOf<T> > returns properly named function 2`] = `"isRecordOf((anonymous), undefined)"`;

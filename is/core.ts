@@ -140,10 +140,36 @@ export function isSet(x: unknown): x is Set<unknown> {
 }
 
 /**
- * Return `true` if the type of `x` is `Record<PropertyKey, unknown>`.
+ * Return `true` if the type of `x` is an object instance that satisfies `Record<PropertyKey, unknown>`.
  *
  * Note that this function check if the `x` is an instance of `Object`.
  * Use `isRecordLike` instead if you want to check if the `x` satisfies the `Record<PropertyKey, unknown>` type.
+ *
+ * ```ts
+ * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ *
+ * const a: unknown = {"a": 0, "b": 1};
+ * if (is.RecordObject(a)) {
+ *   // a is narrowed to Record<PropertyKey, unknown>
+ *   const _: Record<PropertyKey, unknown> = a;
+ * }
+ *
+ * const b: unknown = new Set();
+ * if (is.RecordObject(b)) {
+ *   // b is not a raw object, so it is not narrowed
+ * }
+ * ```
+ */
+export function isRecordObject(
+  x: unknown,
+): x is Record<PropertyKey, unknown> {
+  return x != null && typeof x === "object" && x.constructor === Object;
+}
+
+/**
+ * Return `true` if the type of `x` satisfies `Record<PropertyKey, unknown>`.
+ *
+ * Note that this function returns `true` for ambiguous instances like `Set`, `Map`, `Date`, `Promise`, etc.
  *
  * ```ts
  * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
@@ -153,33 +179,24 @@ export function isSet(x: unknown): x is Set<unknown> {
  *   // a is narrowed to Record<PropertyKey, unknown>
  *   const _: Record<PropertyKey, unknown> = a;
  * }
+ *
+ * const b: unknown = new Set();
+ * if (is.Record(b)) {
+ *   // b is narrowed to Record<PropertyKey, unknown>
+ *   const _: Record<PropertyKey, unknown> = b;
+ * }
  * ```
  */
 export function isRecord(
   x: unknown,
 ): x is Record<PropertyKey, unknown> {
-  return x != null && typeof x === "object" && x.constructor === Object;
+  return x != null && !Array.isArray(x) && typeof x === "object";
 }
 
 /**
  * Return `true` if the type of `x` is like `Record<PropertyKey, unknown>`.
  *
- * Note that this function returns `true` for ambiguous instances like `Set`, `Map`, `Date`, `Promise`, etc.
- *
- * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
- *
- * const a: unknown = {"a": 0, "b": 1};
- * if (is.RecordLike(a)) {
- *   // a is narrowed to Record<PropertyKey, unknown>
- *   const _: Record<PropertyKey, unknown> = a;
- * }
- *
- * const b: unknown = new Date();
- * if (is.RecordLike(b)) {
- *   // a is narrowed to Record<PropertyKey, unknown>
- *   const _: Record<PropertyKey, unknown> = b;
- * }
+ * @deprecated Use `is.Record` instead.
  * ```
  */
 export function isRecordLike(
@@ -376,6 +393,7 @@ export default {
   Primitive: isPrimitive,
   Record: isRecord,
   RecordLike: isRecordLike,
+  RecordObject: isRecordObject,
   Set: isSet,
   String: isString,
   Symbol: isSymbol,

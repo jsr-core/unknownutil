@@ -16,7 +16,7 @@ import {
   isFunction,
   isNull,
   isNumber,
-  isRecord,
+  isRecordObject,
   isSet,
   isString,
   isSymbol,
@@ -121,8 +121,8 @@ Deno.test("isOptionalOf<T>", async (t) => {
       validExamples: ["set", "undefined"],
     });
   });
-  await t.step("with isRecord", async (t) => {
-    await testWithExamples(t, isOptionalOf(isRecord), {
+  await t.step("with isRecordObject", async (t) => {
+    await testWithExamples(t, isOptionalOf(isRecordObject), {
       validExamples: ["record", "undefined"],
     });
   });
@@ -208,10 +208,14 @@ Deno.test("isUnwrapOptionalOf<T>", async (t) => {
       validExamples: ["set"],
     });
   });
-  await t.step("with isRecord", async (t) => {
-    await testWithExamples(t, isUnwrapOptionalOf(isOptionalOf(isRecord)), {
-      validExamples: ["record"],
-    });
+  await t.step("with isRecordObject", async (t) => {
+    await testWithExamples(
+      t,
+      isUnwrapOptionalOf(isOptionalOf(isRecordObject)),
+      {
+        validExamples: ["record"],
+      },
+    );
   });
   await t.step("with isFunction", async (t) => {
     await testWithExamples(t, isUnwrapOptionalOf(isOptionalOf(isFunction)), {
