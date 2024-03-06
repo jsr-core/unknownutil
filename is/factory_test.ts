@@ -27,6 +27,7 @@ import is, {
   isReadonlyTupleOf,
   isReadonlyUniformTupleOf,
   isRecordLikeOf,
+  isRecordObjectOf,
   isRecordOf,
   isSetOf,
   isStrictOf,
@@ -427,6 +428,74 @@ Deno.test("isReadonlyUniformTupleOf<T>", async (t) => {
   });
 });
 
+Deno.test("isRecordObjectOf<T>", async (t) => {
+  await t.step("returns properly named function", async (t) => {
+    await assertSnapshot(t, isRecordObjectOf(isNumber).name);
+    await assertSnapshot(t, isRecordObjectOf((_x): _x is string => false).name);
+  });
+  await t.step("returns proper type predicate", () => {
+    const a: unknown = { a: 0 };
+    if (isRecordObjectOf(isNumber)(a)) {
+      assertType<Equal<typeof a, Record<PropertyKey, number>>>(true);
+    }
+  });
+  await t.step("returns true on T record", () => {
+    assertEquals(isRecordObjectOf(isNumber)({ a: 0 }), true);
+    assertEquals(isRecordObjectOf(isString)({ a: "a" }), true);
+    assertEquals(isRecordObjectOf(isBoolean)({ a: true }), true);
+  });
+  await t.step("returns false on non T record", () => {
+    assertEquals(isRecordObjectOf(isString)({ a: 0 }), false);
+    assertEquals(isRecordObjectOf(isNumber)({ a: "a" }), false);
+    assertEquals(isRecordObjectOf(isString)({ a: true }), false);
+  });
+  await testWithExamples(
+    t,
+    isRecordObjectOf((_: unknown): _ is unknown => true),
+    {
+      excludeExamples: ["record"],
+    },
+  );
+});
+
+Deno.test("isRecordObjectOf<T, K>", async (t) => {
+  await t.step("returns properly named function", async (t) => {
+    await assertSnapshot(t, isRecordObjectOf(isNumber, isString).name);
+    await assertSnapshot(
+      t,
+      isRecordObjectOf((_x): _x is string => false, isString).name,
+    );
+  });
+  await t.step("returns proper type predicate", () => {
+    const a: unknown = { a: 0 };
+    if (isRecordObjectOf(isNumber, isString)(a)) {
+      assertType<Equal<typeof a, Record<string, number>>>(true);
+    }
+  });
+  await t.step("returns true on T record", () => {
+    assertEquals(isRecordObjectOf(isNumber, isString)({ a: 0 }), true);
+    assertEquals(isRecordObjectOf(isString, isString)({ a: "a" }), true);
+    assertEquals(isRecordObjectOf(isBoolean, isString)({ a: true }), true);
+  });
+  await t.step("returns false on non T record", () => {
+    assertEquals(isRecordObjectOf(isString, isString)({ a: 0 }), false);
+    assertEquals(isRecordObjectOf(isNumber, isString)({ a: "a" }), false);
+    assertEquals(isRecordObjectOf(isString, isString)({ a: true }), false);
+  });
+  await t.step("returns false on non K record", () => {
+    assertEquals(isRecordObjectOf(isNumber, isNumber)({ a: 0 }), false);
+    assertEquals(isRecordObjectOf(isString, isNumber)({ a: "a" }), false);
+    assertEquals(isRecordObjectOf(isBoolean, isNumber)({ a: true }), false);
+  });
+  await testWithExamples(
+    t,
+    isRecordObjectOf((_: unknown): _ is unknown => true),
+    {
+      excludeExamples: ["record"],
+    },
+  );
+});
+
 Deno.test("isRecordOf<T>", async (t) => {
   await t.step("returns properly named function", async (t) => {
     await assertSnapshot(t, isRecordOf(isNumber).name);
@@ -448,9 +517,13 @@ Deno.test("isRecordOf<T>", async (t) => {
     assertEquals(isRecordOf(isNumber)({ a: "a" }), false);
     assertEquals(isRecordOf(isString)({ a: true }), false);
   });
-  await testWithExamples(t, isRecordOf((_: unknown): _ is unknown => true), {
-    excludeExamples: ["record"],
-  });
+  await testWithExamples(
+    t,
+    isRecordOf((_: unknown): _ is unknown => true),
+    {
+      excludeExamples: ["record", "date", "promise", "set", "map"],
+    },
+  );
 });
 
 Deno.test("isRecordOf<T, K>", async (t) => {
@@ -482,9 +555,13 @@ Deno.test("isRecordOf<T, K>", async (t) => {
     assertEquals(isRecordOf(isString, isNumber)({ a: "a" }), false);
     assertEquals(isRecordOf(isBoolean, isNumber)({ a: true }), false);
   });
-  await testWithExamples(t, isRecordOf((_: unknown): _ is unknown => true), {
-    excludeExamples: ["record"],
-  });
+  await testWithExamples(
+    t,
+    isRecordOf((_: unknown): _ is unknown => true),
+    {
+      excludeExamples: ["record", "date", "promise", "set", "map"],
+    },
+  );
 });
 
 Deno.test("isRecordLikeOf<T>", async (t) => {

@@ -18,6 +18,7 @@ import is, {
   isPrimitive,
   isRecord,
   isRecordLike,
+  isRecordObject,
   isSet,
   isString,
   isSymbol,
@@ -142,9 +143,15 @@ Deno.test("isSet", async (t) => {
   await testWithExamples(t, isSet, { validExamples: ["set"] });
 });
 
+Deno.test("isRecordObject", async (t) => {
+  await testWithExamples(t, isRecordObject, {
+    validExamples: ["record"],
+  });
+});
+
 Deno.test("isRecord", async (t) => {
   await testWithExamples(t, isRecord, {
-    validExamples: ["record"],
+    validExamples: ["record", "date", "promise", "set", "map"],
   });
 });
 
