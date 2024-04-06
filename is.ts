@@ -373,6 +373,23 @@ export function isNullish(x: unknown): x is null | undefined {
 }
 
 /**
+ * Return `true` if the type of `x` is not `null` or `undefined`.
+ *
+ * ```ts
+ * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ *
+ * const a = "a" as (string | null | undefined);
+ * if (isNonNullable(a)) {
+ *   // a is narrowed to string
+ *   const _: string = a;
+ * }
+ * ```
+ */
+export function isNonNullable<T>(x: T): x is NonNullable<T> {
+  return x != null;
+}
+
+/**
  * Return `true` if the type of `x` is `symbol`.
  *
  * ```ts
@@ -1629,6 +1646,7 @@ export const is = {
   LiteralOneOf: isLiteralOneOf,
   Map: isMap,
   MapOf: isMapOf,
+  NonNullable: isNonNullable,
   Null: isNull,
   Nullish: isNullish,
   Number: isNumber,
