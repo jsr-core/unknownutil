@@ -1,4 +1,4 @@
-import type { Predicate } from "./is/type.ts";
+import type { Predicate } from "./is.ts";
 import { inspect } from "./inspect.ts";
 
 /**

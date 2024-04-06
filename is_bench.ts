@@ -1,4 +1,4 @@
-import is from "./is.ts";
+import { is } from "./is.ts";
 
 const cs: unknown[] = [
   "Hello world",

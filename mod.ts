@@ -242,6 +242,3 @@
 export * from "./is.ts";
 export * from "./metadata.ts";
 export * from "./util.ts";
-
-import is from "./is.ts";
-export { is };
