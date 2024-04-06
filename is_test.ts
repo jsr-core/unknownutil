@@ -19,6 +19,7 @@ import {
   isLiteralOneOf,
   isMap,
   isMapOf,
+  isNonNullable,
   isNull,
   isNullish,
   isNumber,
@@ -223,6 +224,26 @@ Deno.test("isUndefined", async (t) => {
 Deno.test("isNullish", async (t) => {
   await testWithExamples(t, isNullish, {
     validExamples: ["null", "undefined"],
+  });
+});
+
+Deno.test("isNonNullable", async (t) => {
+  await testWithExamples(t, isNonNullable, {
+    validExamples: [
+      "string",
+      "number",
+      "bigint",
+      "boolean",
+      "array",
+      "set",
+      "record",
+      "map",
+      "syncFunction",
+      "asyncFunction",
+      "symbol",
+      "date",
+      "promise",
+    ],
   });
 });
 

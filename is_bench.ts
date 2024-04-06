@@ -433,6 +433,15 @@ Deno.bench({
 });
 
 Deno.bench({
+  name: "is.NonNullable",
+  fn: () => {
+    for (const c of cs) {
+      is.NonNullable(c);
+    }
+  },
+});
+
+Deno.bench({
   name: "is.Symbol",
   fn: () => {
     for (const c of cs) {
