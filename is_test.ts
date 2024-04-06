@@ -1,11 +1,6 @@
-import {
-  assertEquals,
-  assertStrictEquals,
-} from "https://deno.land/std@0.211.0/assert/mod.ts";
-import {
-  assertSnapshot,
-} from "https://deno.land/std@0.211.0/testing/snapshot.ts";
-import { assertType } from "https://deno.land/std@0.211.0/testing/types.ts";
+import { assertEquals, assertStrictEquals } from "@std/assert";
+import { assertSnapshot } from "@std/testing/snapshot";
+import { assertType } from "@std/testing/types";
 import { type Equal, stringify } from "./_testutil.ts";
 import type { Predicate, PredicateType } from "./is.ts";
 import {

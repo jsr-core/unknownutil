@@ -1,4 +1,4 @@
-import { build, emptyDir } from "https://deno.land/x/dnt@0.39.0/mod.ts";
+import { build, emptyDir } from "@deno/dnt";
 
 const name = "unknownutil";
 const version = Deno.args[0];
@@ -29,7 +29,7 @@ await build({
     version,
     author: "Alisue <lambdalisue@gmail.com>",
     license: "MIT",
-    repository: "https://github.com/lambdalisue/deno-unknownutil",
+    repository: "https://github.com/jsr-core/unknownutil",
   },
 });
 
