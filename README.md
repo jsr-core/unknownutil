@@ -2,10 +2,10 @@
 
 [![jsr](https://img.shields.io/jsr/v/%40core/unknownutil?logo=javascript&logoColor=white)](https://jsr.io/@core/unknownutil)
 [![npm](https://img.shields.io/npm/v/unknownutil?logo=npm&logoColor=white)](https://www.npmjs.com/package/unknownutil)
-[![denoland](https://img.shields.io/github/v/release/lambdalisue/deno-unknownutil?logo=deno&label=denoland)](https://github.com/lambdalisue/deno-unknownutil/releases)
+[![denoland](https://img.shields.io/github/v/release/jsr-core/unknownutil?logo=deno&label=denoland)](https://github.com/jsr-core/unknownutil/releases)
 [![deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/unknownutil/mod.ts)
-[![test](https://github.com/lambdalisue/deno-unknownutil/workflows/Test/badge.svg)](https://github.com/lambdalisue/deno-unknownutil/actions?query=workflow%3ATest)
-[![codecov](https://codecov.io/github/lambdalisue/deno-unknownutil/graph/badge.svg?token=pfbLRGU5AM)](https://codecov.io/github/lambdalisue/deno-unknownutil)
+[![test](https://github.com/jsr-core/unknownutil/workflows/Test/badge.svg)](https://github.com/jsr-core/unknownutil/actions?query=workflow%3ATest)
+[![codecov](https://codecov.io/github/jsr-core/unknownutil/graph/badge.svg?token=pfbLRGU5AM)](https://codecov.io/github/jsr-core/unknownutil)
 
 A utility pack for handling `unknown` type.
 
@@ -248,8 +248,8 @@ const _: string = maybe(a, is.String) ?? "default value";
 
 ## Migration
 
-See [GitHub Wiki](https://github.com/lambdalisue/deno-unknownutil/wiki) for
-migration to v3 from v2 or v2 from v1.
+See [GitHub Wiki](https://github.com/jsr-core/unknownutil/wiki) for migration to
+v3 from v2 or v2 from v1.
 
 ## License
 

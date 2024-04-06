@@ -29,7 +29,7 @@ await build({
     version,
     author: "Alisue <lambdalisue@gmail.com>",
     license: "MIT",
-    repository: "https://github.com/lambdalisue/deno-unknownutil",
+    repository: "https://github.com/jsr-core/unknownutil",
   },
 });
 
