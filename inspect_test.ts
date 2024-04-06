@@ -1,6 +1,4 @@
-import {
-  assertSnapshot,
-} from "https://deno.land/std@0.211.0/testing/snapshot.ts";
+import { assertSnapshot } from "@std/testing/snapshot";
 import { inspect } from "./inspect.ts";
 
 Deno.test("inspect", async (t) => {
