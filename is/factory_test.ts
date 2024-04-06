@@ -7,7 +7,7 @@ import {
 } from "https://deno.land/std@0.211.0/testing/snapshot.ts";
 import { assertType } from "https://deno.land/std@0.211.0/testing/types.ts";
 import { type Equal, stringify } from "./_testutil.ts";
-import { type Predicate } from "./type.ts";
+import type { Predicate } from "./type.ts";
 import { isOptionalOf } from "./annotation.ts";
 import {
   isArray,

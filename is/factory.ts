@@ -1,6 +1,6 @@
 import type { FlatType } from "../_typeutil.ts";
 import type { Predicate, PredicateType } from "./type.ts";
-import { isOptionalOf, isReadonlyOf } from "./annotation.ts";
+import { type isOptionalOf, isReadonlyOf } from "./annotation.ts";
 import {
   isAny,
   isArray,

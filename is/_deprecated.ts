@@ -1,7 +1,7 @@
 import type { UnionToIntersection } from "../_typeutil.ts";
 import type { Predicate } from "./type.ts";
-import { type isObjectOf } from "./factory.ts";
-import { type GetMetadata, type WithMetadata } from "../metadata.ts";
+import type { isObjectOf } from "./factory.ts";
+import type { GetMetadata, WithMetadata } from "../metadata.ts";
 import { isIntersectionOf, isUnionOf } from "./utility.ts";
 
 type IsObjectOfMetadata = GetMetadata<ReturnType<typeof isObjectOf>>;

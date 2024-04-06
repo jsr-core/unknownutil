@@ -3,7 +3,7 @@ import {
   assertStrictEquals,
 } from "https://deno.land/std@0.211.0/assert/mod.ts";
 import { stringify } from "./_testutil.ts";
-import { type Predicate } from "./type.ts";
+import type { Predicate } from "./type.ts";
 import is, {
   isAny,
   isArray,
