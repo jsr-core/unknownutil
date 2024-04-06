@@ -1,10 +1,10 @@
 # unknownutil
 
-[![npm](http://img.shields.io/badge/available%20on-npm-lightgrey.svg?logo=npm&logoColor=white)](https://www.npmjs.com/package/unknownutil)
-[![deno land](http://img.shields.io/badge/available%20on-deno.land/x-lightgrey.svg?logo=deno)](https://deno.land/x/unknownutil)
+[![jsr](https://img.shields.io/jsr/v/%40core/unknownutil?logo=javascript&logoColor=white)](https://jsr.io/@core/unknownutil)
+[![npm](https://img.shields.io/npm/v/unknownutil?logo=npm&logoColor=white)](https://www.npmjs.com/package/unknownutil)
+[![denoland](https://img.shields.io/github/v/release/lambdalisue/deno-unknownutil?logo=deno&label=denoland)](https://github.com/lambdalisue/deno-unknownutil/releases)
 [![deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/unknownutil/mod.ts)
-[![Test](https://github.com/lambdalisue/deno-unknownutil/workflows/Test/badge.svg)](https://github.com/lambdalisue/deno-unknownutil/actions?query=workflow%3ATest)
-[![npm version](https://badge.fury.io/js/unknownutil.svg)](https://badge.fury.io/js/unknownutil)
+[![test](https://github.com/lambdalisue/deno-unknownutil/workflows/Test/badge.svg)](https://github.com/lambdalisue/deno-unknownutil/actions?query=workflow%3ATest)
 [![codecov](https://codecov.io/github/lambdalisue/deno-unknownutil/graph/badge.svg?token=pfbLRGU5AM)](https://codecov.io/github/lambdalisue/deno-unknownutil)
 
 A utility pack for handling `unknown` type.
