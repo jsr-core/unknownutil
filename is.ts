@@ -379,7 +379,7 @@ export function isNullish(x: unknown): x is null | undefined {
  * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
  *
  * const a = "a" as (string | null | undefined);
- * if (isNonNullable(a)) {
+ * if (is.NonNullable(a)) {
  *   // a is narrowed to string
  *   const _: string = a;
  * }
