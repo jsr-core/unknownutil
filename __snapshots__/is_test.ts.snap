@@ -70,6 +70,54 @@ snapshot[`isTupleOf<T, E> > returns properly named function 3`] = `
 ])"
 `;
 
+snapshot[`isParametersOf<T> > returns properly named function 1`] = `
+"isParametersOf([
+  isNumber,
+  isString,
+  isOptionalOf(isBoolean)
+])"
+`;
+
+snapshot[`isParametersOf<T> > returns properly named function 2`] = `"isParametersOf([(anonymous)])"`;
+
+snapshot[`isParametersOf<T> > returns properly named function 3`] = `"isParametersOf([])"`;
+
+snapshot[`isParametersOf<T> > returns properly named function 4`] = `
+"isParametersOf([
+  isParametersOf([
+    isParametersOf([
+      isNumber,
+      isString,
+      isOptionalOf(isBoolean)
+    ])
+  ])
+])"
+`;
+
+snapshot[`isParametersOf<T, E> > returns properly named function 1`] = `
+"isParametersOf([
+  isNumber,
+  isString,
+  isOptionalOf(isBoolean)
+], isArray)"
+`;
+
+snapshot[`isParametersOf<T, E> > returns properly named function 2`] = `"isParametersOf([(anonymous)], isArrayOf(isString))"`;
+
+snapshot[`isParametersOf<T, E> > returns properly named function 3`] = `"isParametersOf([], isArrayOf(isString))"`;
+
+snapshot[`isParametersOf<T, E> > returns properly named function 4`] = `
+"isParametersOf([
+  isParametersOf([
+    isParametersOf([
+      isNumber,
+      isString,
+      isOptionalOf(isBoolean)
+    ], isArray)
+  ], isArray)
+])"
+`;
+
 snapshot[`isReadonlyTupleOf<T> > returns properly named function 1`] = `
 "isReadonlyOf(isTupleOf([
   isNumber,

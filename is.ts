@@ -752,6 +752,129 @@ type IsTupleOfMetadata = {
 };
 
 /**
+ * Return a type predicate function that returns `true` if the type of `x` is `ParametersOf<T>` or `ParametersOf<T, E>`.
+ *
+ * This is similar to `TupleOf<T>` or `TupleOf<T, E>`, except that the `OptionalOf<P>` at the end of the tuple becomes optional.
+ *
+ * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
+ *
+ * ```ts
+ * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ *
+ * const isMyType = is.ParametersOf(
+ *   [is.Number, is.String, is.OptionalOf(is.Boolean)] as const,
+ * );
+ * const a: unknown = [0, "a"];
+ * if (isMyType(a)) {
+ *   // a is narrowed to [number, string, boolean?]
+ *   const _: [number, string, boolean?] = a;
+ * }
+ * ```
+ *
+ * With `predElse`:
+ *
+ * ```ts
+ * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ *
+ * const isMyType = is.ParametersOf(
+ *   [is.Number, is.OptionalOf(is.String), is.OptionalOf(is.Boolean)] as const,
+ *   is.ArrayOf(is.Number),
+ * );
+ * const a: unknown = [0, "a", true, 0, 1, 2];
+ * if (isMyType(a)) {
+ *   // a is narrowed to [number, string?, boolean?, ...number[]]
+ *   const _: [number, string?, boolean?, ...number[]] = a;
+ * }
+ * ```
+ *
+ * Depending on the version of TypeScript and how values are provided, it may be necessary to add `as const` to the array
+ * used as `predTup`. If a type error occurs, try adding `as const` as follows:
+ *
+ * ```ts
+ * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ *
+ * const predTup = [is.Number, is.String, is.OptionalOf(is.Boolean)] as const;
+ * const isMyType = is.ParametersOf(predTup);
+ * const a: unknown = [0, "a"];
+ * if (isMyType(a)) {
+ *   // a is narrowed to [number, string, boolean?]
+ *   const _: [number, string, boolean?] = a;
+ * }
+ * ```
+ */
+export function isParametersOf<
+  T extends readonly [...Predicate<unknown>[]],
+>(
+  predTup: T,
+): Predicate<ParametersOf<T>> & WithMetadata<IsParametersOfMetadata>;
+export function isParametersOf<
+  T extends readonly [...Predicate<unknown>[]],
+  E extends Predicate<unknown[]>,
+>(
+  predTup: T,
+  predElse: E,
+):
+  & Predicate<[...ParametersOf<T>, ...PredicateType<E>]>
+  & WithMetadata<IsParametersOfMetadata>;
+export function isParametersOf<
+  T extends readonly [...Predicate<unknown>[]],
+  E extends Predicate<unknown[]>,
+>(
+  predTup: T,
+  predElse?: E,
+):
+  & Predicate<ParametersOf<T> | [...ParametersOf<T>, ...PredicateType<E>]>
+  & WithMetadata<IsParametersOfMetadata> {
+  const requiresLength = 1 + predTup.findLastIndex((pred) => !isOptional(pred));
+  if (!predElse) {
+    return setPredicateFactoryMetadata(
+      (x: unknown): x is ParametersOf<T> => {
+        if (
+          !isArray(x) || x.length < requiresLength || x.length > predTup.length
+        ) {
+          return false;
+        }
+        return predTup.every((pred, i) => pred(x[i]));
+      },
+      { name: "isParametersOf", args: [predTup] },
+    );
+  } else {
+    return setPredicateFactoryMetadata(
+      (x: unknown): x is [...ParametersOf<T>, ...PredicateType<E>] => {
+        if (!isArray(x) || x.length < requiresLength) {
+          return false;
+        }
+        const head = x.slice(0, predTup.length);
+        const tail = x.slice(predTup.length);
+        return predTup.every((pred, i) => pred(head[i])) && predElse(tail);
+      },
+      { name: "isParametersOf", args: [predTup, predElse] },
+    );
+  }
+}
+
+type ParametersOf<T> = T extends readonly [] ? []
+  : T extends readonly [...infer P, infer R]
+  // Tuple of predicates
+    ? P extends Predicate<unknown>[]
+      ? R extends Predicate<unknown> & WithMetadata<IsOptionalOfMetadata>
+        // Last parameter is optional
+        ? [...ParametersOf<P>, PredicateType<R>?]
+        // Last parameter is NOT optional
+      : [...ParametersOf<P>, PredicateType<R>]
+    : never
+  // Array of predicates
+  : TupleOf<T>;
+
+type IsParametersOfMetadata = {
+  name: "isParametersOf";
+  args: [
+    Parameters<typeof isParametersOf>[0],
+    Parameters<typeof isParametersOf>[1]?,
+  ];
+};
+
+/**
  * Return a type predicate function that returns `true` if the type of `x` is `Readonly<TupleOf<T>>`.
  *
  * @deprecated Use `is.ReadonlyOf(is.TupleOf(...))` instead.
@@ -1637,6 +1760,7 @@ export const is = {
   OneOf: isOneOf,
   Optional: isOptional,
   OptionalOf: isOptionalOf,
+  ParametersOf: isParametersOf,
   PartialOf: isPartialOf,
   PickOf: isPickOf,
   Primitive: isPrimitive,
