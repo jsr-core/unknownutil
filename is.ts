@@ -1130,9 +1130,21 @@ type IsMapOfMetadata = {
  *   const _: { a: number; b: string; c?: boolean | undefined } = a;
  * }
  * ```
- *
- * The `option.strict` is deprecated. Use `isStrictOf()` instead.
  */
+export function isObjectOf<
+  T extends Record<PropertyKey, Predicate<unknown>>,
+>(
+  predObj: T,
+): Predicate<ObjectOf<T>> & WithMetadata<IsObjectOfMetadata>;
+/**
+ * @deprecated The `option.strict` is deprecated. Use `isStrictOf()` instead.
+ */
+export function isObjectOf<
+  T extends Record<PropertyKey, Predicate<unknown>>,
+>(
+  predObj: T,
+  options: { strict?: boolean },
+): Predicate<ObjectOf<T>> & WithMetadata<IsObjectOfMetadata>;
 export function isObjectOf<
   T extends Record<PropertyKey, Predicate<unknown>>,
 >(
