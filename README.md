@@ -1,6 +1,6 @@
 # unknownutil
 
-[![jsr](https://img.shields.io/jsr/v/%40core/unknownutil?logo=javascript&logoColor=white)](https://jsr.io/@core/unknownutil)
+[![jsr](https://jsr.io/badges/@core/unknownutil)](https://jsr.io/@core/unknownutil)
 [![npm](https://img.shields.io/npm/v/unknownutil?logo=npm&logoColor=white)](https://www.npmjs.com/package/unknownutil)
 [![denoland](https://img.shields.io/github/v/release/jsr-core/unknownutil?logo=deno&label=denoland)](https://github.com/jsr-core/unknownutil/releases)
 [![deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/unknownutil/mod.ts)
@@ -49,7 +49,7 @@ const isArticle = is.ObjectOf({
         name: is.String,
         url: is.String,
       }),
-    ]),
+    ])
   ),
   createTime: is.OptionalOf(is.InstanceOf(Date)),
   updateTime: is.OptionalOf(is.InstanceOf(Date)),
@@ -95,7 +95,7 @@ const isArticle = is.ObjectOf({
         name: is.String,
         url: is.String,
       }),
-    ]),
+    ])
   ),
   createTime: is.OptionalOf(is.InstanceOf(Date)),
   updateTime: is.OptionalOf(is.InstanceOf(Date)),
