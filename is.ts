@@ -754,20 +754,25 @@ type IsTupleOfMetadata = {
 /**
  * Return a type predicate function that returns `true` if the type of `x` is `ParametersOf<T>` or `ParametersOf<T, E>`.
  *
- * This is similar to `TupleOf<T>` or `TupleOf<T, E>`, except that the `OptionalOf<P>` at the end of the tuple becomes optional.
+ * This is similar to `TupleOf<T>` or `TupleOf<T, E>`, but if `is.OptionalOf()` is specified at the trailing, the trailing elements becomes optional and makes variable-length tuple.
  *
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
  * ```ts
  * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
  *
- * const isMyType = is.ParametersOf(
- *   [is.Number, is.String, is.OptionalOf(is.Boolean)] as const,
- * );
- * const a: unknown = [0, "a"];
+ * const isMyType = is.ParametersOf([
+ *   is.Number,
+ *   is.OptionalOf(is.String),
+ *   is.Boolean,
+ *   is.OptionalOf(is.Number),
+ *   is.OptionalOf(is.String),
+ *   is.OptionalOf(is.Boolean),
+ * ] as const);
+ * const a: unknown = [0, undefined, "a"];
  * if (isMyType(a)) {
- *   // a is narrowed to [number, string, boolean?]
- *   const _: [number, string, boolean?] = a;
+ *   // a is narrowed to [number, string | undefined, boolean, number?, string?, boolean?]
+ *   const _: [number, string | undefined, boolean, number?, string?, boolean?] = a;
  * }
  * ```
  *
@@ -777,7 +782,11 @@ type IsTupleOfMetadata = {
  * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
  *
  * const isMyType = is.ParametersOf(
- *   [is.Number, is.OptionalOf(is.String), is.OptionalOf(is.Boolean)] as const,
+ *   [
+ *     is.Number,
+ *     is.OptionalOf(is.String),
+ *     is.OptionalOf(is.Boolean),
+ *   ] as const,
  *   is.ArrayOf(is.Number),
  * );
  * const a: unknown = [0, "a", true, 0, 1, 2];
