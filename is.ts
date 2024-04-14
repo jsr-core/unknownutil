@@ -1145,7 +1145,11 @@ export function isObjectOf<
   }
   return setPredicateFactoryMetadata(
     (x: unknown): x is ObjectOf<T> => {
-      if (x == null || typeof x !== "object" || Array.isArray(x)) return false;
+      if (
+        x == null ||
+        typeof x !== "object" && typeof x !== "function" ||
+        Array.isArray(x)
+      ) return false;
       // Check each values
       for (const k in predObj) {
         if (!predObj[k]((x as T)[k])) return false;

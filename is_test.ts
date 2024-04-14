@@ -1137,6 +1137,13 @@ Deno.test("isObjectOf<T>", async (t) => {
       true,
       "Object have an unknown property",
     );
+    assertEquals(
+      isObjectOf(predObj)(
+        Object.assign(() => void 0, { a: 0, b: "a", c: true }),
+      ),
+      true,
+      "Function object",
+    );
   });
   await t.step("returns false on non T object", () => {
     const predObj = {
