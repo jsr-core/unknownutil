@@ -1477,24 +1477,62 @@ Deno.test("isIntersectionOf<T>", async (t) => {
         isObjectOf({ a: isNumber }),
         isObjectOf({ b: isString }),
       ]).name,
+      "Should return `isObjectOf`, if all predicates that",
+    );
+    await assertSnapshot(
+      t,
+      isIntersectionOf([
+        isString,
+      ]).name,
+      "Should return as is, if there is only one predicate",
+    );
+    await assertSnapshot(
+      t,
+      isIntersectionOf([
+        isFunction,
+        isObjectOf({ b: isString }),
+      ]).name,
     );
   });
   await t.step("returns proper type predicate", () => {
-    const preds = [
+    const objPreds = [
       isObjectOf({ a: isNumber }),
+      isObjectOf({ b: isString }),
+    ] as const;
+    const funcPreds = [
+      isFunction,
       isObjectOf({ b: isString }),
     ] as const;
     const a: unknown = { a: 0, b: "a" };
-    if (isIntersectionOf(preds)(a)) {
+    if (isIntersectionOf(objPreds)(a)) {
       assertType<Equal<typeof a, { a: number } & { b: string }>>(true);
+    }
+    if (isIntersectionOf([isString])(a)) {
+      assertType<Equal<typeof a, string>>(true);
+    }
+    if (isIntersectionOf(funcPreds)(a)) {
+      assertType<
+        Equal<
+          typeof a,
+          & ((...args: unknown[]) => unknown)
+          & { b: string }
+        >
+      >(true);
     }
   });
   await t.step("returns true on all of T", () => {
-    const preds = [
+    const objPreds = [
       isObjectOf({ a: isNumber }),
       isObjectOf({ b: isString }),
     ] as const;
-    assertEquals(isIntersectionOf(preds)({ a: 0, b: "a" }), true);
+    const funcPreds = [
+      isFunction,
+      isObjectOf({ b: isString }),
+    ] as const;
+    const f = Object.assign(() => void 0, { b: "a" });
+    assertEquals(isIntersectionOf(objPreds)({ a: 0, b: "a" }), true);
+    assertEquals(isIntersectionOf([isString])("a"), true);
+    assertEquals(isIntersectionOf(funcPreds)(f), true);
   });
   await t.step("returns false on non of T", async (t) => {
     const preds = [
@@ -1510,6 +1548,25 @@ Deno.test("isIntersectionOf<T>", async (t) => {
       isIntersectionOf(preds)({ a: 0 }),
       false,
       "Some properties does not exists",
+    );
+    await testWithExamples(t, isIntersectionOf(preds), {
+      excludeExamples: ["record"],
+    });
+  });
+  await t.step("returns false on non of T with any predicates", async (t) => {
+    const preds = [
+      isFunction,
+      isObjectOf({ b: isString }),
+    ] as const;
+    assertEquals(
+      isIntersectionOf(preds)({ b: "a" }),
+      false,
+      "Not a function object",
+    );
+    assertEquals(
+      isIntersectionOf(preds)(() => void 0),
+      false,
+      "Some properties does not exists in Function object",
     );
     await testWithExamples(t, isIntersectionOf(preds), {
       excludeExamples: ["record"],

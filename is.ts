@@ -1,4 +1,4 @@
-import type { FlatType, UnionToIntersection, Writable } from "./_typeutil.ts";
+import type { FlatType, TupleToIntersection, Writable } from "./_typeutil.ts";
 import {
   type GetMetadata,
   getMetadata,
@@ -1430,17 +1430,51 @@ export function isIntersectionOf<
   ],
 >(
   preds: T,
-): Predicate<IntersectionOf<T>> & WithMetadata<IsObjectOfMetadata> {
+): Predicate<IntersectionOf<T>> & WithMetadata<IsObjectOfMetadata>;
+export function isIntersectionOf<
+  T extends readonly [Predicate<unknown>],
+>(
+  preds: T,
+): T[0];
+export function isIntersectionOf<
+  T extends readonly [Predicate<unknown>, ...Predicate<unknown>[]],
+>(
+  preds: T,
+): Predicate<IntersectionOf<T>> & WithMetadata<IsIntersectionOfMetadata>;
+export function isIntersectionOf<
+  T extends readonly [Predicate<unknown>, ...Predicate<unknown>[]],
+>(
+  preds: T,
+):
+  | Predicate<unknown>
+  | Predicate<IntersectionOf<T>>
+    & WithMetadata<IsObjectOfMetadata | IsIntersectionOfMetadata> {
   const predObj = {};
-  preds.forEach((pred) => {
-    Object.assign(predObj, getPredicateFactoryMetadata(pred).args[0]);
+  const restPreds = preds.filter((pred) => {
+    const meta = getMetadata(pred);
+    if ((meta as IsObjectOfMetadata)?.name !== "isObjectOf") {
+      return true;
+    }
+    Object.assign(predObj, (meta as IsObjectOfMetadata).args[0]);
   });
-  return isObjectOf(predObj) as
-    & Predicate<IntersectionOf<T>>
-    & WithMetadata<IsObjectOfMetadata>;
+  if (restPreds.length < preds.length) {
+    restPreds.push(isObjectOf(predObj));
+  }
+  if (restPreds.length === 1) {
+    return restPreds[0];
+  }
+  return setPredicateFactoryMetadata(
+    (x: unknown): x is IntersectionOf<T> => restPreds.every((pred) => pred(x)),
+    { name: "isIntersectionOf", args: [preds] },
+  );
 }
 
-type IntersectionOf<T> = UnionToIntersection<UnionOf<T>>;
+type IntersectionOf<T> = TupleToIntersection<TupleOf<T>>;
+
+type IsIntersectionOfMetadata = {
+  name: "isIntersectionOf";
+  args: Parameters<typeof isIntersectionOf>;
+};
 
 /**
  * Return a type predicate function that returns `true` if the type of `x` is `Required<ObjectOf<T>>`.
@@ -1628,7 +1662,7 @@ export function isAllOf<
   return isIntersectionOf(preds);
 }
 
-type AllOf<T> = UnionToIntersection<OneOf<T>>;
+type AllOf<T> = IntersectionOf<T>;
 
 export const is = {
   AllOf: isAllOf,
