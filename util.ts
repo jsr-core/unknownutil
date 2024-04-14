@@ -45,7 +45,7 @@ export class AssertError extends Error {
  * @param factory The factory function.
  * @example
  * ```ts
- * import { is, setAssertMessageFactory } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is, setAssertMessageFactory } from "@core/unknownutil";
  *
  * setAssertMessageFactory((x, pred) => {
  *   if (pred === is.String) {
@@ -68,7 +68,7 @@ export function setAssertMessageFactory(factory: AssertMessageFactory): void {
  * Asserts that the given value satisfies the provided predicate.
  *
  * ```ts
- * import { assert, is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { assert, is } from "@core/unknownutil";
  *
  * const a: unknown = "hello";
  * assert(a, is.String);
@@ -97,7 +97,7 @@ export function assert<T>(
  * Ensures that the given value satisfies the provided predicate.
  *
  * ```ts
- * import { ensure, is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { ensure, is } from "@core/unknownutil";
  *
  * const a: unknown = "hello";
  * const _: string = ensure(a, is.String);
@@ -122,7 +122,7 @@ export function ensure<T>(
  * Returns the input value if it satisfies the provided predicate, or `undefined` otherwise.
  *
  * ```ts
- * import { is, maybe } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is, maybe } from "@core/unknownutil";
  *
  * const a: unknown = "hello";
  * const _: string = maybe(a, is.String) ?? "default value";

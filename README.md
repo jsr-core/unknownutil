@@ -23,7 +23,7 @@ expected type. For example, `isString` (or `is.String`) returns `true` if a
 given value is `string`.
 
 ```typescript
-import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+import { is } from "@core/unknownutil";
 
 const a: unknown = "Hello";
 if (is.String(a)) {
@@ -34,10 +34,7 @@ if (is.String(a)) {
 For more complex types, you can use `is*Of` (or `is.*Of`) functions like:
 
 ```typescript
-import {
-  is,
-  PredicateType,
-} from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+import { is, PredicateType } from "@core/unknownutil";
 
 const isArticle = is.ObjectOf({
   title: is.String,
@@ -49,7 +46,7 @@ const isArticle = is.ObjectOf({
         name: is.String,
         url: is.String,
       }),
-    ])
+    ]),
   ),
   createTime: is.OptionalOf(is.InstanceOf(Date)),
   updateTime: is.OptionalOf(is.InstanceOf(Date)),
@@ -83,7 +80,7 @@ Additionally, you can manipulate the predicate function returned from
 similar to TypeScript's `Pick`, `Omit`, `Partial`, `Required` utility types.
 
 ```typescript
-import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+import { is } from "@core/unknownutil";
 
 const isArticle = is.ObjectOf({
   title: is.String,
@@ -95,7 +92,7 @@ const isArticle = is.ObjectOf({
         name: is.String,
         url: is.String,
       }),
-    ])
+    ]),
   ),
   createTime: is.OptionalOf(is.InstanceOf(Date)),
   updateTime: is.OptionalOf(is.InstanceOf(Date)),
@@ -169,7 +166,7 @@ If you need an union type or an intersection type, use `isUnionOf` and
 `isIntersectionOf` like:
 
 ```typescript
-import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+import { is } from "@core/unknownutil";
 
 const isFoo = is.ObjectOf({
   foo: is.String,
@@ -192,10 +189,7 @@ The `assert` function does nothing if a given value is expected type. Otherwise,
 it throws an `AssertError` exception like:
 
 ```typescript
-import {
-  assert,
-  is,
-} from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+import { assert, is } from "@core/unknownutil";
 
 const a: unknown = "Hello";
 
@@ -213,10 +207,7 @@ The `ensure` function return the value as-is if a given value is expected type.
 Otherwise, it throws an `AssertError` exception like:
 
 ```typescript
-import {
-  ensure,
-  is,
-} from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+import { ensure, is } from "@core/unknownutil";
 
 const a: unknown = "Hello";
 
@@ -235,10 +226,7 @@ Otherwise, it returns `undefined` that suites with
 like:
 
 ```typescript
-import {
-  is,
-  maybe,
-} from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+import { is, maybe } from "@core/unknownutil";
 
 const a: unknown = "Hello";
 

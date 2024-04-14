@@ -13,7 +13,7 @@
  * given value is `string`.
  *
  * ```typescript
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const a: unknown = "Hello";
  * if (is.String(a)) {
@@ -27,7 +27,7 @@
  * import {
  *   is,
  *   PredicateType,
- * } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * } from "@core/unknownutil";
  *
  * const isArticle = is.ObjectOf({
  *   title: is.String,
@@ -73,7 +73,7 @@
  * similar to TypeScript's `Pick`, `Omit`, `Partial`, `Required` utility types.
  *
  * ```typescript
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const isArticle = is.ObjectOf({
  *   title: is.String,
@@ -159,7 +159,7 @@
  * like:
  *
  * ```typescript
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const isFoo = is.ObjectOf({
  *   foo: is.String,
@@ -185,7 +185,7 @@
  * import {
  *   assert,
  *   is,
- * } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * } from "@core/unknownutil";
  *
  * const a: unknown = "Hello";
  *
@@ -206,7 +206,7 @@
  * import {
  *   ensure,
  *   is,
- * } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * } from "@core/unknownutil";
  *
  * const a: unknown = "Hello";
  *
@@ -228,7 +228,7 @@
  * import {
  *   is,
  *   maybe,
- * } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * } from "@core/unknownutil";
  *
  * const a: unknown = "Hello";
  *

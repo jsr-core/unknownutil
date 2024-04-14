@@ -26,7 +26,7 @@ export type Predicate<T> = (x: unknown) => x is T;
  * A type predicated by Predicate<T>.
  *
  * ```ts
- * import { is, type PredicateType } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is, type PredicateType } from "@core/unknownutil";
  *
  * const isPerson = is.ObjectOf({
  *   name: is.String,
@@ -48,7 +48,7 @@ export type PredicateType<P> = P extends Predicate<infer T> ? T : never;
  * Assume `x is `any` and always return `true` regardless of the type of `x`.
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const a = "a";
  * if (is.Any(a)) {
@@ -66,7 +66,7 @@ export function isAny(_x: unknown): _x is any {
  * Assume `x` is `unknown` and always return `true` regardless of the type of `x`.
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const a = "a";
  * if (is.Unknown(a)) {
@@ -83,7 +83,7 @@ export function isUnknown(_x: unknown): _x is unknown {
  * Return `true` if the type of `x` is `string`.
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const a: unknown = "a";
  * if (is.String(a)) {
@@ -100,7 +100,7 @@ export function isString(x: unknown): x is string {
  * Return `true` if the type of `x` is `number`.
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const a: unknown = 0;
  * if (is.Number(a)) {
@@ -117,7 +117,7 @@ export function isNumber(x: unknown): x is number {
  * Return `true` if the type of `x` is `bigint`.
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const a: unknown = 0n;
  * if (is.BigInt(a)) {
@@ -134,7 +134,7 @@ export function isBigInt(x: unknown): x is bigint {
  * Return `true` if the type of `x` is `boolean`.
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const a: unknown = true;
  * if (is.Boolean(a)) {
@@ -151,7 +151,7 @@ export function isBoolean(x: unknown): x is boolean {
  * Return `true` if the type of `x` is `unknown[]`.
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const a: unknown = [0, 1, 2];
  * if (is.Array(a)) {
@@ -170,7 +170,7 @@ export function isArray(
  * Return `true` if the type of `x` is `Set<unknown>`.
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const a: unknown = new Set([0, 1, 2]);
  * if (is.Set(a)) {
@@ -190,7 +190,7 @@ export function isSet(x: unknown): x is Set<unknown> {
  * Use `isRecordLike` instead if you want to check if the `x` satisfies the `Record<PropertyKey, unknown>` type.
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const a: unknown = {"a": 0, "b": 1};
  * if (is.RecordObject(a)) {
@@ -216,7 +216,7 @@ export function isRecordObject(
  * Note that this function returns `true` for ambiguous instances like `Set`, `Map`, `Date`, `Promise`, etc.
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const a: unknown = {"a": 0, "b": 1};
  * if (is.Record(a)) {
@@ -253,7 +253,7 @@ export function isRecordLike(
  * Return `true` if the type of `x` is `Map<unknown, unknown>`.
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const a: unknown = new Map([["a", 0], ["b", 1]]);
  * if (is.Map(a)) {
@@ -270,7 +270,7 @@ export function isMap(x: unknown): x is Map<unknown, unknown> {
  * Return `true` if the type of `x` is `function`.
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const a: unknown = () => {};
  * if (is.Function(a)) {
@@ -287,7 +287,7 @@ export function isFunction(x: unknown): x is (...args: unknown[]) => unknown {
  * Return `true` if the type of `x` is `function` (non async function).
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const a: unknown = () => {};
  * if (is.Function(a)) {
@@ -306,7 +306,7 @@ export function isSyncFunction(
  * Return `true` if the type of `x` is `function` (async function).
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const a: unknown = async () => {};
  * if (is.Function(a)) {
@@ -325,7 +325,7 @@ export function isAsyncFunction(
  * Return `true` if the type of `x` is `null`.
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const a: unknown = null;
  * if (is.Null(a)) {
@@ -342,7 +342,7 @@ export function isNull(x: unknown): x is null {
  * Return `true` if the type of `x` is `undefined`.
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const a: unknown = undefined;
  * if (is.Undefined(a)) {
@@ -359,7 +359,7 @@ export function isUndefined(x: unknown): x is undefined {
  * Return `true` if the type of `x` is `null` or `undefined`.
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const a: unknown = null;
  * if (is.Nullish(a)) {
@@ -376,7 +376,7 @@ export function isNullish(x: unknown): x is null | undefined {
  * Return `true` if the type of `x` is `symbol`.
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const a: unknown = Symbol("symbol");
  * if (is.Symbol(a)) {
@@ -402,7 +402,7 @@ export type Primitive =
  * Return `true` if the type of `x` is `Primitive`.
  *
  * ```ts
- * import { is, Primitive } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is, Primitive } from "@core/unknownutil";
  *
  * const a: unknown = 0;
  * if (is.Primitive(a)) {
@@ -432,7 +432,7 @@ export function isOptional<P extends Predicate<unknown>>(
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const isMyType = is.OptionalOf(is.String);
  * const a: unknown = "a";
@@ -474,7 +474,7 @@ type IsOptionalOfMetadata = {
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const isMyType = is.UnwrapOptionalOf(is.OptionalOf(is.String));
  * const a: unknown = "a";
@@ -521,7 +521,7 @@ export function isReadonly<P extends Predicate<unknown>>(
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const isMyType = is.ReadonlyOf(is.TupleOf([is.String, is.Number]));
  * const a: unknown = ["a", 1];
@@ -557,7 +557,7 @@ type IsReadonlyOfMetadata = {
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const isMyType = is.UnwrapReadonlyOf(is.ReadonlyOf(is.TupleOf([is.String, is.Number])));
  * const a: unknown = ["a", 1];
@@ -587,7 +587,7 @@ type UnwrapReadonlyOf<T> = T extends
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const isMyType = is.ArrayOf(is.String);
  * const a: unknown = ["a", "b", "c"];
@@ -617,7 +617,7 @@ type IsArrayOfMetadata = {
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const isMyType = is.SetOf(is.String);
  * const a: unknown = new Set(["a", "b", "c"]);
@@ -653,7 +653,7 @@ type IsSetOfMetadata = {
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const isMyType = is.TupleOf([is.Number, is.String, is.Boolean]);
  * const a: unknown = [0, "a", true];
@@ -666,7 +666,7 @@ type IsSetOfMetadata = {
  * With `predElse`:
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const isMyType = is.TupleOf(
  *   [is.Number, is.String, is.Boolean],
@@ -683,7 +683,7 @@ type IsSetOfMetadata = {
  * used as `predTup`. If a type error occurs, try adding `as const` as follows:
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const predTup = [is.Number, is.String, is.Boolean] as const;
  * const isMyType = is.TupleOf(predTup);
@@ -759,7 +759,7 @@ type IsTupleOfMetadata = {
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const isMyType = is.ParametersOf([
  *   is.Number,
@@ -779,7 +779,7 @@ type IsTupleOfMetadata = {
  * With `predElse`:
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const isMyType = is.ParametersOf(
  *   [
@@ -800,7 +800,7 @@ type IsTupleOfMetadata = {
  * used as `predTup`. If a type error occurs, try adding `as const` as follows:
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const predTup = [is.Number, is.String, is.OptionalOf(is.Boolean)] as const;
  * const isMyType = is.ParametersOf(predTup);
@@ -891,7 +891,7 @@ type IsParametersOfMetadata = {
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const isMyType = is.ReadonlyTupleOf([is.Number, is.String, is.Boolean]);
  * const a: unknown = [0, "a", true];
@@ -904,7 +904,7 @@ type IsParametersOfMetadata = {
  * With `predElse`:
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const isMyType = is.ReadonlyTupleOf(
  *   [is.Number, is.String, is.Boolean],
@@ -921,7 +921,7 @@ type IsParametersOfMetadata = {
  * used as `predTup`. If a type error occurs, try adding `as const` as follows:
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const predTup = [is.Number, is.String, is.Boolean] as const;
  * const isMyType = is.ReadonlyTupleOf(predTup);
@@ -971,7 +971,7 @@ export function isReadonlyTupleOf<
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const isMyType = is.UniformTupleOf(5);
  * const a: unknown = [0, 1, 2, 3, 4];
@@ -984,7 +984,7 @@ export function isReadonlyTupleOf<
  * With predicate function:
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const isMyType = is.UniformTupleOf(5, is.Number);
  * const a: unknown = [0, 1, 2, 3, 4];
@@ -1029,7 +1029,7 @@ type IsUniformTupleOfMetadata = {
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const isMyType = is.ReadonlyUniformTupleOf(5);
  * const a: unknown = [0, 1, 2, 3, 4];
@@ -1042,7 +1042,7 @@ type IsUniformTupleOfMetadata = {
  * With predicate function:
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const isMyType = is.ReadonlyUniformTupleOf(5, is.Number);
  * const a: unknown = [0, 1, 2, 3, 4];
@@ -1070,7 +1070,7 @@ export function isReadonlyUniformTupleOf<T, N extends number>(
  * Use `isRecordOf` instead if you want to check if the `x` satisfies the `Record<K, T>` type.
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const isMyType = is.RecordObjectOf(is.Number);
  * const a: unknown = {"a": 0, "b": 1};
@@ -1083,7 +1083,7 @@ export function isReadonlyUniformTupleOf<T, N extends number>(
  * With predicate function for keys:
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const isMyType = is.RecordObjectOf(is.Number, is.String);
  * const a: unknown = {"a": 0, "b": 1};
@@ -1121,7 +1121,7 @@ type IsRecordObjectOfMetadata = {
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const isMyType = is.RecordOf(is.Number);
  * const a: unknown = {"a": 0, "b": 1};
@@ -1134,7 +1134,7 @@ type IsRecordObjectOfMetadata = {
  * With predicate function for keys:
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const isMyType = is.RecordOf(is.Number, is.String);
  * const a: unknown = {"a": 0, "b": 1};
@@ -1192,7 +1192,7 @@ type IsRecordLikeOfMetadata = {
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const isMyType = is.MapOf(is.Number);
  * const a: unknown = new Map([["a", 0], ["b", 1]]);
@@ -1205,7 +1205,7 @@ type IsRecordLikeOfMetadata = {
  * With predicate function for keys:
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const isMyType = is.MapOf(is.Number, is.String);
  * const a: unknown = new Map([["a", 0], ["b", 1]]);
@@ -1248,7 +1248,7 @@ type IsMapOfMetadata = {
  * The number of keys of `x` must be greater than or equal to the number of keys of `predObj`.
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const isMyType = is.ObjectOf({
  *   a: is.Number,
@@ -1337,7 +1337,7 @@ type IsObjectOfMetadata = {
  * the deprecated `options.strict` in `isObjectOf()`.
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const isMyType = is.StrictOf(is.ObjectOf({
  *   a: is.Number,
@@ -1381,7 +1381,7 @@ type IsStrictOfMetadata = {
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const isMyType = is.InstanceOf(Date);
  * const a: unknown = new Date();
@@ -1412,7 +1412,7 @@ type IsInstanceOfMetadata = {
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const isMyType = is.LiteralOf("hello");
  * const a: unknown = "hello";
@@ -1442,7 +1442,7 @@ type IsLiteralOfMetadata = {
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const isMyType = is.LiteralOneOf(["hello", "world"] as const);
  * const a: unknown = "hello";
@@ -1473,7 +1473,7 @@ type IsLiteralOneOfMetadata = {
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const isMyType = is.UnionOf([is.Number, is.String, is.Boolean]);
  * const a: unknown = 0;
@@ -1487,7 +1487,7 @@ type IsLiteralOneOfMetadata = {
  * used as `preds`. If a type error occurs, try adding `as const` as follows:
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const preds = [is.Number, is.String, is.Boolean] as const;
  * const isMyType = is.UnionOf(preds);
@@ -1524,7 +1524,7 @@ type IsUnionOfMetadata = {
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const isMyType = is.IntersectionOf([
  *   is.ObjectOf({ a: is.Number }),
@@ -1541,7 +1541,7 @@ type IsUnionOfMetadata = {
  * used as `preds`. If a type error occurs, try adding `as const` as follows:
  *
  * ```ts
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const preds = [
  *   is.ObjectOf({ a: is.Number }),
@@ -1614,7 +1614,7 @@ type IsIntersectionOfMetadata = {
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
  * ```typescript
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const isMyType = is.RequiredOf(is.ObjectOf({
  *   a: is.Number,
@@ -1650,7 +1650,7 @@ export function isRequiredOf<
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
  * ```typescript
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const isMyType = is.PartialOf(is.ObjectOf({
  *   a: is.Number,
@@ -1687,7 +1687,7 @@ export function isPartialOf<
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
  * ```typescript
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const isMyType = is.PickOf(is.ObjectOf({
  *   a: is.Number,
@@ -1727,7 +1727,7 @@ export function isPickOf<
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
  * ```typescript
- * import { is } from "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts";
+ * import { is } from "@core/unknownutil";
  *
  * const isMyType = is.OmitOf(is.ObjectOf({
  *   a: is.Number,
