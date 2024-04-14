@@ -39,7 +39,7 @@ Deno.copyFileSync("LICENSE", "npm/LICENSE");
 // build README for npm
 let readme = Deno.readTextFileSync("README.md");
 readme = readme.replaceAll(
-  "https://deno.land/x/unknownutil@$MODULE_VERSION/mod.ts",
+  "@core/unknownutil",
   name,
 );
 readme = readme.replaceAll(
