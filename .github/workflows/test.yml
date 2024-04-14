@@ -41,10 +41,11 @@ jobs:
         timeout-minutes: 5
       - run: |
           deno task coverage --lcov > coverage.lcov
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v4
         with:
           os: ${{ runner.os }}
           files: ./coverage.lcov
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   bench:
     runs-on: ubuntu-latest
