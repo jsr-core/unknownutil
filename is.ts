@@ -454,7 +454,7 @@ export function isOptionalOf<T>(
   }
   return Object.defineProperties(
     setPredicateFactoryMetadata(
-      (x: unknown): x is Predicate<T | undefined> => x === undefined || pred(x),
+      (x: unknown): x is T | undefined => x === undefined || pred(x),
       { name: "isOptionalOf", args: [pred] },
     ),
     { optional: { value: true as const } },
