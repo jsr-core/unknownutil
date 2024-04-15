@@ -2,7 +2,7 @@ import { assertEquals, assertStrictEquals } from "@std/assert";
 import { assertSnapshot } from "@std/testing/snapshot";
 import { assertType } from "@std/testing/types";
 import { type Equal, stringify } from "./_testutil.ts";
-import type { Predicate, PredicateType } from "./is.ts";
+import type { Predicate, PredicateType } from "./type.ts";
 import {
   is,
   isAllOf,

@@ -1,4 +1,5 @@
 import type { FlatType, TupleToIntersection, Writable } from "./_typeutil.ts";
+import type { Predicate, PredicateType, Primitive } from "./type.ts";
 import {
   type GetMetadata,
   getMetadata,
@@ -16,33 +17,6 @@ const primitiveSet = new Set([
   "boolean",
   "symbol",
 ]);
-
-/**
- * A type predicate function.
- */
-export type Predicate<T> = (x: unknown) => x is T;
-
-/**
- * A type predicated by Predicate<T>.
- *
- * ```ts
- * import { is, type PredicateType } from "@core/unknownutil";
- *
- * const isPerson = is.ObjectOf({
- *   name: is.String,
- *   age: is.Number,
- *   address: is.OptionalOf(is.String),
- * });
- *
- * type Person = PredicateType<typeof isPerson>;
- * // Above is equivalent to the following type
- * // type Person = {
- * //   name: string;
- * //   age: number;
- * //   address: string | undefined;
- * // };
- */
-export type PredicateType<P> = P extends Predicate<infer T> ? T : never;
 
 /**
  * Assume `x is `any` and always return `true` regardless of the type of `x`.
@@ -388,15 +362,6 @@ export function isNullish(x: unknown): x is null | undefined {
 export function isSymbol(x: unknown): x is symbol {
   return typeof x === "symbol";
 }
-
-export type Primitive =
-  | string
-  | number
-  | bigint
-  | boolean
-  | null
-  | undefined
-  | symbol;
 
 /**
  * Return `true` if the type of `x` is `Primitive`.
