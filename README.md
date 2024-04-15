@@ -236,8 +236,8 @@ const _: string = maybe(a, is.String) ?? "default value";
 
 ## Migration
 
-See [GitHub Wiki](https://github.com/jsr-core/unknownutil/wiki) for migration to
-v3 from v2 or v2 from v1.
+See [GitHub Wiki](https://github.com/jsr-core/unknownutil/wiki) for migration
+from previous versions.
 
 ## License
 
