@@ -118,61 +118,11 @@ snapshot[`isParametersOf<T, E> > returns properly named function 4`] = `
 ])"
 `;
 
-snapshot[`isReadonlyTupleOf<T> > returns properly named function 1`] = `
-"isReadonlyOf(isTupleOf([
-  isNumber,
-  isString,
-  isBoolean
-]))"
-`;
-
-snapshot[`isReadonlyTupleOf<T> > returns properly named function 2`] = `"isReadonlyOf(isTupleOf([(anonymous)]))"`;
-
-snapshot[`isReadonlyTupleOf<T> > returns properly named function 3`] = `
-"isReadonlyOf(isTupleOf([
-  isReadonlyOf(isTupleOf([
-    isReadonlyOf(isTupleOf([
-      isNumber,
-      isString,
-      isBoolean
-    ]))
-  ]))
-]))"
-`;
-
-snapshot[`isReadonlyTupleOf<T, E> > returns properly named function 1`] = `
-"isReadonlyOf(isTupleOf([
-  isNumber,
-  isString,
-  isBoolean
-], isArray))"
-`;
-
-snapshot[`isReadonlyTupleOf<T, E> > returns properly named function 2`] = `"isReadonlyOf(isTupleOf([(anonymous)], isArrayOf(isString)))"`;
-
-snapshot[`isReadonlyTupleOf<T, E> > returns properly named function 3`] = `
-"isReadonlyOf(isTupleOf([
-  isReadonlyOf(isTupleOf([
-    isReadonlyOf(isTupleOf([
-      isNumber,
-      isString,
-      isBoolean
-    ], isArray))
-  ], isArray))
-], isArray))"
-`;
-
 snapshot[`isUniformTupleOf<T> > returns properly named function 1`] = `"isUniformTupleOf(3, isAny)"`;
 
 snapshot[`isUniformTupleOf<T> > returns properly named function 2`] = `"isUniformTupleOf(3, isNumber)"`;
 
 snapshot[`isUniformTupleOf<T> > returns properly named function 3`] = `"isUniformTupleOf(3, (anonymous))"`;
-
-snapshot[`isReadonlyUniformTupleOf<T> > returns properly named function 1`] = `"isReadonlyOf(isUniformTupleOf(3, isAny))"`;
-
-snapshot[`isReadonlyUniformTupleOf<T> > returns properly named function 2`] = `"isReadonlyOf(isUniformTupleOf(3, isNumber))"`;
-
-snapshot[`isReadonlyUniformTupleOf<T> > returns properly named function 3`] = `"isReadonlyOf(isUniformTupleOf(3, (anonymous)))"`;
 
 snapshot[`isRecordObjectOf<T> > returns properly named function 1`] = `"isRecordObjectOf(isNumber, undefined)"`;
 
@@ -189,14 +139,6 @@ snapshot[`isRecordOf<T> > returns properly named function 2`] = `"isRecordOf((an
 snapshot[`isRecordOf<T, K> > returns properly named function 1`] = `"isRecordOf(isNumber, isString)"`;
 
 snapshot[`isRecordOf<T, K> > returns properly named function 2`] = `"isRecordOf((anonymous), isString)"`;
-
-snapshot[`isRecordLikeOf<T> > returns properly named function 1`] = `"isRecordLikeOf(isNumber, undefined)"`;
-
-snapshot[`isRecordLikeOf<T> > returns properly named function 2`] = `"isRecordLikeOf((anonymous), undefined)"`;
-
-snapshot[`isRecordLikeOf<T, K> > returns properly named function 1`] = `"isRecordLikeOf(isNumber, isString)"`;
-
-snapshot[`isRecordLikeOf<T, K> > returns properly named function 2`] = `"isRecordLikeOf((anonymous), isString)"`;
 
 snapshot[`isMapOf<T> > returns properly named function 1`] = `"isMapOf(isNumber, undefined)"`;
 
@@ -349,18 +291,3 @@ snapshot[`isOmitOf<T, K> > returns properly named function 1`] = `
 `;
 
 snapshot[`isOmitOf<T, K> > returns properly named function 2`] = `"isObjectOf({a: isNumber})"`;
-
-snapshot[`isOneOf<T> > returns properly named function 1`] = `
-"isUnionOf([
-  isNumber,
-  isString,
-  isBoolean
-])"
-`;
-
-snapshot[`isAllOf<T> > returns properly named function 1`] = `
-"isObjectOf({
-  a: isNumber,
-  b: isString
-})"
-`;
