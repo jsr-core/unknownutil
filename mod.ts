@@ -239,6 +239,7 @@
  * @module
  */
 
+export type * from "./type.ts";
 export * from "./is.ts";
 export * from "./metadata.ts";
 export * from "./util.ts";

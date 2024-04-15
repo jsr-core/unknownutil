@@ -2,10 +2,9 @@ import { assertEquals, assertStrictEquals } from "@std/assert";
 import { assertSnapshot } from "@std/testing/snapshot";
 import { assertType } from "@std/testing/types";
 import { type Equal, stringify } from "./_testutil.ts";
-import type { Predicate, PredicateType } from "./is.ts";
+import type { Predicate, PredicateType } from "./type.ts";
 import {
   is,
-  isAllOf,
   isAny,
   isArray,
   isArrayOf,
@@ -24,18 +23,13 @@ import {
   isNumber,
   isObjectOf,
   isOmitOf,
-  isOneOf,
   isOptionalOf,
   isParametersOf,
   isPartialOf,
   isPickOf,
   isPrimitive,
   isReadonlyOf,
-  isReadonlyTupleOf,
-  isReadonlyUniformTupleOf,
   isRecord,
-  isRecordLike,
-  isRecordLikeOf,
   isRecordObject,
   isRecordObjectOf,
   isRecordOf,
@@ -179,12 +173,6 @@ Deno.test("isRecordObject", async (t) => {
 
 Deno.test("isRecord", async (t) => {
   await testWithExamples(t, isRecord, {
-    validExamples: ["record", "date", "promise", "set", "map"],
-  });
-});
-
-Deno.test("isRecordLike", async (t) => {
-  await testWithExamples(t, isRecordLike, {
     validExamples: ["record", "date", "promise", "set", "map"],
   });
 });
@@ -780,122 +768,6 @@ Deno.test("isParametersOf<T, E>", async (t) => {
   );
 });
 
-Deno.test("isReadonlyTupleOf<T>", async (t) => {
-  await t.step("returns properly named function", async (t) => {
-    await assertSnapshot(
-      t,
-      isReadonlyTupleOf([isNumber, isString, isBoolean]).name,
-    );
-    await assertSnapshot(
-      t,
-      isReadonlyTupleOf([(_x): _x is string => false]).name,
-    );
-    // Nested
-    await assertSnapshot(
-      t,
-      isReadonlyTupleOf([
-        isReadonlyTupleOf([isReadonlyTupleOf([isNumber, isString, isBoolean])]),
-      ]).name,
-    );
-  });
-  await t.step("returns proper type predicate", () => {
-    const predTup = [isNumber, isString, isBoolean] as const;
-    const a: unknown = [0, "a", true];
-    if (isReadonlyTupleOf(predTup)(a)) {
-      assertType<Equal<typeof a, readonly [number, string, boolean]>>(true);
-    }
-  });
-  await t.step("returns true on T tuple", () => {
-    const predTup = [isNumber, isString, isBoolean] as const;
-    assertEquals(isReadonlyTupleOf(predTup)([0, "a", true]), true);
-  });
-  await t.step("returns false on non T tuple", () => {
-    const predTup = [isNumber, isString, isBoolean] as const;
-    assertEquals(isReadonlyTupleOf(predTup)([0, 1, 2]), false);
-    assertEquals(isReadonlyTupleOf(predTup)([0, "a"]), false);
-    assertEquals(isReadonlyTupleOf(predTup)([0, "a", true, 0]), false);
-  });
-  await testWithExamples(
-    t,
-    isReadonlyTupleOf([(_: unknown): _ is unknown => true]),
-    {
-      excludeExamples: ["array"],
-    },
-  );
-});
-
-Deno.test("isReadonlyTupleOf<T, E>", async (t) => {
-  await t.step("returns properly named function", async (t) => {
-    await assertSnapshot(
-      t,
-      isReadonlyTupleOf([isNumber, isString, isBoolean], isArray)
-        .name,
-    );
-    await assertSnapshot(
-      t,
-      isReadonlyTupleOf(
-        [(_x): _x is string => false],
-        isArrayOf(isString),
-      ).name,
-    );
-    // Nested
-    await assertSnapshot(
-      t,
-      isReadonlyTupleOf([
-        isReadonlyTupleOf([
-          isReadonlyTupleOf([isNumber, isString, isBoolean], isArray),
-        ], isArray),
-      ], isArray).name,
-    );
-  });
-  await t.step("returns proper type predicate", () => {
-    const predTup = [isNumber, isString, isBoolean] as const;
-    const predElse = isArrayOf(isNumber);
-    const a: unknown = [0, "a", true, 0, 1, 2];
-    if (isReadonlyTupleOf(predTup, predElse)(a)) {
-      assertType<
-        Equal<typeof a, readonly [number, string, boolean, ...number[]]>
-      >(true);
-    }
-  });
-  await t.step("returns true on T tuple", () => {
-    const predTup = [isNumber, isString, isBoolean] as const;
-    const predElse = isArrayOf(isNumber);
-    assertEquals(
-      isReadonlyTupleOf(predTup, predElse)([0, "a", true, 0, 1, 2]),
-      true,
-    );
-  });
-  await t.step("returns false on non T tuple", () => {
-    const predTup = [isNumber, isString, isBoolean] as const;
-    const predElse = isArrayOf(isString);
-    assertEquals(
-      isReadonlyTupleOf(predTup, predElse)([0, 1, 2, 0, 1, 2]),
-      false,
-    );
-    assertEquals(
-      isReadonlyTupleOf(predTup, predElse)([0, "a", 0, 1, 2]),
-      false,
-    );
-    assertEquals(
-      isReadonlyTupleOf(predTup, predElse)([0, "a", true, 0, 0, 1, 2]),
-      false,
-    );
-    assertEquals(
-      isReadonlyTupleOf(predTup, predElse)([0, "a", true, 0, 1, 2]),
-      false,
-    );
-  });
-  const predElse = isArray;
-  await testWithExamples(
-    t,
-    isReadonlyTupleOf([(_: unknown): _ is unknown => true], predElse),
-    {
-      excludeExamples: ["array"],
-    },
-  );
-});
-
 Deno.test("isUniformTupleOf<T>", async (t) => {
   await t.step("returns properly named function", async (t) => {
     await assertSnapshot(t, isUniformTupleOf(3).name);
@@ -929,49 +801,6 @@ Deno.test("isUniformTupleOf<T>", async (t) => {
     assertEquals(isUniformTupleOf(3, isNumber)(["a", "b", "c"]), false);
   });
   await testWithExamples(t, isUniformTupleOf(4), {
-    excludeExamples: ["array"],
-  });
-});
-
-Deno.test("isReadonlyUniformTupleOf<T>", async (t) => {
-  await t.step("returns properly named function", async (t) => {
-    await assertSnapshot(t, isReadonlyUniformTupleOf(3).name);
-    await assertSnapshot(t, isReadonlyUniformTupleOf(3, isNumber).name);
-    await assertSnapshot(
-      t,
-      isReadonlyUniformTupleOf(3, (_x): _x is string => false).name,
-    );
-  });
-  await t.step("returns proper type predicate", () => {
-    const a: unknown = [0, 1, 2, 3, 4];
-    if (isReadonlyUniformTupleOf(5)(a)) {
-      assertType<
-        Equal<
-          typeof a,
-          readonly [unknown, unknown, unknown, unknown, unknown]
-        >
-      >(true);
-    }
-
-    if (isReadonlyUniformTupleOf(5, isNumber)(a)) {
-      assertType<
-        Equal<typeof a, readonly [number, number, number, number, number]>
-      >(true);
-    }
-  });
-  await t.step("returns true on mono-typed T tuple", () => {
-    assertEquals(isReadonlyUniformTupleOf(3)([0, 1, 2]), true);
-    assertEquals(isReadonlyUniformTupleOf(3, isNumber)([0, 1, 2]), true);
-  });
-  await t.step("returns false on non mono-typed T tuple", () => {
-    assertEquals(isReadonlyUniformTupleOf(4)([0, 1, 2]), false);
-    assertEquals(isReadonlyUniformTupleOf(4)([0, 1, 2, 3, 4]), false);
-    assertEquals(
-      isReadonlyUniformTupleOf(3, isNumber)(["a", "b", "c"]),
-      false,
-    );
-  });
-  await testWithExamples(t, isReadonlyUniformTupleOf(4), {
     excludeExamples: ["array"],
   });
 });
@@ -1112,74 +941,6 @@ Deno.test("isRecordOf<T, K>", async (t) => {
   );
 });
 
-Deno.test("isRecordLikeOf<T>", async (t) => {
-  await t.step("returns properly named function", async (t) => {
-    await assertSnapshot(t, isRecordLikeOf(isNumber).name);
-    await assertSnapshot(t, isRecordLikeOf((_x): _x is string => false).name);
-  });
-  await t.step("returns proper type predicate", () => {
-    const a: unknown = { a: 0 };
-    if (isRecordLikeOf(isNumber)(a)) {
-      assertType<Equal<typeof a, Record<PropertyKey, number>>>(true);
-    }
-  });
-  await t.step("returns true on T record", () => {
-    assertEquals(isRecordLikeOf(isNumber)({ a: 0 }), true);
-    assertEquals(isRecordLikeOf(isString)({ a: "a" }), true);
-    assertEquals(isRecordLikeOf(isBoolean)({ a: true }), true);
-  });
-  await t.step("returns false on non T record", () => {
-    assertEquals(isRecordLikeOf(isString)({ a: 0 }), false);
-    assertEquals(isRecordLikeOf(isNumber)({ a: "a" }), false);
-    assertEquals(isRecordLikeOf(isString)({ a: true }), false);
-  });
-  await testWithExamples(
-    t,
-    isRecordLikeOf((_: unknown): _ is unknown => true),
-    {
-      excludeExamples: ["record", "date", "promise", "set", "map"],
-    },
-  );
-});
-
-Deno.test("isRecordLikeOf<T, K>", async (t) => {
-  await t.step("returns properly named function", async (t) => {
-    await assertSnapshot(t, isRecordLikeOf(isNumber, isString).name);
-    await assertSnapshot(
-      t,
-      isRecordLikeOf((_x): _x is string => false, isString).name,
-    );
-  });
-  await t.step("returns proper type predicate", () => {
-    const a: unknown = { a: 0 };
-    if (isRecordLikeOf(isNumber, isString)(a)) {
-      assertType<Equal<typeof a, Record<string, number>>>(true);
-    }
-  });
-  await t.step("returns true on T record", () => {
-    assertEquals(isRecordLikeOf(isNumber, isString)({ a: 0 }), true);
-    assertEquals(isRecordLikeOf(isString, isString)({ a: "a" }), true);
-    assertEquals(isRecordLikeOf(isBoolean, isString)({ a: true }), true);
-  });
-  await t.step("returns false on non T record", () => {
-    assertEquals(isRecordLikeOf(isString, isString)({ a: 0 }), false);
-    assertEquals(isRecordLikeOf(isNumber, isString)({ a: "a" }), false);
-    assertEquals(isRecordLikeOf(isString, isString)({ a: true }), false);
-  });
-  await t.step("returns false on non K record", () => {
-    assertEquals(isRecordLikeOf(isNumber, isNumber)({ a: 0 }), false);
-    assertEquals(isRecordLikeOf(isString, isNumber)({ a: "a" }), false);
-    assertEquals(isRecordLikeOf(isBoolean, isNumber)({ a: true }), false);
-  });
-  await testWithExamples(
-    t,
-    isRecordLikeOf((_: unknown): _ is unknown => true),
-    {
-      excludeExamples: ["record", "date", "promise", "set", "map"],
-    },
-  );
-});
-
 Deno.test("isMapOf<T>", async (t) => {
   await t.step("returns properly named function", async (t) => {
     await assertSnapshot(t, isMapOf(isNumber).name);
@@ -1275,11 +1036,6 @@ Deno.test("isObjectOf<T>", async (t) => {
     };
     assertEquals(isObjectOf(predObj)({ a: 0, b: "a", c: true }), true);
     assertEquals(
-      isObjectOf(predObj, { strict: true })({ a: 0, b: "a", c: true }),
-      true,
-      "Specify `{ strict: true }`",
-    );
-    assertEquals(
       isObjectOf(predObj)({ a: 0, b: "a", c: true, d: "ignored" }),
       true,
       "Object have an unknown property",
@@ -1308,16 +1064,6 @@ Deno.test("isObjectOf<T>", async (t) => {
       isObjectOf(predObj)({ a: 0, b: "a" }),
       false,
       "Object does not have one property",
-    );
-    assertEquals(
-      isObjectOf(predObj, { strict: true })({
-        a: 0,
-        b: "a",
-        c: true,
-        d: "invalid",
-      }),
-      false,
-      "Specify `{ strict: true }` and object have an unknown property",
     );
     assertEquals(
       isObjectOf({ 0: isString })(["a"]),
@@ -1885,90 +1631,6 @@ Deno.test("isOmitOf<T, K>", async (t) => {
       false,
       "Object have a different type property",
     );
-  });
-});
-
-Deno.test("isOneOf<T>", async (t) => {
-  await t.step("returns properly named function", async (t) => {
-    await assertSnapshot(t, isOneOf([isNumber, isString, isBoolean]).name);
-  });
-  await t.step("returns proper type predicate", () => {
-    const preds = [isNumber, isString, isBoolean] as const;
-    const a: unknown = [0, "a", true];
-    if (isOneOf(preds)(a)) {
-      assertType<Equal<typeof a, number | string | boolean>>(true);
-    }
-  });
-  await t.step("returns proper type predicate (#49)", () => {
-    const isFoo = isObjectOf({ foo: isString });
-    const isBar = isObjectOf({ foo: isString, bar: isNumber });
-    type Foo = PredicateType<typeof isFoo>;
-    type Bar = PredicateType<typeof isBar>;
-    const preds = [isFoo, isBar] as const;
-    const a: unknown = [0, "a", true];
-    if (isOneOf(preds)(a)) {
-      assertType<Equal<typeof a, Foo | Bar>>(true);
-    }
-  });
-  await t.step("returns true on one of T", () => {
-    const preds = [isNumber, isString, isBoolean] as const;
-    assertEquals(isOneOf(preds)(0), true);
-    assertEquals(isOneOf(preds)("a"), true);
-    assertEquals(isOneOf(preds)(true), true);
-  });
-  await t.step("returns false on non of T", async (t) => {
-    const preds = [isNumber, isString, isBoolean] as const;
-    await testWithExamples(t, isOneOf(preds), {
-      excludeExamples: ["number", "string", "boolean"],
-    });
-  });
-});
-
-Deno.test("isAllOf<T>", async (t) => {
-  await t.step("returns properly named function", async (t) => {
-    await assertSnapshot(
-      t,
-      isAllOf([
-        isObjectOf({ a: isNumber }),
-        isObjectOf({ b: isString }),
-      ]).name,
-    );
-  });
-  await t.step("returns proper type predicate", () => {
-    const preds = [
-      isObjectOf({ a: isNumber }),
-      isObjectOf({ b: isString }),
-    ] as const;
-    const a: unknown = { a: 0, b: "a" };
-    if (isAllOf(preds)(a)) {
-      assertType<Equal<typeof a, { a: number } & { b: string }>>(true);
-    }
-  });
-  await t.step("returns true on all of T", () => {
-    const preds = [
-      isObjectOf({ a: isNumber }),
-      isObjectOf({ b: isString }),
-    ] as const;
-    assertEquals(isAllOf(preds)({ a: 0, b: "a" }), true);
-  });
-  await t.step("returns false on non of T", async (t) => {
-    const preds = [
-      isObjectOf({ a: isNumber }),
-      isObjectOf({ b: isString }),
-    ] as const;
-    assertEquals(
-      isAllOf(preds)({ a: 0, b: 0 }),
-      false,
-      "Some properties has wrong type",
-    );
-    assertEquals(
-      isAllOf(preds)({ a: 0 }),
-      false,
-      "Some properties does not exists",
-    );
-    await testWithExamples(t, isAllOf(preds), {
-      excludeExamples: ["record"],
-    });
   });
 });
 
