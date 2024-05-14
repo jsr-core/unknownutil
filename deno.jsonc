@@ -10,9 +10,11 @@
   },
   "tasks": {
     "build-npm": "deno run -A scripts/build_npm.ts $(git describe --tags --always --dirty)",
-    "check": "deno check ./**/*.ts",
-    "test": "deno test -A --parallel --doc",
+    "check": "deno check **/*.ts",
+    "test": "deno test -A --doc --parallel --shuffle",
     "test:coverage": "deno task test --coverage=.coverage",
-    "coverage": "deno coverage .coverage --exclude=is_bench.ts"
+    "coverage": "deno coverage .coverage",
+    "update": "deno run --allow-env --allow-read --allow-write=. --allow-run=git,deno --allow-net=jsr.io,registry.npmjs.org jsr:@molt/cli ./*.ts",
+    "update:commit": "deno task -q update --commit --pre-commit=fmt,lint"
   }
 }
