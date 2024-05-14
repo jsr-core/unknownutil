@@ -11,6 +11,20 @@ A utility pack for handling `unknown` type.
 
 [deno]: https://deno.land/
 
+> [!WARNING]
+>
+> The package on [deno.land] and [npm] is deprecated. Use the package on
+> [jsr.io] instead.
+>
+> ```
+> deno add @core/unknownutil
+> npx jsr add @core/unknownutil
+> ```
+
+[deno.land]: https://deno.land/x/unknownutil
+[npm]: https://www.npmjs.com/package/unknownutil
+[jsr.io]: https://jsr.io/@core/unknownutil
+
 ## Usage
 
 It provides `is` module for type predicate functions and `assert`, `ensure`, and
