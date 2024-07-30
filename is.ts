@@ -238,18 +238,6 @@ export function isRecord(
 }
 
 /**
- * Return `true` if the type of `x` is like `Record<PropertyKey, unknown>`.
- *
- * @deprecated Use `is.Record` instead.
- * ```
- */
-export function isRecordLike(
-  x: unknown,
-): x is Record<PropertyKey, unknown> {
-  return x != null && !Array.isArray(x) && typeof x === "object";
-}
-
-/**
  * Return `true` if the type of `x` is `Map<unknown, unknown>`.
  *
  * ```ts
@@ -884,88 +872,6 @@ type IsParametersOfMetadata = {
 };
 
 /**
- * Return a type predicate function that returns `true` if the type of `x` is `Readonly<TupleOf<T>>`.
- *
- * @deprecated Use `is.ReadonlyOf(is.TupleOf(...))` instead.
- *
- * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
- *
- * ```ts
- * import { is } from "@core/unknownutil";
- *
- * const isMyType = is.ReadonlyTupleOf([is.Number, is.String, is.Boolean]);
- * const a: unknown = [0, "a", true];
- * if (isMyType(a)) {
- *   // a is narrowed to readonly [number, string, boolean]
- *   const _: readonly [number, string, boolean] = a;
- * }
- * ```
- *
- * With `predElse`:
- *
- * ```ts
- * import { is } from "@core/unknownutil";
- *
- * const isMyType = is.ReadonlyTupleOf(
- *   [is.Number, is.String, is.Boolean],
- *   is.ArrayOf(is.Number),
- * );
- * const a: unknown = [0, "a", true, 0, 1, 2];
- * if (isMyType(a)) {
- *   // a is narrowed to readonly [number, string, boolean, ...number[]]
- *   const _: readonly [number, string, boolean, ...number[]] = a;
- * }
- * ```
- *
- * Depending on the version of TypeScript and how values are provided, it may be necessary to add `as const` to the array
- * used as `predTup`. If a type error occurs, try adding `as const` as follows:
- *
- * ```ts
- * import { is } from "@core/unknownutil";
- *
- * const predTup = [is.Number, is.String, is.Boolean] as const;
- * const isMyType = is.ReadonlyTupleOf(predTup);
- * const a: unknown = [0, "a", true];
- * if (isMyType(a)) {
- *   // a is narrowed to readonly [number, string, boolean]
- *   const _: readonly [number, string, boolean] = a;
- * }
- * ```
- */
-export function isReadonlyTupleOf<
-  T extends readonly [Predicate<unknown>, ...Predicate<unknown>[]],
->(
-  predTup: T,
-): Predicate<Readonly<TupleOf<T>>> & WithMetadata<IsReadonlyOfMetadata>;
-export function isReadonlyTupleOf<
-  T extends readonly [Predicate<unknown>, ...Predicate<unknown>[]],
-  E extends Predicate<unknown[]>,
->(
-  predTup: T,
-  predElse: E,
-):
-  & Predicate<Readonly<[...TupleOf<T>, ...PredicateType<E>]>>
-  & WithMetadata<IsReadonlyOfMetadata>;
-export function isReadonlyTupleOf<
-  T extends readonly [Predicate<unknown>, ...Predicate<unknown>[]],
-  E extends Predicate<unknown[]>,
->(
-  predTup: T,
-  predElse?: E,
-):
-  & Predicate<
-    | Readonly<TupleOf<T>>
-    | Readonly<[...TupleOf<T>, ...PredicateType<E>]>
-  >
-  & WithMetadata<IsReadonlyOfMetadata> {
-  if (!predElse) {
-    return isReadonlyOf(isTupleOf(predTup));
-  } else {
-    return isReadonlyOf(isTupleOf(predTup, predElse));
-  }
-}
-
-/**
  * Return a type predicate function that returns `true` if the type of `x` is `UniformTupleOf<T>`.
  *
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
@@ -1020,46 +926,6 @@ type IsUniformTupleOfMetadata = {
   name: "isUniformTupleOf";
   args: Parameters<typeof isUniformTupleOf>;
 };
-
-/**
- * Return a type predicate function that returns `true` if the type of `x` is `Readonly<UniformTupleOf<T>>`.
- *
- * @deprecated Use `is.ReadonlyOf(is.UniformTupleOf(...))` instead.
- *
- * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
- *
- * ```ts
- * import { is } from "@core/unknownutil";
- *
- * const isMyType = is.ReadonlyUniformTupleOf(5);
- * const a: unknown = [0, 1, 2, 3, 4];
- * if (isMyType(a)) {
- *   // a is narrowed to readonly [unknown, unknown, unknown, unknown, unknown]
- *   const _: readonly [unknown, unknown, unknown, unknown, unknown] = a;
- * }
- * ```
- *
- * With predicate function:
- *
- * ```ts
- * import { is } from "@core/unknownutil";
- *
- * const isMyType = is.ReadonlyUniformTupleOf(5, is.Number);
- * const a: unknown = [0, 1, 2, 3, 4];
- * if (isMyType(a)) {
- *   // a is narrowed to readonly [number, number, number, number, number]
- *   const _: readonly [number, number, number, number, number] = a;
- * }
- * ```
- */
-export function isReadonlyUniformTupleOf<T, N extends number>(
-  n: N,
-  pred: Predicate<T> = isAny,
-):
-  & Predicate<Readonly<UniformTupleOf<T, N>>>
-  & WithMetadata<IsReadonlyOfMetadata> {
-  return isReadonlyOf(isUniformTupleOf(n, pred));
-}
 
 /**
  * Return a type predicate function that returns `true` if the type of `x` is an Object instance that satisfies `Record<K, T>`.
@@ -1167,26 +1033,6 @@ type IsRecordOfMetadata = {
 };
 
 /**
- * Return a type predicate function that returns `true` if the type of `x` satisfies `Record<K, T>`.
- *
- * @deprecated Use `is.RecordOf()` instead
- */
-export function isRecordLikeOf<T, K extends PropertyKey = PropertyKey>(
-  pred: Predicate<T>,
-  predKey?: Predicate<K>,
-): Predicate<Record<K, T>> & WithMetadata<IsRecordLikeOfMetadata> {
-  return setPredicateFactoryMetadata(isRecordOf(pred, predKey), {
-    name: "isRecordLikeOf",
-    args: [pred, predKey],
-  });
-}
-
-type IsRecordLikeOfMetadata = {
-  name: "isRecordLikeOf";
-  args: Parameters<typeof isRecordLikeOf>;
-};
-
-/**
  * Return a type predicate function that returns `true` if the type of `x` is `Map<K, T>`.
  *
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
@@ -1268,25 +1114,11 @@ export function isObjectOf<
 >(
   predObj: T,
 ): Predicate<ObjectOf<T>> & WithMetadata<IsObjectOfMetadata>;
-/**
- * @deprecated The `option.strict` is deprecated. Use `isStrictOf()` instead.
- */
 export function isObjectOf<
   T extends Record<PropertyKey, Predicate<unknown>>,
 >(
   predObj: T,
-  options: { strict?: boolean },
-): Predicate<ObjectOf<T>> & WithMetadata<IsObjectOfMetadata>;
-export function isObjectOf<
-  T extends Record<PropertyKey, Predicate<unknown>>,
->(
-  predObj: T,
-  options?: { strict?: boolean },
 ): Predicate<ObjectOf<T>> & WithMetadata<IsObjectOfMetadata> {
-  if (options?.strict) {
-    // deno-lint-ignore no-explicit-any
-    return isStrictOf(isObjectOf(predObj)) as any;
-  }
   return setPredicateFactoryMetadata(
     (x: unknown): x is ObjectOf<T> => {
       if (
@@ -1333,8 +1165,7 @@ type IsObjectOfMetadata = {
  *
  * If `is.OptionalOf()` is specified in the predicate function, the property becomes optional.
  *
- * The number of keys of `x` must be equal to the number of non optional keys of `predObj`. This is equivalent to
- * the deprecated `options.strict` in `isObjectOf()`.
+ * The number of keys of `x` must be equal to the number of non optional keys of `predObj`.
  *
  * ```ts
  * import { is } from "@core/unknownutil";
@@ -1761,43 +1592,7 @@ export function isOmitOf<
     & WithMetadata<IsObjectOfMetadata>;
 }
 
-/**
- * Return a type predicate function that returns `true` if the type of `x` is `UnionOf<T>`.
- *
- * @deprecated Use `isUnionOf` instead.
- */
-export function isOneOf<
-  T extends readonly [Predicate<unknown>, ...Predicate<unknown>[]],
->(
-  preds: T,
-): Predicate<OneOf<T>> {
-  return isUnionOf(preds);
-}
-
-type OneOf<T> = T extends readonly [Predicate<infer U>, ...infer R]
-  ? U | OneOf<R>
-  : never;
-
-/**
- * Return a type predicate function that returns `true` if the type of `x` is `IntersectionOf<T>`.
- *
- * @deprecated Use `isIntersectionOf` instead.
- */
-export function isAllOf<
-  T extends readonly [
-    Predicate<unknown> & WithMetadata<IsObjectOfMetadata>,
-    ...(Predicate<unknown> & WithMetadata<IsObjectOfMetadata>)[],
-  ],
->(
-  preds: T,
-): Predicate<AllOf<T>> {
-  return isIntersectionOf(preds);
-}
-
-type AllOf<T> = IntersectionOf<T>;
-
 export const is = {
-  AllOf: isAllOf,
   Any: isAny,
   Array: isArray,
   ArrayOf: isArrayOf,
@@ -1816,7 +1611,6 @@ export const is = {
   Number: isNumber,
   ObjectOf: isObjectOf,
   OmitOf: isOmitOf,
-  OneOf: isOneOf,
   Optional: isOptional,
   OptionalOf: isOptionalOf,
   ParametersOf: isParametersOf,
@@ -1825,11 +1619,7 @@ export const is = {
   Primitive: isPrimitive,
   Readonly: isReadonly,
   ReadonlyOf: isReadonlyOf,
-  ReadonlyTupleOf: isReadonlyTupleOf,
-  ReadonlyUniformTupleOf: isReadonlyUniformTupleOf,
   Record: isRecord,
-  RecordLike: isRecordLike,
-  RecordLikeOf: isRecordLikeOf,
   RecordObject: isRecordObject,
   RecordObjectOf: isRecordObjectOf,
   RecordOf: isRecordOf,
