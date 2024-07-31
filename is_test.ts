@@ -3,6 +3,7 @@ import { assertSnapshot } from "@std/testing/snapshot";
 import { assertType } from "@std/testing/types";
 import { type Equal, stringify } from "./_testutil.ts";
 import type { Predicate, PredicateType } from "./is.ts";
+import { as } from "./as/mod.ts";
 import {
   is,
   isAny,
@@ -23,7 +24,6 @@ import {
   isNumber,
   isObjectOf,
   isOmitOf,
-  isOptionalOf,
   isParametersOf,
   isPartialOf,
   isPickOf,
@@ -44,7 +44,6 @@ import {
   isUniformTupleOf,
   isUnionOf,
   isUnknown,
-  isUnwrapOptionalOf,
 } from "./is.ts";
 
 const examples = {
@@ -231,184 +230,6 @@ Deno.test("isPrimitive", async (t) => {
   });
 });
 
-Deno.test("isOptionalOf<T>", async (t) => {
-  await t.step("returns properly named function", async (t) => {
-    await assertSnapshot(t, isOptionalOf(isNumber).name);
-    // Nesting does nothing
-    await assertSnapshot(t, isOptionalOf(isOptionalOf(isNumber)).name);
-  });
-  await t.step("returns proper type predicate", () => {
-    const a: unknown = undefined;
-    if (isOptionalOf(isNumber)(a)) {
-      assertType<Equal<typeof a, number | undefined>>(true);
-    }
-  });
-  await t.step("with isString", async (t) => {
-    await testWithExamples(t, isOptionalOf(isString), {
-      validExamples: ["string", "undefined"],
-    });
-  });
-  await t.step("with isNumber", async (t) => {
-    await testWithExamples(t, isOptionalOf(isNumber), {
-      validExamples: ["number", "undefined"],
-    });
-  });
-  await t.step("with isBigInt", async (t) => {
-    await testWithExamples(t, isOptionalOf(isBigInt), {
-      validExamples: ["bigint", "undefined"],
-    });
-  });
-  await t.step("with isBoolean", async (t) => {
-    await testWithExamples(t, isOptionalOf(isBoolean), {
-      validExamples: ["boolean", "undefined"],
-    });
-  });
-  await t.step("with isArray", async (t) => {
-    await testWithExamples(t, isOptionalOf(isArray), {
-      validExamples: ["array", "undefined"],
-    });
-  });
-  await t.step("with isSet", async (t) => {
-    await testWithExamples(t, isOptionalOf(isSet), {
-      validExamples: ["set", "undefined"],
-    });
-  });
-  await t.step("with isRecordObject", async (t) => {
-    await testWithExamples(t, isOptionalOf(isRecordObject), {
-      validExamples: ["record", "undefined"],
-    });
-  });
-  await t.step("with isFunction", async (t) => {
-    await testWithExamples(t, isOptionalOf(isFunction), {
-      validExamples: ["syncFunction", "asyncFunction", "undefined"],
-    });
-  });
-  await t.step("with isSyncFunction", async (t) => {
-    await testWithExamples(t, isOptionalOf(isSyncFunction), {
-      validExamples: ["syncFunction", "undefined"],
-    });
-  });
-  await t.step("with isAsyncFunction", async (t) => {
-    await testWithExamples(t, isOptionalOf(isAsyncFunction), {
-      validExamples: ["asyncFunction", "undefined"],
-    });
-  });
-  await t.step("with isNull", async (t) => {
-    await testWithExamples(t, isOptionalOf(isNull), {
-      validExamples: ["null", "undefined"],
-    });
-  });
-  await t.step("with isUndefined", async (t) => {
-    await testWithExamples(t, isOptionalOf(isUndefined), {
-      validExamples: ["undefined"],
-    });
-  });
-  await t.step("with isSymbol", async (t) => {
-    await testWithExamples(t, isOptionalOf(isSymbol), {
-      validExamples: ["symbol", "undefined"],
-    });
-  });
-});
-
-Deno.test("isUnwrapOptionalOf<T>", async (t) => {
-  await t.step("returns properly named function", async (t) => {
-    await assertSnapshot(t, isUnwrapOptionalOf(isOptionalOf(isNumber)).name);
-    // Non optional does nothing
-    await assertSnapshot(t, isUnwrapOptionalOf(isNumber).name);
-    // Nesting does nothing
-    await assertSnapshot(
-      t,
-      isUnwrapOptionalOf(isUnwrapOptionalOf(isOptionalOf(isNumber))).name,
-    );
-  });
-  await t.step("returns proper type predicate", () => {
-    const a: unknown = undefined;
-    if (isUnwrapOptionalOf(isOptionalOf(isNumber))(a)) {
-      assertType<Equal<typeof a, number>>(true);
-    }
-    if (isUnwrapOptionalOf(isNumber)(a)) {
-      assertType<Equal<typeof a, number>>(true);
-    }
-  });
-  await t.step("with isString", async (t) => {
-    await testWithExamples(t, isUnwrapOptionalOf(isOptionalOf(isString)), {
-      validExamples: ["string"],
-    });
-  });
-  await t.step("with isNumber", async (t) => {
-    await testWithExamples(t, isUnwrapOptionalOf(isOptionalOf(isNumber)), {
-      validExamples: ["number"],
-    });
-  });
-  await t.step("with isBigInt", async (t) => {
-    await testWithExamples(t, isUnwrapOptionalOf(isOptionalOf(isBigInt)), {
-      validExamples: ["bigint"],
-    });
-  });
-  await t.step("with isBoolean", async (t) => {
-    await testWithExamples(t, isUnwrapOptionalOf(isOptionalOf(isBoolean)), {
-      validExamples: ["boolean"],
-    });
-  });
-  await t.step("with isArray", async (t) => {
-    await testWithExamples(t, isUnwrapOptionalOf(isOptionalOf(isArray)), {
-      validExamples: ["array"],
-    });
-  });
-  await t.step("with isSet", async (t) => {
-    await testWithExamples(t, isUnwrapOptionalOf(isOptionalOf(isSet)), {
-      validExamples: ["set"],
-    });
-  });
-  await t.step("with isRecordObject", async (t) => {
-    await testWithExamples(
-      t,
-      isUnwrapOptionalOf(isOptionalOf(isRecordObject)),
-      {
-        validExamples: ["record"],
-      },
-    );
-  });
-  await t.step("with isFunction", async (t) => {
-    await testWithExamples(t, isUnwrapOptionalOf(isOptionalOf(isFunction)), {
-      validExamples: ["syncFunction", "asyncFunction"],
-    });
-  });
-  await t.step("with isSyncFunction", async (t) => {
-    await testWithExamples(
-      t,
-      isUnwrapOptionalOf(isOptionalOf(isSyncFunction)),
-      {
-        validExamples: ["syncFunction"],
-      },
-    );
-  });
-  await t.step("with isAsyncFunction", async (t) => {
-    await testWithExamples(
-      t,
-      isUnwrapOptionalOf(isOptionalOf(isAsyncFunction)),
-      {
-        validExamples: ["asyncFunction"],
-      },
-    );
-  });
-  await t.step("with isNull", async (t) => {
-    await testWithExamples(t, isUnwrapOptionalOf(isOptionalOf(isNull)), {
-      validExamples: ["null"],
-    });
-  });
-  await t.step("with isUndefined", async (t) => {
-    await testWithExamples(t, isUnwrapOptionalOf(isOptionalOf(isUndefined)), {
-      validExamples: ["undefined"],
-    });
-  });
-  await t.step("with isSymbol", async (t) => {
-    await testWithExamples(t, isUnwrapOptionalOf(isOptionalOf(isSymbol)), {
-      validExamples: ["symbol"],
-    });
-  });
-});
-
 Deno.test("isArrayOf<T>", async (t) => {
   await t.step("returns properly named function", async (t) => {
     await assertSnapshot(t, isArrayOf(isNumber).name);
@@ -561,7 +382,7 @@ Deno.test("isParametersOf<T>", async (t) => {
   await t.step("returns properly named function", async (t) => {
     await assertSnapshot(
       t,
-      isParametersOf([isNumber, isString, isOptionalOf(isBoolean)]).name,
+      isParametersOf([isNumber, isString, as.Optional(isBoolean)]).name,
     );
     await assertSnapshot(
       t,
@@ -576,17 +397,17 @@ Deno.test("isParametersOf<T>", async (t) => {
       t,
       isParametersOf([
         isParametersOf([
-          isParametersOf([isNumber, isString, isOptionalOf(isBoolean)]),
+          isParametersOf([isNumber, isString, as.Optional(isBoolean)]),
         ]),
       ]).name,
     );
   });
   await t.step("returns proper type predicate", () => {
     const predTup = [
-      isOptionalOf(isNumber),
+      as.Optional(isNumber),
       isString,
-      isOptionalOf(isString),
-      isOptionalOf(isBoolean),
+      as.Optional(isString),
+      as.Optional(isBoolean),
     ] as const;
     const a: unknown = [0, "a"];
     if (isParametersOf(predTup)(a)) {
@@ -596,12 +417,12 @@ Deno.test("isParametersOf<T>", async (t) => {
     }
   });
   await t.step("returns true on T tuple", () => {
-    const predTup = [isNumber, isString, isOptionalOf(isBoolean)] as const;
+    const predTup = [isNumber, isString, as.Optional(isBoolean)] as const;
     assertEquals(isParametersOf(predTup)([0, "a", true]), true);
     assertEquals(isParametersOf(predTup)([0, "a"]), true);
   });
   await t.step("returns false on non T tuple", () => {
-    const predTup = [isNumber, isString, isOptionalOf(isBoolean)] as const;
+    const predTup = [isNumber, isString, as.Optional(isBoolean)] as const;
     assertEquals(isParametersOf(predTup)([0, 1, 2]), false);
     assertEquals(isParametersOf(predTup)([0, "a", true, 0]), false);
   });
@@ -618,7 +439,7 @@ Deno.test("isParametersOf<T, E>", async (t) => {
   await t.step("returns properly named function", async (t) => {
     await assertSnapshot(
       t,
-      isParametersOf([isNumber, isString, isOptionalOf(isBoolean)], isArray)
+      isParametersOf([isNumber, isString, as.Optional(isBoolean)], isArray)
         .name,
     );
     await assertSnapshot(
@@ -637,7 +458,7 @@ Deno.test("isParametersOf<T, E>", async (t) => {
       isParametersOf([
         isParametersOf(
           [isParametersOf(
-            [isNumber, isString, isOptionalOf(isBoolean)],
+            [isNumber, isString, as.Optional(isBoolean)],
             isArray,
           )],
           isArray,
@@ -647,10 +468,10 @@ Deno.test("isParametersOf<T, E>", async (t) => {
   });
   await t.step("returns proper type predicate", () => {
     const predTup = [
-      isOptionalOf(isNumber),
+      as.Optional(isNumber),
       isString,
-      isOptionalOf(isString),
-      isOptionalOf(isBoolean),
+      as.Optional(isString),
+      as.Optional(isBoolean),
     ] as const;
     const predElse = isArrayOf(isNumber);
     const a: unknown = [0, "a"];
@@ -666,7 +487,7 @@ Deno.test("isParametersOf<T, E>", async (t) => {
     }
   });
   await t.step("returns true on T tuple", () => {
-    const predTup = [isNumber, isString, isOptionalOf(isBoolean)] as const;
+    const predTup = [isNumber, isString, as.Optional(isBoolean)] as const;
     const predElse = isArrayOf(isNumber);
     assertEquals(
       isParametersOf(predTup, predElse)([0, "a", true, 0, 1, 2]),
@@ -679,7 +500,7 @@ Deno.test("isParametersOf<T, E>", async (t) => {
     assertEquals(isParametersOf(predTup, predElse)([0, "a"]), true);
   });
   await t.step("returns false on non T tuple", () => {
-    const predTup = [isNumber, isString, isOptionalOf(isBoolean)] as const;
+    const predTup = [isNumber, isString, as.Optional(isBoolean)] as const;
     const predElse = isArrayOf(isString);
     assertEquals(isParametersOf(predTup, predElse)([0, 1, 2, 0, 1, 2]), false);
     assertEquals(isParametersOf(predTup, predElse)([0, "a", 0, 1, 2]), false);
@@ -1101,7 +922,7 @@ Deno.test("isStrictOf<T>", async (t) => {
       const predObj = {
         a: isNumber,
         b: isUnionOf([isString, isUndefined]),
-        c: isOptionalOf(isBoolean),
+        c: as.Optional(isBoolean),
       };
       const a: unknown = { a: 0, b: "a" };
       if (isStrictOf(isObjectOf(predObj))(a)) {
@@ -1114,7 +935,7 @@ Deno.test("isStrictOf<T>", async (t) => {
       const predObj = {
         a: isNumber,
         b: isUnionOf([isString, isUndefined]),
-        c: isOptionalOf(isBoolean),
+        c: as.Optional(isBoolean),
       };
       assertEquals(
         isStrictOf(isObjectOf(predObj))({ a: 0, b: "a", c: true }),
@@ -1135,7 +956,7 @@ Deno.test("isStrictOf<T>", async (t) => {
       const predObj = {
         a: isNumber,
         b: isUnionOf([isString, isUndefined]),
-        c: isOptionalOf(isBoolean),
+        c: as.Optional(isBoolean),
       };
       assertEquals(
         isStrictOf(isObjectOf(predObj))({ a: 0, b: "a", c: "" }),
@@ -1406,7 +1227,7 @@ Deno.test("isRequiredOf<T>", async (t) => {
   const pred = isObjectOf({
     a: isNumber,
     b: isUnionOf([isString, isUndefined]),
-    c: isOptionalOf(isBoolean),
+    c: as.Optional(isBoolean),
   });
   await t.step("returns properly named function", async (t) => {
     await assertSnapshot(t, isRequiredOf(pred).name);
@@ -1447,7 +1268,7 @@ Deno.test("isPartialOf<T>", async (t) => {
   const pred = isObjectOf({
     a: isNumber,
     b: isUnionOf([isString, isUndefined]),
-    c: isOptionalOf(isBoolean),
+    c: as.Optional(isBoolean),
   });
   await t.step("returns properly named function", async (t) => {
     await assertSnapshot(t, isPartialOf(pred).name);

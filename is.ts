@@ -1,12 +1,16 @@
 import type { FlatType, TupleToIntersection } from "./_typeutil.ts";
 import {
-  type GetMetadata,
   getMetadata,
   getPredicateFactoryMetadata,
-  type PredicateFactoryMetadata,
   setPredicateFactoryMetadata,
   type WithMetadata,
 } from "./metadata.ts";
+import {
+  asOptional,
+  asUnoptional,
+  hasOptional,
+  type WithOptional,
+} from "./as/optional.ts";
 
 const objectToString = Object.prototype.toString;
 const primitiveSet = new Set([
@@ -26,12 +30,12 @@ export type Predicate<T> = (x: unknown) => x is T;
  * A type predicated by Predicate<T>.
  *
  * ```ts
- * import { is, type PredicateType } from "@core/unknownutil";
+ * import { as, is, type PredicateType } from "@core/unknownutil";
  *
  * const isPerson = is.ObjectOf({
  *   name: is.String,
  *   age: is.Number,
- *   address: is.OptionalOf(is.String),
+ *   address: as.Optional(is.String),
  * });
  *
  * type Person = PredicateType<typeof isPerson>;
@@ -404,89 +408,6 @@ export function isPrimitive(x: unknown): x is Primitive {
 }
 
 /**
- * Return `true` if the type of predicate function `x` is annotated as `Optional`
- */
-export function isOptional<P extends Predicate<unknown>>(
-  x: P,
-): x is P & WithMetadata<IsOptionalOfMetadata> {
-  const m = getMetadata(x);
-  if (m == null) return false;
-  return (m as PredicateFactoryMetadata).name === "isOptionalOf";
-}
-
-/**
- * Return an `Optional` annotated type predicate function that returns `true` if the type of `x` is `T` or `undefined`.
- *
- * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
- *
- * ```ts
- * import { is } from "@core/unknownutil";
- *
- * const isMyType = is.OptionalOf(is.String);
- * const a: unknown = "a";
- * if (isMyType(a)) {
- *   // a is narrowed to string | undefined
- *   const _: string | undefined = a;
- * }
- * ```
- */
-export function isOptionalOf<T>(
-  pred: Predicate<T>,
-):
-  & Predicate<T | undefined>
-  & WithMetadata<IsOptionalOfMetadata> {
-  if (isOptional(pred)) {
-    return pred as
-      & Predicate<T | undefined>
-      & WithMetadata<IsOptionalOfMetadata>;
-  }
-  return Object.defineProperties(
-    setPredicateFactoryMetadata(
-      (x: unknown): x is T | undefined => x === undefined || pred(x),
-      { name: "isOptionalOf", args: [pred] },
-    ),
-    { optional: { value: true as const } },
-  ) as
-    & Predicate<T | undefined>
-    & WithMetadata<IsOptionalOfMetadata>;
-}
-
-type IsOptionalOfMetadata = {
-  name: "isOptionalOf";
-  args: Parameters<typeof isOptionalOf>;
-};
-
-/**
- * Return an `Optional` un-annotated type predicate function that returns `true` if the type of `x` is `T`.
- *
- * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
- *
- * ```ts
- * import { is } from "@core/unknownutil";
- *
- * const isMyType = is.UnwrapOptionalOf(is.OptionalOf(is.String));
- * const a: unknown = "a";
- * if (isMyType(a)) {
- *   // a is narrowed to string
- *   const _: string = a;
- * }
- * ```
- */
-export function isUnwrapOptionalOf<P extends Predicate<unknown>>(
-  pred: P,
-): UnwrapOptionalOf<P> {
-  if (!isOptional(pred)) return pred as UnwrapOptionalOf<P>;
-  const { args } = getPredicateFactoryMetadata(pred);
-  return args[0] as UnwrapOptionalOf<P>;
-}
-
-type UnwrapOptionalOf<T> = T extends
-  Predicate<undefined | infer U> & WithMetadata<IsOptionalOfMetadata>
-  ? Predicate<U>
-  : T extends Predicate<unknown> ? T
-  : never;
-
-/**
  * Return a type predicate function that returns `true` if the type of `x` is `T[]`.
  *
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
@@ -659,20 +580,20 @@ type IsTupleOfMetadata = {
 /**
  * Return a type predicate function that returns `true` if the type of `x` is `ParametersOf<T>` or `ParametersOf<T, E>`.
  *
- * This is similar to `TupleOf<T>` or `TupleOf<T, E>`, but if `is.OptionalOf()` is specified at the trailing, the trailing elements becomes optional and makes variable-length tuple.
+ * This is similar to `TupleOf<T>` or `TupleOf<T, E>`, but if `as.Optional()` is specified at the trailing, the trailing elements becomes optional and makes variable-length tuple.
  *
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
  * ```ts
- * import { is } from "@core/unknownutil";
+ * import { as, is } from "@core/unknownutil";
  *
  * const isMyType = is.ParametersOf([
  *   is.Number,
- *   is.OptionalOf(is.String),
+ *   as.Optional(is.String),
  *   is.Boolean,
- *   is.OptionalOf(is.Number),
- *   is.OptionalOf(is.String),
- *   is.OptionalOf(is.Boolean),
+ *   as.Optional(is.Number),
+ *   as.Optional(is.String),
+ *   as.Optional(is.Boolean),
  * ] as const);
  * const a: unknown = [0, undefined, "a"];
  * if (isMyType(a)) {
@@ -684,13 +605,13 @@ type IsTupleOfMetadata = {
  * With `predElse`:
  *
  * ```ts
- * import { is } from "@core/unknownutil";
+ * import { as, is } from "@core/unknownutil";
  *
  * const isMyType = is.ParametersOf(
  *   [
  *     is.Number,
- *     is.OptionalOf(is.String),
- *     is.OptionalOf(is.Boolean),
+ *     as.Optional(is.String),
+ *     as.Optional(is.Boolean),
  *   ] as const,
  *   is.ArrayOf(is.Number),
  * );
@@ -705,9 +626,9 @@ type IsTupleOfMetadata = {
  * used as `predTup`. If a type error occurs, try adding `as const` as follows:
  *
  * ```ts
- * import { is } from "@core/unknownutil";
+ * import { as, is } from "@core/unknownutil";
  *
- * const predTup = [is.Number, is.String, is.OptionalOf(is.Boolean)] as const;
+ * const predTup = [is.Number, is.String, as.Optional(is.Boolean)] as const;
  * const isMyType = is.ParametersOf(predTup);
  * const a: unknown = [0, "a"];
  * if (isMyType(a)) {
@@ -739,7 +660,8 @@ export function isParametersOf<
 ):
   & Predicate<ParametersOf<T> | [...ParametersOf<T>, ...PredicateType<E>]>
   & WithMetadata<IsParametersOfMetadata> {
-  const requiresLength = 1 + predTup.findLastIndex((pred) => !isOptional(pred));
+  const requiresLength = 1 +
+    predTup.findLastIndex((pred) => !hasOptional(pred));
   if (!predElse) {
     return setPredicateFactoryMetadata(
       (x: unknown): x is ParametersOf<T> => {
@@ -771,7 +693,7 @@ type ParametersOf<T> = T extends readonly [] ? []
   : T extends readonly [...infer P, infer R]
   // Tuple of predicates
     ? P extends Predicate<unknown>[]
-      ? R extends Predicate<unknown> & WithMetadata<IsOptionalOfMetadata>
+      ? R extends Predicate<unknown> & WithOptional<unknown>
         // Last parameter is optional
         ? [...ParametersOf<P>, PredicateType<R>?]
         // Last parameter is NOT optional
@@ -1006,17 +928,17 @@ type IsMapOfMetadata = {
  *
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
- * If `is.OptionalOf()` is specified in the predicate function, the property becomes optional.
+ * If `as.Optional` is specified in the predicate function, the property becomes optional.
  *
  * The number of keys of `x` must be greater than or equal to the number of keys of `predObj`.
  *
  * ```ts
- * import { is } from "@core/unknownutil";
+ * import { as, is } from "@core/unknownutil";
  *
  * const isMyType = is.ObjectOf({
  *   a: is.Number,
  *   b: is.String,
- *   c: is.OptionalOf(is.Boolean),
+ *   c: as.Optional(is.Boolean),
  * });
  * const a: unknown = { a: 0, b: "a", other: "other" };
  * if (isMyType(a)) {
@@ -1053,20 +975,16 @@ export function isObjectOf<
   );
 }
 
-type WithOptional =
-  | WithMetadata<GetMetadata<ReturnType<typeof isOptionalOf>>>
-  | { optional: true }; // For backward compatibility
-
 type ObjectOf<T extends Record<PropertyKey, Predicate<unknown>>> = FlatType<
   // Non optional
   & {
-    [K in keyof T as T[K] extends WithOptional ? never : K]: T[K] extends
-      Predicate<infer U> ? U : never;
+    [K in keyof T as T[K] extends WithOptional<unknown> ? never : K]:
+      T[K] extends Predicate<infer U> ? U : never;
   }
   // Optional
   & {
-    [K in keyof T as T[K] extends WithOptional ? K : never]?: T[K] extends
-      Predicate<infer U> ? U : never;
+    [K in keyof T as T[K] extends WithOptional<unknown> ? K : never]?:
+      T[K] extends Predicate<infer U> ? U : never;
   }
 >;
 
@@ -1080,17 +998,17 @@ type IsObjectOfMetadata = {
  *
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
- * If `is.OptionalOf()` is specified in the predicate function, the property becomes optional.
+ * If `as.Optional` is specified in the predicate function, the property becomes optional.
  *
  * The number of keys of `x` must be equal to the number of non optional keys of `predObj`.
  *
  * ```ts
- * import { is } from "@core/unknownutil";
+ * import { as, is } from "@core/unknownutil";
  *
  * const isMyType = is.StrictOf(is.ObjectOf({
  *   a: is.Number,
  *   b: is.String,
- *   c: is.OptionalOf(is.Boolean),
+ *   c: as.Optional(is.Boolean),
  * }));
  * const a: unknown = { a: 0, b: "a", other: "other" };
  * if (isMyType(a)) {
@@ -1362,12 +1280,12 @@ type IsIntersectionOfMetadata = {
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
  * ```typescript
- * import { is } from "@core/unknownutil";
+ * import { as, is } from "@core/unknownutil";
  *
  * const isMyType = is.RequiredOf(is.ObjectOf({
  *   a: is.Number,
  *   b: is.UnionOf([is.String, is.Undefined]),
- *   c: is.OptionalOf(is.Boolean),
+ *   c: as.Optional(is.Boolean),
  * }));
  * const a: unknown = { a: 0, b: "b", c: true, other: "other" };
  * if (isMyType(a)) {
@@ -1385,7 +1303,7 @@ export function isRequiredOf<
   & WithMetadata<IsObjectOfMetadata> {
   const { args } = getPredicateFactoryMetadata(pred);
   const predObj = Object.fromEntries(
-    Object.entries(args[0]).map(([k, v]) => [k, isUnwrapOptionalOf(v)]),
+    Object.entries(args[0]).map(([k, v]) => [k, asUnoptional(v)]),
   );
   return isObjectOf(predObj) as
     & Predicate<FlatType<Required<T>>>
@@ -1398,12 +1316,12 @@ export function isRequiredOf<
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
  * ```typescript
- * import { is } from "@core/unknownutil";
+ * import { as, is } from "@core/unknownutil";
  *
  * const isMyType = is.PartialOf(is.ObjectOf({
  *   a: is.Number,
  *   b: is.UnionOf([is.String, is.Undefined]),
- *   c: is.OptionalOf(is.Boolean),
+ *   c: as.Optional(is.Boolean),
  * }));
  * const a: unknown = { a: undefined, other: "other" };
  * if (isMyType(a)) {
@@ -1422,7 +1340,7 @@ export function isPartialOf<
   & WithMetadata<IsObjectOfMetadata> {
   const { args } = getPredicateFactoryMetadata(pred);
   const predObj = Object.fromEntries(
-    Object.entries(args[0]).map(([k, v]) => [k, isOptionalOf(v)]),
+    Object.entries(args[0]).map(([k, v]) => [k, asOptional(v)]),
   );
   return isObjectOf(predObj) as
     & Predicate<FlatType<Partial<T>>>
@@ -1435,12 +1353,12 @@ export function isPartialOf<
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
  * ```typescript
- * import { is } from "@core/unknownutil";
+ * import { as, is } from "@core/unknownutil";
  *
  * const isMyType = is.PickOf(is.ObjectOf({
  *   a: is.Number,
  *   b: is.String,
- *   c: is.OptionalOf(is.Boolean),
+ *   c: as.Optional(is.Boolean),
  * }), ["a", "c"]);
  * const a: unknown = { a: 0, b: "a", other: "other" };
  * if (isMyType(a)) {
@@ -1475,12 +1393,12 @@ export function isPickOf<
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
  * ```typescript
- * import { is } from "@core/unknownutil";
+ * import { as, is } from "@core/unknownutil";
  *
  * const isMyType = is.OmitOf(is.ObjectOf({
  *   a: is.Number,
  *   b: is.String,
- *   c: is.OptionalOf(is.Boolean),
+ *   c: as.Optional(is.Boolean),
  * }), ["a", "c"]);
  * const a: unknown = { a: 0, b: "a", other: "other" };
  * if (isMyType(a)) {
@@ -1528,8 +1446,6 @@ export const is = {
   Number: isNumber,
   ObjectOf: isObjectOf,
   OmitOf: isOmitOf,
-  Optional: isOptional,
-  OptionalOf: isOptionalOf,
   ParametersOf: isParametersOf,
   PartialOf: isPartialOf,
   PickOf: isPickOf,
@@ -1550,5 +1466,4 @@ export const is = {
   UniformTupleOf: isUniformTupleOf,
   UnionOf: isUnionOf,
   Unknown: isUnknown,
-  UnwrapOptionalOf: isUnwrapOptionalOf,
 };
