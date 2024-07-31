@@ -28,7 +28,6 @@ import {
   isPartialOf,
   isPickOf,
   isPrimitive,
-  isReadonlyOf,
   isRecord,
   isRecordObject,
   isRecordObjectOf,
@@ -46,7 +45,6 @@ import {
   isUnionOf,
   isUnknown,
   isUnwrapOptionalOf,
-  isUnwrapReadonlyOf,
 } from "./is.ts";
 
 const examples = {
@@ -408,69 +406,6 @@ Deno.test("isUnwrapOptionalOf<T>", async (t) => {
     await testWithExamples(t, isUnwrapOptionalOf(isOptionalOf(isSymbol)), {
       validExamples: ["symbol"],
     });
-  });
-});
-
-Deno.test("isReadonlyOf<T>", async (t) => {
-  await t.step("returns properly named function", async (t) => {
-    await assertSnapshot(t, isReadonlyOf(isNumber).name);
-    // Nesting does nothing
-    await assertSnapshot(t, isReadonlyOf(isReadonlyOf(isNumber)).name);
-  });
-  await t.step("returns proper type predicate", () => {
-    const a: unknown = undefined;
-    if (isReadonlyOf(isNumber)(a)) {
-      assertType<Equal<typeof a, Readonly<number>>>(true);
-    }
-    if (isReadonlyOf(isTupleOf([isString, isNumber, isBoolean]))(a)) {
-      assertType<Equal<typeof a, Readonly<[string, number, boolean]>>>(true);
-    }
-    if (isReadonlyOf(isUniformTupleOf(3, isString))(a)) {
-      assertType<Equal<typeof a, Readonly<[string, string, string]>>>(true);
-    }
-    if (
-      isReadonlyOf(isObjectOf({ a: isString, b: isNumber, c: isBoolean }))(a)
-    ) {
-      assertType<
-        Equal<typeof a, Readonly<{ a: string; b: number; c: boolean }>>
-      >(true);
-    }
-  });
-});
-
-Deno.test("isUnwrapReadonlyOf<T>", async (t) => {
-  await t.step("returns properly named function", async (t) => {
-    await assertSnapshot(t, isUnwrapReadonlyOf(isReadonlyOf(isNumber)).name);
-    // Nesting does nothing
-    await assertSnapshot(
-      t,
-      isUnwrapReadonlyOf(isReadonlyOf(isReadonlyOf(isNumber))).name,
-    );
-  });
-  await t.step("returns proper type predicate", () => {
-    const a: unknown = undefined;
-    if (isUnwrapReadonlyOf(isReadonlyOf(isNumber))(a)) {
-      assertType<Equal<typeof a, number>>(true);
-    }
-    if (
-      isUnwrapReadonlyOf(
-        isReadonlyOf(isTupleOf([isString, isNumber, isBoolean])),
-      )(a)
-    ) {
-      assertType<Equal<typeof a, [string, number, boolean]>>(true);
-    }
-    if (isUnwrapReadonlyOf(isReadonlyOf(isUniformTupleOf(3, isString)))(a)) {
-      assertType<Equal<typeof a, [string, string, string]>>(true);
-    }
-    if (
-      isUnwrapReadonlyOf(
-        isReadonlyOf(isObjectOf({ a: isString, b: isNumber, c: isBoolean })),
-      )(a)
-    ) {
-      assertType<
-        Equal<typeof a, { a: string; b: number; c: boolean }>
-      >(true);
-    }
   });
 });
 
