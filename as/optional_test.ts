@@ -2,8 +2,7 @@ import { assertEquals } from "@std/assert";
 import { assertSnapshot } from "@std/testing/snapshot";
 import { assertType } from "@std/testing/types";
 import { type Equal, stringify } from "../_testutil.ts";
-import type { Predicate } from "../is.ts";
-import { is } from "../is.ts";
+import { is, type Predicate } from "../is.ts";
 import { asOptional, asUnoptional } from "./optional.ts";
 
 const examples = {

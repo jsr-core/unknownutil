@@ -1,16 +1,7 @@
 import type { FlatType, TupleToIntersection } from "./_typeutil.ts";
-import {
-  getMetadata,
-  getPredicateFactoryMetadata,
-  setPredicateFactoryMetadata,
-  type WithMetadata,
-} from "./metadata.ts";
-import {
-  asOptional,
-  asUnoptional,
-  hasOptional,
-  type WithOptional,
-} from "./as/optional.ts";
+import { rewriteName } from "./_funcutil.ts";
+import { annotate, hasAnnotation, type WithOptional } from "./_annotation.ts";
+import { asOptional, asUnoptional, hasOptional } from "./as/optional.ts";
 
 const objectToString = Object.prototype.toString;
 const primitiveSet = new Set([
@@ -425,17 +416,13 @@ export function isPrimitive(x: unknown): x is Primitive {
  */
 export function isArrayOf<T>(
   pred: Predicate<T>,
-): Predicate<T[]> & WithMetadata<IsArrayOfMetadata> {
-  return setPredicateFactoryMetadata(
+): Predicate<T[]> {
+  return rewriteName(
     (x: unknown): x is T[] => isArray(x) && x.every(pred),
-    { name: "isArrayOf", args: [pred] },
+    "isArrayOf",
+    pred,
   );
 }
-
-type IsArrayOfMetadata = {
-  name: "isArrayOf";
-  args: Parameters<typeof isArrayOf>;
-};
 
 /**
  * Return a type predicate function that returns `true` if the type of `x` is `Set<T>`.
@@ -455,8 +442,8 @@ type IsArrayOfMetadata = {
  */
 export function isSetOf<T>(
   pred: Predicate<T>,
-): Predicate<Set<T>> & WithMetadata<IsSetOfMetadata> {
-  return setPredicateFactoryMetadata(
+): Predicate<Set<T>> {
+  return rewriteName(
     (x: unknown): x is Set<T> => {
       if (!isSet(x)) return false;
       for (const v of x.values()) {
@@ -464,14 +451,10 @@ export function isSetOf<T>(
       }
       return true;
     },
-    { name: "isSetOf", args: [pred] },
+    "isSetOf",
+    pred,
   );
 }
-
-type IsSetOfMetadata = {
-  name: "isSetOf";
-  args: Parameters<typeof isSetOf>;
-};
 
 /**
  * Return a type predicate function that returns `true` if the type of `x` is `TupleOf<T>` or `TupleOf<T, E>`.
@@ -524,37 +507,34 @@ export function isTupleOf<
   T extends readonly [Predicate<unknown>, ...Predicate<unknown>[]],
 >(
   predTup: T,
-): Predicate<TupleOf<T>> & WithMetadata<IsTupleOfMetadata>;
+): Predicate<TupleOf<T>>;
 export function isTupleOf<
   T extends readonly [Predicate<unknown>, ...Predicate<unknown>[]],
   E extends Predicate<unknown[]>,
 >(
   predTup: T,
   predElse: E,
-):
-  & Predicate<[...TupleOf<T>, ...PredicateType<E>]>
-  & WithMetadata<IsTupleOfMetadata>;
+): Predicate<[...TupleOf<T>, ...PredicateType<E>]>;
 export function isTupleOf<
   T extends readonly [Predicate<unknown>, ...Predicate<unknown>[]],
   E extends Predicate<unknown[]>,
 >(
   predTup: T,
   predElse?: E,
-):
-  & Predicate<TupleOf<T> | [...TupleOf<T>, ...PredicateType<E>]>
-  & WithMetadata<IsTupleOfMetadata> {
+): Predicate<TupleOf<T> | [...TupleOf<T>, ...PredicateType<E>]> {
   if (!predElse) {
-    return setPredicateFactoryMetadata(
+    return rewriteName(
       (x: unknown): x is TupleOf<T> => {
         if (!isArray(x) || x.length !== predTup.length) {
           return false;
         }
         return predTup.every((pred, i) => pred(x[i]));
       },
-      { name: "isTupleOf", args: [predTup] },
+      "isTupleOf",
+      predTup,
     );
   } else {
-    return setPredicateFactoryMetadata(
+    return rewriteName(
       (x: unknown): x is [...TupleOf<T>, ...PredicateType<E>] => {
         if (!isArray(x) || x.length < predTup.length) {
           return false;
@@ -563,18 +543,15 @@ export function isTupleOf<
         const tail = x.slice(predTup.length);
         return predTup.every((pred, i) => pred(head[i])) && predElse(tail);
       },
-      { name: "isTupleOf", args: [predTup, predElse] },
+      "isTupleOf",
+      predTup,
+      predElse,
     );
   }
 }
 
 type TupleOf<T> = {
   -readonly [P in keyof T]: T[P] extends Predicate<infer U> ? U : never;
-};
-
-type IsTupleOfMetadata = {
-  name: "isTupleOf";
-  args: [Parameters<typeof isTupleOf>[0], Parameters<typeof isTupleOf>[1]?];
 };
 
 /**
@@ -641,29 +618,25 @@ export function isParametersOf<
   T extends readonly [...Predicate<unknown>[]],
 >(
   predTup: T,
-): Predicate<ParametersOf<T>> & WithMetadata<IsParametersOfMetadata>;
+): Predicate<ParametersOf<T>>;
 export function isParametersOf<
   T extends readonly [...Predicate<unknown>[]],
   E extends Predicate<unknown[]>,
 >(
   predTup: T,
   predElse: E,
-):
-  & Predicate<[...ParametersOf<T>, ...PredicateType<E>]>
-  & WithMetadata<IsParametersOfMetadata>;
+): Predicate<[...ParametersOf<T>, ...PredicateType<E>]>;
 export function isParametersOf<
   T extends readonly [...Predicate<unknown>[]],
   E extends Predicate<unknown[]>,
 >(
   predTup: T,
   predElse?: E,
-):
-  & Predicate<ParametersOf<T> | [...ParametersOf<T>, ...PredicateType<E>]>
-  & WithMetadata<IsParametersOfMetadata> {
+): Predicate<ParametersOf<T> | [...ParametersOf<T>, ...PredicateType<E>]> {
   const requiresLength = 1 +
     predTup.findLastIndex((pred) => !hasOptional(pred));
   if (!predElse) {
-    return setPredicateFactoryMetadata(
+    return rewriteName(
       (x: unknown): x is ParametersOf<T> => {
         if (
           !isArray(x) || x.length < requiresLength || x.length > predTup.length
@@ -672,10 +645,11 @@ export function isParametersOf<
         }
         return predTup.every((pred, i) => pred(x[i]));
       },
-      { name: "isParametersOf", args: [predTup] },
+      "isParametersOf",
+      predTup,
     );
   } else {
-    return setPredicateFactoryMetadata(
+    return rewriteName(
       (x: unknown): x is [...ParametersOf<T>, ...PredicateType<E>] => {
         if (!isArray(x) || x.length < requiresLength) {
           return false;
@@ -684,7 +658,9 @@ export function isParametersOf<
         const tail = x.slice(predTup.length);
         return predTup.every((pred, i) => pred(head[i])) && predElse(tail);
       },
-      { name: "isParametersOf", args: [predTup, predElse] },
+      "isParametersOf",
+      predTup,
+      predElse,
     );
   }
 }
@@ -701,14 +677,6 @@ type ParametersOf<T> = T extends readonly [] ? []
     : never
   // Array of predicates
   : TupleOf<T>;
-
-type IsParametersOfMetadata = {
-  name: "isParametersOf";
-  args: [
-    Parameters<typeof isParametersOf>[0],
-    Parameters<typeof isParametersOf>[1]?,
-  ];
-};
 
 /**
  * Return a type predicate function that returns `true` if the type of `x` is `UniformTupleOf<T>`.
@@ -742,15 +710,17 @@ type IsParametersOfMetadata = {
 export function isUniformTupleOf<T, N extends number>(
   n: N,
   pred: Predicate<T> = isAny,
-): Predicate<UniformTupleOf<T, N>> & WithMetadata<IsUniformTupleOfMetadata> {
-  return setPredicateFactoryMetadata(
+): Predicate<UniformTupleOf<T, N>> {
+  return rewriteName(
     (x: unknown): x is UniformTupleOf<T, N> => {
       if (!isArray(x) || x.length !== n) {
         return false;
       }
       return x.every((v) => pred(v));
     },
-    { name: "isUniformTupleOf", args: [n, pred] },
+    "isUniformTupleOf",
+    n,
+    pred,
   );
 }
 
@@ -760,11 +730,6 @@ type UniformTupleOf<
   N extends number,
   R extends readonly T[] = [],
 > = R["length"] extends N ? R : UniformTupleOf<T, N, [T, ...R]>;
-
-type IsUniformTupleOfMetadata = {
-  name: "isUniformTupleOf";
-  args: Parameters<typeof isUniformTupleOf>;
-};
 
 /**
  * Return a type predicate function that returns `true` if the type of `x` is an Object instance that satisfies `Record<K, T>`.
@@ -801,8 +766,8 @@ type IsUniformTupleOfMetadata = {
 export function isRecordObjectOf<T, K extends PropertyKey = PropertyKey>(
   pred: Predicate<T>,
   predKey?: Predicate<K>,
-): Predicate<Record<K, T>> & WithMetadata<IsRecordObjectOfMetadata> {
-  return setPredicateFactoryMetadata(
+): Predicate<Record<K, T>> {
+  return rewriteName(
     (x: unknown): x is Record<K, T> => {
       if (!isRecordObject(x)) return false;
       for (const k in x) {
@@ -811,14 +776,11 @@ export function isRecordObjectOf<T, K extends PropertyKey = PropertyKey>(
       }
       return true;
     },
-    { name: "isRecordObjectOf", args: [pred, predKey] },
+    "isRecordObjectOf",
+    pred,
+    predKey,
   );
 }
-
-type IsRecordObjectOfMetadata = {
-  name: "isRecordObjectOf";
-  args: Parameters<typeof isRecordObjectOf>;
-};
 
 /**
  * Return a type predicate function that returns `true` if the type of `x` satisfies `Record<K, T>`.
@@ -852,8 +814,8 @@ type IsRecordObjectOfMetadata = {
 export function isRecordOf<T, K extends PropertyKey = PropertyKey>(
   pred: Predicate<T>,
   predKey?: Predicate<K>,
-): Predicate<Record<K, T>> & WithMetadata<IsRecordOfMetadata> {
-  return setPredicateFactoryMetadata(
+): Predicate<Record<K, T>> {
+  return rewriteName(
     (x: unknown): x is Record<K, T> => {
       if (!isRecord(x)) return false;
       for (const k in x) {
@@ -862,14 +824,11 @@ export function isRecordOf<T, K extends PropertyKey = PropertyKey>(
       }
       return true;
     },
-    { name: "isRecordOf", args: [pred, predKey] },
+    "isRecordOf",
+    pred,
+    predKey,
   );
 }
-
-type IsRecordOfMetadata = {
-  name: "isRecordOf";
-  args: Parameters<typeof isRecordOf>;
-};
 
 /**
  * Return a type predicate function that returns `true` if the type of `x` is `Map<K, T>`.
@@ -903,8 +862,8 @@ type IsRecordOfMetadata = {
 export function isMapOf<T, K>(
   pred: Predicate<T>,
   predKey?: Predicate<K>,
-): Predicate<Map<K, T>> & WithMetadata<IsMapOfMetadata> {
-  return setPredicateFactoryMetadata(
+): Predicate<Map<K, T>> {
+  return rewriteName(
     (x: unknown): x is Map<K, T> => {
       if (!isMap(x)) return false;
       for (const entry of x.entries()) {
@@ -914,14 +873,11 @@ export function isMapOf<T, K>(
       }
       return true;
     },
-    { name: "isMapOf", args: [pred, predKey] },
+    "isMapOf",
+    pred,
+    predKey,
   );
 }
-
-type IsMapOfMetadata = {
-  name: "isMapOf";
-  args: Parameters<typeof isMapOf>;
-};
 
 /**
  * Return a type predicate function that returns `true` if the type of `x` is `ObjectOf<T>`.
@@ -950,47 +906,44 @@ type IsMapOfMetadata = {
  */
 export function isObjectOf<
   T extends Record<PropertyKey, Predicate<unknown>>,
->(
-  predObj: T,
-): Predicate<ObjectOf<T>> & WithMetadata<IsObjectOfMetadata>;
-export function isObjectOf<
-  T extends Record<PropertyKey, Predicate<unknown>>,
->(
-  predObj: T,
-): Predicate<ObjectOf<T>> & WithMetadata<IsObjectOfMetadata> {
-  return setPredicateFactoryMetadata(
-    (x: unknown): x is ObjectOf<T> => {
-      if (
-        x == null ||
-        typeof x !== "object" && typeof x !== "function" ||
-        Array.isArray(x)
-      ) return false;
-      // Check each values
-      for (const k in predObj) {
-        if (!predObj[k]((x as T)[k])) return false;
-      }
-      return true;
-    },
-    { name: "isObjectOf", args: [predObj] },
+>(predObj: T): Predicate<ObjectOf<T>> & WithPredObj<T> {
+  return annotate(
+    rewriteName(
+      (x: unknown): x is ObjectOf<T> => {
+        if (
+          x == null ||
+          typeof x !== "object" && typeof x !== "function" ||
+          Array.isArray(x)
+        ) return false;
+        // Check each values
+        for (const k in predObj) {
+          if (!predObj[k]((x as T)[k])) return false;
+        }
+        return true;
+      },
+      "isObjectOf",
+      predObj,
+    ),
+    "predObj",
+    predObj,
   );
 }
 
 type ObjectOf<T extends Record<PropertyKey, Predicate<unknown>>> = FlatType<
-  // Non optional
-  & {
-    [K in keyof T as T[K] extends WithOptional<unknown> ? never : K]:
-      T[K] extends Predicate<infer U> ? U : never;
-  }
   // Optional
   & {
     [K in keyof T as T[K] extends WithOptional<unknown> ? K : never]?:
       T[K] extends Predicate<infer U> ? U : never;
   }
+  // Non optional
+  & {
+    [K in keyof T as T[K] extends WithOptional<unknown> ? never : K]:
+      T[K] extends Predicate<infer U> ? U : never;
+  }
 >;
 
-type IsObjectOfMetadata = {
-  name: "isObjectOf";
-  args: [Parameters<typeof isObjectOf>[0]];
+type WithPredObj<T extends Record<PropertyKey, Predicate<unknown>>> = {
+  predObj: T;
 };
 
 /**
@@ -1016,30 +969,28 @@ type IsObjectOfMetadata = {
  * }
  * ```
  */
-export function isStrictOf<T extends Record<PropertyKey, unknown>>(
+export function isStrictOf<
+  T extends Record<PropertyKey, unknown>,
+  P extends Record<PropertyKey, Predicate<unknown>>,
+>(
   pred:
     & Predicate<T>
-    & WithMetadata<IsObjectOfMetadata>,
+    & WithPredObj<P>,
 ):
   & Predicate<T>
-  & WithMetadata<IsStrictOfMetadata> {
-  const { args } = getPredicateFactoryMetadata(pred);
-  const s = new Set(Object.keys(args[0]));
-  return setPredicateFactoryMetadata(
+  & WithPredObj<P> {
+  const s = new Set(Object.keys(pred.predObj));
+  return rewriteName(
     (x: unknown): x is T => {
       if (!pred(x)) return false;
       // deno-lint-ignore no-explicit-any
       const ks = Object.keys(x as any);
       return ks.length <= s.size && ks.every((k) => s.has(k));
     },
-    { name: "isStrictOf", args: [pred] },
-  );
+    "isStrictOf",
+    pred,
+  ) as Predicate<T> & WithPredObj<P>;
 }
-
-type IsStrictOfMetadata = {
-  name: "isStrictOf";
-  args: Parameters<typeof isStrictOf>;
-};
 
 /**
  * Return `true` if the type of `x` is instance of `ctor`.
@@ -1060,17 +1011,13 @@ type IsStrictOfMetadata = {
 // deno-lint-ignore no-explicit-any
 export function isInstanceOf<T extends new (...args: any) => unknown>(
   ctor: T,
-): Predicate<InstanceType<T>> & WithMetadata<IsInstanceOfMetadata> {
-  return setPredicateFactoryMetadata(
+): Predicate<InstanceType<T>> {
+  return rewriteName(
     (x: unknown): x is InstanceType<T> => x instanceof ctor,
-    { name: "isInstanceOf", args: [ctor] },
+    "isInstanceOf",
+    ctor,
   );
 }
-
-type IsInstanceOfMetadata = {
-  name: "isInstanceOf";
-  args: Parameters<typeof isInstanceOf>;
-};
 
 /**
  * Return a type predicate function that returns `true` if the type of `x` is a literal type of `pred`.
@@ -1090,17 +1037,13 @@ type IsInstanceOfMetadata = {
  */
 export function isLiteralOf<T extends Primitive>(
   literal: T,
-): Predicate<T> & WithMetadata<IsLiteralOfMetadata> {
-  return setPredicateFactoryMetadata(
+): Predicate<T> {
+  return rewriteName(
     (x: unknown): x is T => x === literal,
-    { name: "isLiteralOf", args: [literal] },
+    "isLiteralOf",
+    literal,
   );
 }
-
-type IsLiteralOfMetadata = {
-  name: "isLiteralOf";
-  args: Parameters<typeof isLiteralOf>;
-};
 
 /**
  * Return a type predicate function that returns `true` if the type of `x` is one of literal type in `preds`.
@@ -1120,18 +1063,14 @@ type IsLiteralOfMetadata = {
  */
 export function isLiteralOneOf<T extends readonly Primitive[]>(
   literals: T,
-): Predicate<T[number]> & WithMetadata<IsLiteralOneOfMetadata> {
+): Predicate<T[number]> {
   const s = new Set(literals);
-  return setPredicateFactoryMetadata(
+  return rewriteName(
     (x: unknown): x is T[number] => s.has(x as T[number]),
-    { name: "isLiteralOneOf", args: [literals] },
+    "isLiteralOneOf",
+    literals,
   );
 }
-
-type IsLiteralOneOfMetadata = {
-  name: "isLiteralOneOf";
-  args: Parameters<typeof isLiteralOneOf>;
-};
 
 /**
  * Return a type predicate function that returns `true` if the type of `x` is `UnionOf<T>`.
@@ -1168,10 +1107,15 @@ export function isUnionOf<
   T extends readonly [Predicate<unknown>, ...Predicate<unknown>[]],
 >(
   preds: T,
-): Predicate<UnionOf<T>> & WithMetadata<IsUnionOfMetadata> {
-  return setPredicateFactoryMetadata(
-    (x: unknown): x is UnionOf<T> => preds.some((pred) => pred(x)),
-    { name: "isUnionOf", args: [preds] },
+): Predicate<UnionOf<T>> & WithUnion<T> {
+  return annotate(
+    rewriteName(
+      (x: unknown): x is UnionOf<T> => preds.some((pred) => pred(x)),
+      "isUnionOf",
+      preds,
+    ),
+    "union",
+    preds,
   );
 }
 
@@ -1179,9 +1123,10 @@ type UnionOf<T> = T extends readonly [Predicate<infer U>, ...infer R]
   ? U | UnionOf<R>
   : never;
 
-type IsUnionOfMetadata = {
-  name: "isUnionOf";
-  args: Parameters<typeof isUnionOf>;
+type WithUnion<
+  T extends readonly [Predicate<unknown>, ...Predicate<unknown>[]],
+> = {
+  union: T;
 };
 
 /**
@@ -1223,12 +1168,17 @@ type IsUnionOfMetadata = {
  */
 export function isIntersectionOf<
   T extends readonly [
-    Predicate<unknown> & WithMetadata<IsObjectOfMetadata>,
-    ...(Predicate<unknown> & WithMetadata<IsObjectOfMetadata>)[],
+    Predicate<unknown> & WithPredObj<Record<PropertyKey, Predicate<unknown>>>,
+    ...(
+      & Predicate<unknown>
+      & WithPredObj<Record<PropertyKey, Predicate<unknown>>>
+    )[],
   ],
 >(
   preds: T,
-): Predicate<IntersectionOf<T>> & WithMetadata<IsObjectOfMetadata>;
+):
+  & Predicate<IntersectionOf<T>>
+  & WithPredObj<Record<PropertyKey, Predicate<unknown>>>;
 export function isIntersectionOf<
   T extends readonly [Predicate<unknown>],
 >(
@@ -1238,7 +1188,9 @@ export function isIntersectionOf<
   T extends readonly [Predicate<unknown>, ...Predicate<unknown>[]],
 >(
   preds: T,
-): Predicate<IntersectionOf<T>> & WithMetadata<IsIntersectionOfMetadata>;
+):
+  & Predicate<IntersectionOf<T>>
+  & WithPredObj<Record<PropertyKey, Predicate<unknown>>>;
 export function isIntersectionOf<
   T extends readonly [Predicate<unknown>, ...Predicate<unknown>[]],
 >(
@@ -1246,14 +1198,13 @@ export function isIntersectionOf<
 ):
   | Predicate<unknown>
   | Predicate<IntersectionOf<T>>
-    & WithMetadata<IsObjectOfMetadata | IsIntersectionOfMetadata> {
+    & WithPredObj<Record<PropertyKey, Predicate<unknown>>> {
   const predObj = {};
   const restPreds = preds.filter((pred) => {
-    const meta = getMetadata(pred);
-    if ((meta as IsObjectOfMetadata)?.name !== "isObjectOf") {
+    if (!hasAnnotation(pred, "predObj")) {
       return true;
     }
-    Object.assign(predObj, (meta as IsObjectOfMetadata).args[0]);
+    Object.assign(predObj, pred.predObj);
   });
   if (restPreds.length < preds.length) {
     restPreds.push(isObjectOf(predObj));
@@ -1261,18 +1212,14 @@ export function isIntersectionOf<
   if (restPreds.length === 1) {
     return restPreds[0];
   }
-  return setPredicateFactoryMetadata(
+  return rewriteName(
     (x: unknown): x is IntersectionOf<T> => restPreds.every((pred) => pred(x)),
-    { name: "isIntersectionOf", args: [preds] },
+    "isIntersectionOf",
+    preds,
   );
 }
 
 type IntersectionOf<T> = TupleToIntersection<TupleOf<T>>;
-
-type IsIntersectionOfMetadata = {
-  name: "isIntersectionOf";
-  args: Parameters<typeof isIntersectionOf>;
-};
 
 /**
  * Return a type predicate function that returns `true` if the type of `x` is `Required<ObjectOf<T>>`.
@@ -1296,18 +1243,18 @@ type IsIntersectionOfMetadata = {
  */
 export function isRequiredOf<
   T extends Record<PropertyKey, unknown>,
+  P extends Record<PropertyKey, Predicate<unknown>>,
 >(
-  pred: Predicate<T> & WithMetadata<IsObjectOfMetadata>,
+  pred: Predicate<T> & WithPredObj<P>,
 ):
   & Predicate<FlatType<Required<T>>>
-  & WithMetadata<IsObjectOfMetadata> {
-  const { args } = getPredicateFactoryMetadata(pred);
+  & WithPredObj<P> {
   const predObj = Object.fromEntries(
-    Object.entries(args[0]).map(([k, v]) => [k, asUnoptional(v)]),
+    Object.entries(pred.predObj).map(([k, v]) => [k, asUnoptional(v)]),
   );
   return isObjectOf(predObj) as
     & Predicate<FlatType<Required<T>>>
-    & WithMetadata<IsObjectOfMetadata>;
+    & WithPredObj<P>;
 }
 
 /**
@@ -1333,18 +1280,18 @@ export function isRequiredOf<
  */
 export function isPartialOf<
   T extends Record<PropertyKey, unknown>,
+  P extends Record<PropertyKey, Predicate<unknown>>,
 >(
-  pred: Predicate<T> & WithMetadata<IsObjectOfMetadata>,
+  pred: Predicate<T> & WithPredObj<P>,
 ):
   & Predicate<FlatType<Partial<T>>>
-  & WithMetadata<IsObjectOfMetadata> {
-  const { args } = getPredicateFactoryMetadata(pred);
+  & WithPredObj<P> {
   const predObj = Object.fromEntries(
-    Object.entries(args[0]).map(([k, v]) => [k, asOptional(v)]),
-  );
+    Object.entries(pred.predObj).map(([k, v]) => [k, asOptional(v)]),
+  ) as Record<PropertyKey, Predicate<unknown>>;
   return isObjectOf(predObj) as
     & Predicate<FlatType<Partial<T>>>
-    & WithMetadata<IsObjectOfMetadata>;
+    & WithPredObj<P>;
 }
 
 /**
@@ -1370,21 +1317,21 @@ export function isPartialOf<
  */
 export function isPickOf<
   T extends Record<PropertyKey, unknown>,
+  P extends Record<PropertyKey, Predicate<unknown>>,
   K extends keyof T,
 >(
-  pred: Predicate<T> & WithMetadata<IsObjectOfMetadata>,
+  pred: Predicate<T> & WithPredObj<P>,
   keys: K[],
 ):
   & Predicate<FlatType<Pick<T, K>>>
-  & WithMetadata<IsObjectOfMetadata> {
+  & WithPredObj<P> {
   const s = new Set(keys);
-  const { args } = getPredicateFactoryMetadata(pred);
   const predObj = Object.fromEntries(
-    Object.entries(args[0]).filter(([k]) => s.has(k as K)),
+    Object.entries(pred.predObj).filter(([k]) => s.has(k as K)),
   );
   return isObjectOf(predObj) as
     & Predicate<FlatType<Pick<T, K>>>
-    & WithMetadata<IsObjectOfMetadata>;
+    & WithPredObj<P>;
 }
 
 /**
@@ -1410,21 +1357,21 @@ export function isPickOf<
  */
 export function isOmitOf<
   T extends Record<PropertyKey, unknown>,
+  P extends Record<PropertyKey, Predicate<unknown>>,
   K extends keyof T,
 >(
-  pred: Predicate<T> & WithMetadata<IsObjectOfMetadata>,
+  pred: Predicate<T> & WithPredObj<P>,
   keys: K[],
 ):
   & Predicate<FlatType<Omit<T, K>>>
-  & WithMetadata<IsObjectOfMetadata> {
+  & WithPredObj<P> {
   const s = new Set(keys);
-  const { args } = getPredicateFactoryMetadata(pred);
   const predObj = Object.fromEntries(
-    Object.entries(args[0]).filter(([k]) => !s.has(k as K)),
+    Object.entries(pred.predObj).filter(([k]) => !s.has(k as K)),
   );
   return isObjectOf(predObj) as
     & Predicate<FlatType<Omit<T, K>>>
-    & WithMetadata<IsObjectOfMetadata>;
+    & WithPredObj<P>;
 }
 
 export const is = {

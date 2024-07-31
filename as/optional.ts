@@ -1,13 +1,11 @@
-import type { Predicate } from "../is.ts";
 import { rewriteName } from "../_funcutil.ts";
-import { annotate, hasAnnotation, unannotate } from "../_annotation.ts";
-
-/**
- * Annotation for optional.
- */
-export type WithOptional<T> = {
-  optional: Predicate<T>;
-};
+import type { Predicate } from "../is.ts";
+import {
+  annotate,
+  hasAnnotation,
+  unannotate,
+  type WithOptional,
+} from "../_annotation.ts";
 
 /**
  * Return an `Optional` annotated type predicate function that returns `true` if the type of `x` is `T` or `undefined`.

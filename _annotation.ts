@@ -30,17 +30,8 @@ export function hasAnnotation<F extends Fn, N extends string>(
 }
 
 /**
- * Annotation for readonly.
+ * Annotation for optional.
  */
-export type WithReadonly<P extends Predicate<unknown>> = {
-  readonly: P;
-};
-
-export type PredObj = Record<PropertyKey, Predicate<unknown>>;
-
-/**
- * Annotation for predObj.
- */
-export type WithPredObj<T extends PredObj> = {
-  predObj: T;
+export type WithOptional<T> = {
+  optional: Predicate<T>;
 };
