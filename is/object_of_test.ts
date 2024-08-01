@@ -3,6 +3,7 @@ import { assertSnapshot } from "@std/testing/snapshot";
 import { assertType } from "@std/testing/types";
 import { type Equal, testWithExamples } from "../_testutil.ts";
 import { is } from "./mod.ts";
+import { as } from "../as/mod.ts";
 import { isObjectOf } from "./object_of.ts";
 
 Deno.test("isObjectOf<T>", async (t) => {
@@ -81,6 +82,32 @@ Deno.test("isObjectOf<T>", async (t) => {
       getFullYear: is.Function,
     };
     assertEquals(isObjectOf(predObj)(date), true, "Value is not an object");
+  });
+  await t.step("with asOptional/asReadonly", () => {
+    const predObj = {
+      a: as.Readonly(as.Optional(is.String)),
+      b: as.Optional(as.Readonly(is.String)),
+      c: as.Readonly(is.String),
+      d: as.Optional(is.String),
+      e: as.Unreadonly(as.Unoptional(as.Readonly(as.Optional(is.String)))),
+      f: as.Unoptional(as.Unreadonly(as.Optional(as.Readonly(is.String)))),
+    };
+    const a: unknown = undefined;
+    if (isObjectOf(predObj)(a)) {
+      assertType<
+        Equal<
+          typeof a,
+          {
+            readonly a?: string;
+            readonly b?: string;
+            readonly c: string;
+            d?: string;
+            e: string;
+            f: string;
+          }
+        >
+      >(true);
+    }
   });
   await testWithExamples(
     t,
