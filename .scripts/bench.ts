@@ -1,5 +1,5 @@
-import { as } from "./as/mod.ts";
-import { is } from "./is/mod.ts";
+import { as } from "../as/mod.ts";
+import { is } from "../is/mod.ts";
 
 const cs: unknown[] = [
   "Hello world",
@@ -426,7 +426,7 @@ Deno.bench({
 
 const asOptionalPred = as.Optional(is.String);
 Deno.bench({
-  name: "is.OptionalOf<T> (pre)",
+  name: "as.Optional<T> (pre)",
   fn: () => {
     for (const c of cs) {
       asOptionalPred(c);
