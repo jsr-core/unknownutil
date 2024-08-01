@@ -1,28 +1,11 @@
 # unknownutil
 
 [![jsr](https://jsr.io/badges/@core/unknownutil)](https://jsr.io/@core/unknownutil)
-[![npm](https://img.shields.io/npm/v/unknownutil?logo=npm&logoColor=white)](https://www.npmjs.com/package/unknownutil)
-[![denoland](https://img.shields.io/github/v/release/jsr-core/unknownutil?logo=deno&label=denoland)](https://deno.land/x/unknownutil)
-[![deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/unknownutil/mod.ts)
 [![test](https://github.com/jsr-core/unknownutil/workflows/Test/badge.svg)](https://github.com/jsr-core/unknownutil/actions?query=workflow%3ATest)
 [![codecov](https://codecov.io/github/jsr-core/unknownutil/graph/badge.svg?token=pfbLRGU5AM)](https://codecov.io/github/jsr-core/unknownutil)
 
 A utility pack for handling `unknown` type.
 
-[deno]: https://deno.land/
-
-> [!WARNING]
->
-> The package on [deno.land] and [npm] is deprecated. Use the package on
-> [jsr.io] instead.
->
-> ```
-> deno add @core/unknownutil
-> npx jsr add @core/unknownutil
-> ```
-
-[deno.land]: https://deno.land/x/unknownutil
-[npm]: https://www.npmjs.com/package/unknownutil
 [jsr.io]: https://jsr.io/@core/unknownutil
 
 ## Usage
