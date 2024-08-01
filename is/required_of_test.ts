@@ -11,6 +11,7 @@ Deno.test("isRequiredOf<T>", async (t) => {
     a: is.Number,
     b: is.UnionOf([is.String, is.Undefined]),
     c: as.Optional(is.Boolean),
+    d: as.Readonly(is.String),
   });
   await t.step("returns properly named function", async (t) => {
     await assertSnapshot(t, isRequiredOf(pred).name);
@@ -21,7 +22,10 @@ Deno.test("isRequiredOf<T>", async (t) => {
     const a: unknown = { a: 0, b: "a", c: true };
     if (isRequiredOf(pred)(a)) {
       assertType<
-        Equal<typeof a, { a: number; b: string | undefined; c: boolean }>
+        Equal<
+          typeof a,
+          { a: number; b: string | undefined; c: boolean; readonly d: string }
+        >
       >(true);
     }
   });
