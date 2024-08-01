@@ -75,7 +75,6 @@
     "@std/testing": "jsr:@std/testing@^0.221.0"
   },
   "tasks": {
-    "build-npm": "deno run -A .scripts/build_npm.ts $(git describe --tags --always --dirty)",
     "check": "deno check **/*.ts",
     "test": "deno test -A --doc --parallel --shuffle",
     "test:coverage": "deno task test --coverage=.coverage",
