@@ -1,5 +1,5 @@
 import { assertSnapshot } from "@std/testing/snapshot";
-import { inspect } from "./inspect.ts";
+import { inspect } from "./_inspect.ts";
 
 Deno.test("inspect", async (t) => {
   await t.step("string", async (t) => {

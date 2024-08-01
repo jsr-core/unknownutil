@@ -1,4 +1,4 @@
-import { inspect } from "./inspect.ts";
+import { inspect } from "./_inspect.ts";
 
 /**
  * Rewrite the function name.
