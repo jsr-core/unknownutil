@@ -1,5 +1,5 @@
 import { rewriteName } from "../_funcutil.ts";
-import type { Predicate } from "../type.ts";
+import type { Predicate, PredicateType } from "../type.ts";
 import {
   annotate,
   hasAnnotation,
@@ -25,21 +25,21 @@ import {
  * }
  * ```
  */
-export function asReadonly<T>(
-  pred: Predicate<T>,
-): Predicate<T> & WithReadonly {
+export function asReadonly<P extends Predicate<unknown>>(
+  pred: P,
+): P & WithReadonly {
   if (hasAnnotation(pred, "readonly")) {
-    return pred as Predicate<T> & WithReadonly;
+    return pred as P & WithReadonly;
   }
   return rewriteName(
     annotate(
-      (x: unknown): x is T => pred(x),
+      (x: unknown) => pred(x),
       "readonly",
       pred,
     ),
     "asReadonly",
     pred,
-  ) as Predicate<T> & WithReadonly;
+  ) as unknown as P & WithReadonly;
 }
 
 /**

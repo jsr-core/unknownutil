@@ -1,5 +1,5 @@
 import { rewriteName } from "../_funcutil.ts";
-import type { Predicate } from "../type.ts";
+import type { Predicate, PredicateType } from "../type.ts";
 import {
   annotate,
   hasAnnotation,
@@ -25,21 +25,30 @@ import {
  * }
  * ```
  */
-export function asOptional<T>(
-  pred: Predicate<T>,
-): Predicate<T | undefined> & WithOptional<T> {
+export function asOptional<P extends Predicate<unknown>>(
+  pred: P,
+):
+  & Extract<P, Predicate<PredicateType<P>>>
+  & Predicate<PredicateType<P> | undefined>
+  & WithOptional<PredicateType<P>> {
   if (hasAnnotation(pred, "optional")) {
-    return pred as Predicate<T | undefined> & WithOptional<T>;
+    return pred as
+      & Extract<P, Predicate<PredicateType<P>>>
+      & Predicate<PredicateType<P> | undefined>
+      & WithOptional<PredicateType<P>>;
   }
   return rewriteName(
     annotate(
-      (x: unknown): x is T | undefined => x === undefined || pred(x),
+      (x: unknown) => x === undefined || pred(x),
       "optional",
       pred,
     ),
     "asOptional",
     pred,
-  ) as Predicate<T | undefined> & WithOptional<T>;
+  ) as unknown as
+    & Extract<P, Predicate<PredicateType<P>>>
+    & Predicate<PredicateType<P> | undefined>
+    & WithOptional<PredicateType<P>>;
 }
 
 /**
