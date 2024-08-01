@@ -240,6 +240,7 @@
  * @module
  */
 
+export type * from "./type.ts";
 export * from "./as/mod.ts";
-export * from "./is.ts";
+export * from "./is/mod.ts";
 export * from "./util.ts";

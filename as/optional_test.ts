@@ -2,7 +2,8 @@ import { assertEquals } from "@std/assert";
 import { assertSnapshot } from "@std/testing/snapshot";
 import { assertType } from "@std/testing/types";
 import { type Equal, stringify } from "../_testutil.ts";
-import { is, type Predicate } from "../is.ts";
+import type { Predicate } from "../type.ts";
+import { is } from "../is/mod.ts";
 import { asOptional, asUnoptional } from "./optional.ts";
 
 const examples = {
@@ -75,8 +76,8 @@ Deno.test("asOptional<T>", async (t) => {
       validExamples: ["number", "undefined"],
     });
   });
-  await t.step("with is.BigInt", async (t) => {
-    await testWithExamples(t, asOptional(is.BigInt), {
+  await t.step("with is.Bigint", async (t) => {
+    await testWithExamples(t, asOptional(is.Bigint), {
       validExamples: ["bigint", "undefined"],
     });
   });
@@ -162,8 +163,8 @@ Deno.test("asUnoptional<T>", async (t) => {
       validExamples: ["number"],
     });
   });
-  await t.step("with is.BigInt", async (t) => {
-    await testWithExamples(t, asUnoptional(asOptional(is.BigInt)), {
+  await t.step("with is.Bigint", async (t) => {
+    await testWithExamples(t, asUnoptional(asOptional(is.Bigint)), {
       validExamples: ["bigint"],
     });
   });

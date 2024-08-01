@@ -1,0 +1,49 @@
+export const snapshot = {};
+
+snapshot[`isParametersOf<T> > returns properly named function 1`] = `
+"isParametersOf([
+  isNumber,
+  isString,
+  asOptional(isBoolean)
+])"
+`;
+
+snapshot[`isParametersOf<T> > returns properly named function 2`] = `"isParametersOf([(anonymous)])"`;
+
+snapshot[`isParametersOf<T> > returns properly named function 3`] = `"isParametersOf([])"`;
+
+snapshot[`isParametersOf<T> > returns properly named function 4`] = `
+"isParametersOf([
+  isParametersOf([
+    isParametersOf([
+      isNumber,
+      isString,
+      asOptional(isBoolean)
+    ])
+  ])
+])"
+`;
+
+snapshot[`isParametersOf<T, E> > returns properly named function 1`] = `
+"isParametersOf([
+  isNumber,
+  isString,
+  asOptional(isBoolean)
+], isArray)"
+`;
+
+snapshot[`isParametersOf<T, E> > returns properly named function 2`] = `"isParametersOf([(anonymous)], isArrayOf(isString))"`;
+
+snapshot[`isParametersOf<T, E> > returns properly named function 3`] = `"isParametersOf([], isArrayOf(isString))"`;
+
+snapshot[`isParametersOf<T, E> > returns properly named function 4`] = `
+"isParametersOf([
+  isParametersOf([
+    isParametersOf([
+      isNumber,
+      isString,
+      asOptional(isBoolean)
+    ], isArray)
+  ], isArray)
+])"
+`;

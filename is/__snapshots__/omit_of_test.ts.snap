@@ -1,0 +1,10 @@
+export const snapshot = {};
+
+snapshot[`isOmitOf<T, K> > returns properly named function 1`] = `
+"isObjectOf({
+  a: isNumber,
+  c: isBoolean
+})"
+`;
+
+snapshot[`isOmitOf<T, K> > returns properly named function 2`] = `"isObjectOf({a: isNumber})"`;

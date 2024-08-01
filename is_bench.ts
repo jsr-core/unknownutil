@@ -1,5 +1,5 @@
 import { as } from "./as/mod.ts";
-import { is } from "./is.ts";
+import { is } from "./is/mod.ts";
 
 const cs: unknown[] = [
   "Hello world",
@@ -61,10 +61,10 @@ Deno.bench({
 });
 
 Deno.bench({
-  name: "is.BigInt",
+  name: "is.Bigint",
   fn: () => {
     for (const c of cs) {
-      is.BigInt(c);
+      is.Bigint(c);
     }
   },
 });

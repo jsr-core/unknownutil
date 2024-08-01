@@ -1,0 +1,19 @@
+export const snapshot = {};
+
+snapshot[`isObjectOf<T> > returns properly named function 1`] = `
+"isObjectOf({
+  a: isNumber,
+  b: isString,
+  c: isBoolean
+})"
+`;
+
+snapshot[`isObjectOf<T> > returns properly named function 2`] = `"isObjectOf({a: a})"`;
+
+snapshot[`isObjectOf<T> > returns properly named function 3`] = `
+"isObjectOf({
+  a: isObjectOf({
+    b: isObjectOf({c: isBoolean})
+  })
+})"
+`;

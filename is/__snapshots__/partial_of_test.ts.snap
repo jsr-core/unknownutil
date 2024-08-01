@@ -1,0 +1,23 @@
+export const snapshot = {};
+
+snapshot[`isPartialOf<T> > returns properly named function 1`] = `
+"isObjectOf({
+  a: asOptional(isNumber),
+  b: asOptional(isUnionOf([
+    isString,
+    isUndefined
+  ])),
+  c: asOptional(isBoolean)
+})"
+`;
+
+snapshot[`isPartialOf<T> > returns properly named function 2`] = `
+"isObjectOf({
+  a: asOptional(isNumber),
+  b: asOptional(isUnionOf([
+    isString,
+    isUndefined
+  ])),
+  c: asOptional(isBoolean)
+})"
+`;

@@ -1,5 +1,5 @@
 import { rewriteName } from "../_funcutil.ts";
-import type { Predicate } from "../is.ts";
+import type { Predicate } from "../type.ts";
 import {
   annotate,
   hasAnnotation,

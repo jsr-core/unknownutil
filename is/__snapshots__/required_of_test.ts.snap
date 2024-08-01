@@ -1,0 +1,23 @@
+export const snapshot = {};
+
+snapshot[`isRequiredOf<T> > returns properly named function 1`] = `
+"isObjectOf({
+  a: isNumber,
+  b: isUnionOf([
+    isString,
+    isUndefined
+  ]),
+  c: isBoolean
+})"
+`;
+
+snapshot[`isRequiredOf<T> > returns properly named function 2`] = `
+"isObjectOf({
+  a: isNumber,
+  b: isUnionOf([
+    isString,
+    isUndefined
+  ]),
+  c: isBoolean
+})"
+`;

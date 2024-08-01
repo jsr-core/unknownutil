@@ -1,4 +1,4 @@
-import type { Predicate } from "./is.ts";
+import type { Predicate } from "./type.ts";
 
 export type Fn = (...args: unknown[]) => unknown;
 
@@ -32,6 +32,13 @@ export function hasAnnotation<F extends Fn, N extends string>(
 /**
  * Annotation for optional.
  */
-export type WithOptional<T> = {
+export type WithOptional<T = unknown> = {
   optional: Predicate<T>;
+};
+
+/**
+ * Annotation for predObj.
+ */
+export type WithPredObj<T extends Record<PropertyKey, Predicate<unknown>>> = {
+  predObj: T;
 };
