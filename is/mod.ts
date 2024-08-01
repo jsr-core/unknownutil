@@ -20,6 +20,7 @@ import { isParametersOf } from "./parameters_of.ts";
 import { isPartialOf } from "./partial_of.ts";
 import { isPickOf } from "./pick_of.ts";
 import { isPrimitive } from "./primitive.ts";
+import { isReadonlyOf } from "./readonly_of.ts";
 import { isRecord } from "./record.ts";
 import { isRecordObject } from "./record_object.ts";
 import { isRecordObjectOf } from "./record_object_of.ts";
@@ -60,6 +61,7 @@ export const is = {
   PartialOf: isPartialOf,
   PickOf: isPickOf,
   Primitive: isPrimitive,
+  ReadonlyOf: isReadonlyOf,
   Record: isRecord,
   RecordObject: isRecordObject,
   RecordObjectOf: isRecordObjectOf,
