@@ -8,7 +8,6 @@ const objectToString = Object.prototype.toString;
  *
  * const a: unknown = async () => {};
  * if (is.AsyncFunction(a)) {
- *   // a is narrowed to (...args: unknown[]) => Promise<unknown>
  *   const _: ((...args: unknown[]) => Promise<unknown>) = a;
  * }
  * ```

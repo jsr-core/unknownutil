@@ -6,7 +6,6 @@
  *
  * const a: unknown = [0, 1, 2];
  * if (is.Array(a)) {
- *   // a is narrowed to unknown[]
  *   const _: unknown[] = a;
  * }
  * ```

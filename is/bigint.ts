@@ -6,7 +6,6 @@
  *
  * const a: unknown = 0n;
  * if (is.Bigint(a)) {
- *   // a is narrowed to bigint
  *   const _: bigint = a;
  * }
  * ```

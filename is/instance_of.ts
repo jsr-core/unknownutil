@@ -12,7 +12,6 @@ import type { Predicate } from "../type.ts";
  * const isMyType = is.InstanceOf(Date);
  * const a: unknown = new Date();
  * if (isMyType(a)) {
- *   // a is narrowed to Date
  *   const _: Date = a;
  * }
  * ```

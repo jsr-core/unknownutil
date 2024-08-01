@@ -6,7 +6,6 @@
  *
  * const a: unknown = 0;
  * if (is.Number(a)) {
- *   // a is narrowed to number
  *   const _: number = a;
  * }
  * ```

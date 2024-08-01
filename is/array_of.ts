@@ -13,7 +13,6 @@ import { isArray } from "./array.ts";
  * const isMyType = is.ArrayOf(is.String);
  * const a: unknown = ["a", "b", "c"];
  * if (isMyType(a)) {
- *   // a is narrowed to string[]
  *   const _: string[] = a;
  * }
  * ```

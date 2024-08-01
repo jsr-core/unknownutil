@@ -17,7 +17,6 @@ import type { Predicate } from "../type.ts";
  * }));
  * const a: unknown = { a: 0, b: "b", c: true };
  * if (isMyType(a)) {
- *   // 'a' is narrowed to { readonly a: number; readonly b: string | undefined; readonly c: boolean }
  *   const _: { readonly a: number; readonly b: string | undefined; readonly c: boolean } = a;
  * }
  * ```

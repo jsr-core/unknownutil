@@ -13,7 +13,6 @@ import { isSet } from "./set.ts";
  * const isMyType = is.SetOf(is.String);
  * const a: unknown = new Set(["a", "b", "c"]);
  * if (isMyType(a)) {
- *   // a is narrowed to Set<string>
  *   const _: Set<string> = a;
  * }
  * ```

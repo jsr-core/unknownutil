@@ -13,9 +13,11 @@ import type { Predicate } from "../type.ts";
  *
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
- * If `as.Optional` is specified in the predicate function, the property becomes optional.
+ * If {@linkcode asOptional} is specified in the predicate function, the property becomes optional.
+ * If {@linkcode asReadonly} is specified in the predicate function, the property becomes readonly.
  *
  * The number of keys of `x` must be greater than or equal to the number of keys of `predObj`.
+ * Use {@linkcode isStrictOf} if you want to check the exact number of keys.
  *
  * ```ts
  * import { as, is } from "@core/unknownutil";
@@ -24,12 +26,11 @@ import type { Predicate } from "../type.ts";
  *   a: is.Number,
  *   b: is.String,
  *   c: as.Optional(is.Boolean),
+ *   d: as.Readonly(is.String),
  * });
- * const a: unknown = { a: 0, b: "a", other: "other" };
+ * const a: unknown = { a: 0, b: "a", d: "d" };
  * if (isMyType(a)) {
- *   // "other" key in `a` is ignored because of `options.strict` is `false`.
- *   // a is narrowed to { a: number; b: string; c?: boolean | undefined }
- *   const _: { a: number; b: string; c?: boolean | undefined } = a;
+ *   const _: { a: number; b: string; c?: boolean | undefined, readonly d: string } = a;
  * }
  * ```
  */

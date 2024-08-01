@@ -6,7 +6,6 @@
  *
  * const a = "a";
  * if (is.Any(a)) {
- *   // a is narrowed to any
  *   const _: any = a;
  * }
  * ```

@@ -6,7 +6,6 @@
  *
  * const a: unknown = null;
  * if (is.Null(a)) {
- *   // a is narrowed to null
  *   const _: null = a;
  * }
  * ```

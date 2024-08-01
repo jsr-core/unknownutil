@@ -7,7 +7,7 @@ import { isArray } from "./array.ts";
 /**
  * Return a type predicate function that returns `true` if the type of `x` is `ParametersOf<T>` or `ParametersOf<T, E>`.
  *
- * This is similar to `TupleOf<T>` or `TupleOf<T, E>`, but if `as.Optional()` is specified at the trailing, the trailing elements becomes optional and makes variable-length tuple.
+ * This is similar to {@linkcode isTupleOf}, but if {@linkcode asOptional} is specified at the trailing, the trailing elements becomes optional and makes variable-length tuple.
  *
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
@@ -24,7 +24,6 @@ import { isArray } from "./array.ts";
  * ] as const);
  * const a: unknown = [0, undefined, "a"];
  * if (isMyType(a)) {
- *   // a is narrowed to [number, string | undefined, boolean, number?, string?, boolean?]
  *   const _: [number, string | undefined, boolean, number?, string?, boolean?] = a;
  * }
  * ```
@@ -44,7 +43,6 @@ import { isArray } from "./array.ts";
  * );
  * const a: unknown = [0, "a", true, 0, 1, 2];
  * if (isMyType(a)) {
- *   // a is narrowed to [number, string?, boolean?, ...number[]]
  *   const _: [number, string?, boolean?, ...number[]] = a;
  * }
  * ```
@@ -59,7 +57,6 @@ import { isArray } from "./array.ts";
  * const isMyType = is.ParametersOf(predTup);
  * const a: unknown = [0, "a"];
  * if (isMyType(a)) {
- *   // a is narrowed to [number, string, boolean?]
  *   const _: [number, string, boolean?] = a;
  * }
  * ```

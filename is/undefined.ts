@@ -6,7 +6,6 @@
  *
  * const a: unknown = undefined;
  * if (is.Undefined(a)) {
- *   // a is narrowed to undefined
  *   const _: undefined = a;
  * }
  * ```

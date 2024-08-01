@@ -16,7 +16,6 @@ const primitiveSet: Set<Primitive> = new Set([
  *
  * const a: unknown = 0;
  * if (is.Primitive(a)) {
- *   // a is narrowed to Primitive
  *   const _: Primitive = a;
  * }
  * ```

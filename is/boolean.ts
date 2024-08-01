@@ -6,7 +6,6 @@
  *
  * const a: unknown = true;
  * if (is.Boolean(a)) {
- *   // a is narrowed to boolean
  *   const _: boolean = a;
  * }
  * ```

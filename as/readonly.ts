@@ -1,5 +1,5 @@
 import { rewriteName } from "../_funcutil.ts";
-import type { Predicate, PredicateType } from "../type.ts";
+import type { Predicate } from "../type.ts";
 import {
   annotate,
   hasAnnotation,
@@ -20,7 +20,6 @@ import {
  * });
  * const a: unknown = {};
  * if (isMyType(a)) {
- *   // a is narrowed to {readonly foo: string}
  *   const _: {readonly foo: string} = a;
  * }
  * ```
@@ -55,7 +54,6 @@ export function asReadonly<P extends Predicate<unknown>>(
  * });
  * const a: unknown = {foo: "a"};
  * if (isMyType(a)) {
- *   // a is narrowed to {foo: string}
  *   const _: {foo: string} = a;
  * }
  * ```

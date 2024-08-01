@@ -1,11 +1,17 @@
 import type { Predicate } from "./type.ts";
 
+/**
+ * A factory function that generates assertion error messages.
+ */
 export type AssertMessageFactory = (
   x: unknown,
   pred: Predicate<unknown>,
   name?: string,
 ) => string;
 
+/**
+ * The default factory function used to generate assertion error messages.
+ */
 export const defaultAssertMessageFactory: AssertMessageFactory = (
   x,
   pred,
@@ -26,7 +32,7 @@ let assertMessageFactory = defaultAssertMessageFactory;
  */
 export class AssertError extends Error {
   /**
-   * Constructs a new `AssertError` instance.
+   * Constructs a new instance.
    * @param message The error message.
    */
   constructor(message?: string) {
@@ -42,8 +48,7 @@ export class AssertError extends Error {
 
 /**
  * Sets the factory function used to generate assertion error messages.
- * @param factory The factory function.
- * @example
+ *
  * ```ts
  * import { is, setAssertMessageFactory } from "@core/unknownutil";
  *
@@ -59,6 +64,8 @@ export class AssertError extends Error {
  *   }
  * });
  * ```
+ *
+ * @param factory The factory function.
  */
 export function setAssertMessageFactory(factory: AssertMessageFactory): void {
   assertMessageFactory = factory;
@@ -66,6 +73,8 @@ export function setAssertMessageFactory(factory: AssertMessageFactory): void {
 
 /**
  * Asserts that the given value satisfies the provided predicate.
+ *
+ * It throws {@linkcode AssertError} if the value does not satisfy the predicate.
  *
  * ```ts
  * import { assert, is } from "@core/unknownutil";
@@ -78,8 +87,7 @@ export function setAssertMessageFactory(factory: AssertMessageFactory): void {
  * @param x The value to be asserted.
  * @param pred The predicate function to test the value against.
  * @param options Optional configuration for the assertion.
- * @returns Nothing. The function has a return type of `asserts x is T` to help TypeScript narrow down the type of `x` after the assertion.
- * @throws {AssertError} If the value does not satisfy the predicate.
+ * @returns The function has a return type of `asserts x is T` to help TypeScript narrow down the type of `x` after the assertion.
  */
 export function assert<T>(
   x: unknown,
