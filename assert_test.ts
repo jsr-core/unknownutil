@@ -1,12 +1,10 @@
-import { assertStrictEquals, assertThrows } from "@std/assert";
+import { assertThrows } from "@std/assert";
 import {
   assert,
   AssertError,
   defaultAssertMessageFactory,
-  ensure,
-  maybe,
   setAssertMessageFactory,
-} from "./util.ts";
+} from "./assert.ts";
 
 const x: unknown = Symbol("x");
 
@@ -54,66 +52,12 @@ Deno.test("assert", async (t) => {
   );
 });
 
-Deno.test("ensure", async (t) => {
-  await t.step("returns `x` as-is on true predicate", () => {
-    assertStrictEquals(ensure(x, truePredicate), x);
-  });
-
-  await t.step("throws an `AssertError` on false predicate", () => {
-    assertThrows(
-      () => ensure(x, falsePredicate),
-      AssertError,
-      `Expected a value that satisfies the predicate falsePredicate, got symbol: undefined`,
-    );
-  });
-
-  await t.step(
-    "throws an `AssertError` on false predicate with a custom name",
-    () => {
-      assertThrows(
-        () => ensure(x, falsePredicate, { name: "hello world" }),
-        AssertError,
-        `Expected hello world that satisfies the predicate falsePredicate, got symbol: undefined`,
-      );
-    },
-  );
-
-  await t.step(
-    "throws an `AssertError` with a custom message on false predicate",
-    () => {
-      assertThrows(
-        () => ensure(x, falsePredicate, { message: "Hello" }),
-        AssertError,
-        "Hello",
-      );
-    },
-  );
-});
-
-Deno.test("maybe", async (t) => {
-  await t.step("returns `x` as-is on true predicate", () => {
-    assertStrictEquals(maybe(x, truePredicate), x);
-  });
-
-  await t.step("returns `undefined` on false predicate", () => {
-    assertStrictEquals(maybe(x, falsePredicate), undefined);
-  });
-});
-
 Deno.test("setAssertMessageFactory", async (t) => {
   setAssertMessageFactory((x, pred) => `Hello ${typeof x} ${pred.name}`);
 
   await t.step("change `AssertError` message on `assert` failure", () => {
     assertThrows(
       () => assert(x, falsePredicate),
-      AssertError,
-      "Hello symbol falsePredicate",
-    );
-  });
-
-  await t.step("change `AssertError` message on `ensure` failure", () => {
-    assertThrows(
-      () => ensure(x, falsePredicate),
       AssertError,
       "Hello symbol falsePredicate",
     );
