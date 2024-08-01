@@ -13,7 +13,6 @@ import { isArray } from "./array.ts";
  * const isMyType = is.UniformTupleOf(5);
  * const a: unknown = [0, 1, 2, 3, 4];
  * if (isMyType(a)) {
- *   // a is narrowed to [unknown, unknown, unknown, unknown, unknown]
  *   const _: [unknown, unknown, unknown, unknown, unknown] = a;
  * }
  * ```
@@ -26,7 +25,6 @@ import { isArray } from "./array.ts";
  * const isMyType = is.UniformTupleOf(5, is.Number);
  * const a: unknown = [0, 1, 2, 3, 4];
  * if (isMyType(a)) {
- *   // a is narrowed to [number, number, number, number, number]
  *   const _: [number, number, number, number, number] = a;
  * }
  * ```

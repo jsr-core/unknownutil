@@ -8,7 +8,7 @@ import { isRecordObject } from "./record_object.ts";
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
  * Note that this function check if the `x` is an instance of `Object`.
- * Use `isRecordOf` instead if you want to check if the `x` satisfies the `Record<K, T>` type.
+ * Use {@linkcode isRecordOf} instead if you want to check if the `x` satisfies the `Record<K, T>` type.
  *
  * ```ts
  * import { is } from "@core/unknownutil";
@@ -16,7 +16,6 @@ import { isRecordObject } from "./record_object.ts";
  * const isMyType = is.RecordObjectOf(is.Number);
  * const a: unknown = {"a": 0, "b": 1};
  * if (isMyType(a)) {
- *   // a is narrowed to Record<PropertyKey, number>
  *   const _: Record<PropertyKey, number> = a;
  * }
  * ```
@@ -29,7 +28,6 @@ import { isRecordObject } from "./record_object.ts";
  * const isMyType = is.RecordObjectOf(is.Number, is.String);
  * const a: unknown = {"a": 0, "b": 1};
  * if (isMyType(a)) {
- *   // a is narrowed to Record<string, number>
  *   const _: Record<string, number> = a;
  * }
  * ```

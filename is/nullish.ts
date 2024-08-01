@@ -6,7 +6,6 @@
  *
  * const a: unknown = null;
  * if (is.Nullish(a)) {
- *   // a is narrowed to null | undefined
  *   const _: (null | undefined) = a;
  * }
  * ```

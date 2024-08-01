@@ -6,7 +6,6 @@
  *
  * const a: unknown = new Set([0, 1, 2]);
  * if (is.Set(a)) {
- *   // a is narrowed to Set<unknown>
  *   const _: Set<unknown> = a;
  * }
  * ```

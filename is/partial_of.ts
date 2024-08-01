@@ -19,8 +19,6 @@ import { isObjectOf } from "./object_of.ts";
  * }));
  * const a: unknown = { a: undefined, other: "other" };
  * if (isMyType(a)) {
- *   // The "other" key in `a` is ignored.
- *   // 'a' is narrowed to { a?: number | undefined; b?: string | undefined; c?: boolean | undefined }
  *   const _: { a?: number | undefined; b?: string | undefined; c?: boolean | undefined } = a;
  * }
  * ```

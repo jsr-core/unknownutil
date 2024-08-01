@@ -6,7 +6,6 @@
  *
  * const a: unknown = Symbol("symbol");
  * if (is.Symbol(a)) {
- *   // a is narrowed to symbol
  *   const _: symbol = a;
  * }
  * ```

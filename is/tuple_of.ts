@@ -13,7 +13,6 @@ import { isArray } from "./array.ts";
  * const isMyType = is.TupleOf([is.Number, is.String, is.Boolean]);
  * const a: unknown = [0, "a", true];
  * if (isMyType(a)) {
- *   // a is narrowed to [number, string, boolean]
  *   const _: [number, string, boolean] = a;
  * }
  * ```
@@ -29,7 +28,6 @@ import { isArray } from "./array.ts";
  * );
  * const a: unknown = [0, "a", true, 0, 1, 2];
  * if (isMyType(a)) {
- *   // a is narrowed to [number, string, boolean, ...number[]]
  *   const _: [number, string, boolean, ...number[]] = a;
  * }
  * ```
@@ -44,7 +42,6 @@ import { isArray } from "./array.ts";
  * const isMyType = is.TupleOf(predTup);
  * const a: unknown = [0, "a", true];
  * if (isMyType(a)) {
- *   // a is narrowed to [number, string, boolean]
  *   const _: [number, string, boolean] = a;
  * }
  * ```

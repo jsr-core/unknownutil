@@ -17,7 +17,6 @@ import { isObjectOf } from "./object_of.ts";
  * ]);
  * const a: unknown = { a: 0, b: "a" };
  * if (isMyType(a)) {
- *   // a is narrowed to { a: number } & { b: string }
  *   const _: { a: number } & { b: string } = a;
  * }
  * ```
@@ -35,7 +34,6 @@ import { isObjectOf } from "./object_of.ts";
  * const isMyType = is.IntersectionOf(preds);
  * const a: unknown = { a: 0, b: "a" };
  * if (isMyType(a)) {
- *   // a is narrowed to { a: number } & { b: string }
  *   const _: { a: number } & { b: string } = a;
  * }
  * ```

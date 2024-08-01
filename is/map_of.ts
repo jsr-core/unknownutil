@@ -13,7 +13,6 @@ import { isMap } from "./map.ts";
  * const isMyType = is.MapOf(is.Number);
  * const a: unknown = new Map([["a", 0], ["b", 1]]);
  * if (isMyType(a)) {
- *   // a is narrowed to Map<unknown, number>
  *   const _: Map<unknown, number> = a;
  * }
  * ```
@@ -26,7 +25,6 @@ import { isMap } from "./map.ts";
  * const isMyType = is.MapOf(is.Number, is.String);
  * const a: unknown = new Map([["a", 0], ["b", 1]]);
  * if (isMyType(a)) {
- *   // a is narrowed to Map<string, number>
  *   const _: Map<string, number> = a;
  * }
  * ```

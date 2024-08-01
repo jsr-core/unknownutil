@@ -1,10 +1,25 @@
 /**
  * A type predicate function.
+ *
+ * ```ts
+ * import { as, is, type Predicate } from "@core/unknownutil";
+ *
+ * type Person = {
+ *   name: string;
+ *   age: number;
+ *   address?: string;
+ * };
+ * const isPerson = is.ObjectOf({
+ *   name: is.String,
+ *   age: is.Number,
+ *   address: as.Optional(is.String),
+ * }) satisfies Predicate<Person>;
+ * ```
  */
 export type Predicate<T> = (x: unknown) => x is T;
 
 /**
- * A type predicated by Predicate<T>.
+ * A type predicated by {@linkcode Predicate<T>}.
  *
  * ```ts
  * import { as, is, type PredicateType } from "@core/unknownutil";
@@ -16,12 +31,12 @@ export type Predicate<T> = (x: unknown) => x is T;
  * });
  *
  * type Person = PredicateType<typeof isPerson>;
- * // Above is equivalent to the following type
  * // type Person = {
  * //   name: string;
  * //   age: number;
- * //   address: string | undefined;
+ * //   address?: string;
  * // };
+ * ```
  */
 export type PredicateType<P> = P extends Predicate<infer T> ? T : never;
 

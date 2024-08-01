@@ -6,7 +6,6 @@
  *
  * const a: unknown = () => {};
  * if (is.Function(a)) {
- *   // a is narrowed to (...args: unknown[]) => unknown
  *   const _: ((...args: unknown[]) => unknown) = a;
  * }
  * ```

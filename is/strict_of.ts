@@ -7,10 +7,6 @@ import type { Predicate } from "../type.ts";
  *
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
- * If `as.Optional` is specified in the predicate function, the property becomes optional.
- *
- * The number of keys of `x` must be equal to the number of non optional keys of `predObj`.
- *
  * ```ts
  * import { as, is } from "@core/unknownutil";
  *

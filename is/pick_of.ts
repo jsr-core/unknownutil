@@ -16,10 +16,8 @@ import { isObjectOf } from "./object_of.ts";
  *   b: is.String,
  *   c: as.Optional(is.Boolean),
  * }), ["a", "c"]);
- * const a: unknown = { a: 0, b: "a", other: "other" };
+ * const a: unknown = { a: 0, b: "a" };
  * if (isMyType(a)) {
- *   // The "b" and "other" key in `a` is ignored.
- *   // 'a' is narrowed to { a: number; c?: boolean | undefined }
  *   const _: { a: number; c?: boolean | undefined } = a;
  * }
  * ```

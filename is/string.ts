@@ -6,7 +6,6 @@
  *
  * const a: unknown = "a";
  * if (is.String(a)) {
- *   // a is narrowed to string
  *   const _: string = a;
  * }
  * ```

@@ -8,7 +8,6 @@ const objectToString = Object.prototype.toString;
  *
  * const a: unknown = () => {};
  * if (is.SyncFunction(a)) {
- *   // a is narrowed to (...args: unknown[]) => unknown
  *   const _: ((...args: unknown[]) => unknown) = a;
  * }
  * ```

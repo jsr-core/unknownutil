@@ -13,7 +13,6 @@ import type { Predicate } from "../type.ts";
  * const isMyType = is.UnionOf([is.Number, is.String, is.Boolean]);
  * const a: unknown = 0;
  * if (isMyType(a)) {
- *   // a is narrowed to number | string | boolean
  *   const _: number | string | boolean = a;
  * }
  * ```
@@ -28,7 +27,6 @@ import type { Predicate } from "../type.ts";
  * const isMyType = is.UnionOf(preds);
  * const a: unknown = 0;
  * if (isMyType(a)) {
- *   // a is narrowed to number | string | boolean
  *   const _: number | string | boolean = a;
  * }
  * ```

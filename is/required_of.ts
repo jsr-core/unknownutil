@@ -19,7 +19,6 @@ import { isObjectOf } from "./object_of.ts";
  * }));
  * const a: unknown = { a: 0, b: "b", c: true, other: "other" };
  * if (isMyType(a)) {
- *   // 'a' is narrowed to { a: number; b: string | undefined; c: boolean }
  *   const _: { a: number; b: string | undefined; c: boolean } = a;
  * }
  * ```

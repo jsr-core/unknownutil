@@ -4,6 +4,8 @@ import { assert } from "./assert.ts";
 /**
  * Ensures that the given value satisfies the provided predicate.
  *
+ * It throws {@linkcode AssertError} if the value does not satisfy the predicate.
+ *
  * ```ts
  * import { ensure, is } from "@core/unknownutil";
  *
@@ -15,7 +17,6 @@ import { assert } from "./assert.ts";
  * @param pred The predicate function to test the value against.
  * @param options Optional configuration for the assertion.
  * @returns The input value `x`.
- * @throws {AssertError} If the value does not satisfy the predicate.
  */
 export function ensure<T>(
   x: unknown,

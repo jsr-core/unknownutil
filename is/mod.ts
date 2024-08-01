@@ -38,6 +38,9 @@ import { isUniformTupleOf } from "./uniform_tuple_of.ts";
 import { isUnionOf } from "./union_of.ts";
 import { isUnknown } from "./unknown.ts";
 
+/**
+ * Type predicate function collection.
+ */
 export const is = {
   Any: isAny,
   Array: isArray,

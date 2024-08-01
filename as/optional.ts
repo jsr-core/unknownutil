@@ -20,7 +20,6 @@ import {
  * });
  * const a: unknown = {};
  * if (isMyType(a)) {
- *   // a is narrowed to {foo?: string}
  *   const _: {foo?: string} = a;
  * }
  * ```
@@ -64,7 +63,6 @@ export function asOptional<P extends Predicate<unknown>>(
  * });
  * const a: unknown = {foo: "a"};
  * if (isMyType(a)) {
- *   // a is narrowed to {foo: string}
  *   const _: {foo: string} = a;
  * }
  * ```

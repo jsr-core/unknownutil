@@ -12,7 +12,6 @@ import type { Predicate, Primitive } from "../type.ts";
  * const isMyType = is.LiteralOneOf(["hello", "world"] as const);
  * const a: unknown = "hello";
  * if (isMyType(a)) {
- *   // a is narrowed to "hello" | "world"
  *   const _: "hello" | "world" = a;
  * }
  * ```
