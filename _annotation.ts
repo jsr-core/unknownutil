@@ -37,6 +37,13 @@ export type WithOptional<T = unknown> = {
 };
 
 /**
+ * Annotation for readonly.
+ */
+export type WithReadonly<T = unknown> = {
+  readonly: Predicate<T>;
+};
+
+/**
  * Annotation for predObj.
  */
 export type WithPredObj<T extends Record<PropertyKey, Predicate<unknown>>> = {

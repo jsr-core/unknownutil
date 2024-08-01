@@ -4,6 +4,7 @@ import {
   annotate,
   type WithOptional,
   type WithPredObj,
+  type WithReadonly,
 } from "../_annotation.ts";
 import type { Predicate } from "../type.ts";
 
@@ -58,14 +59,36 @@ export function isObjectOf<
 }
 
 type ObjectOf<T extends Record<PropertyKey, Predicate<unknown>>> = FlatType<
-  // Optional
+  // Readonly/Optional
   & {
-    [K in keyof T as T[K] extends WithOptional<unknown> ? K : never]?:
-      T[K] extends Predicate<infer U> ? U : never;
+    readonly [
+      K in keyof T as T[K] extends WithReadonly
+        ? T[K] extends WithOptional ? K : never
+        : never
+    ]?: T[K] extends Predicate<infer U> ? U : never;
   }
-  // Non optional
+  // Readonly/Non optional
   & {
-    [K in keyof T as T[K] extends WithOptional<unknown> ? never : K]:
-      T[K] extends Predicate<infer U> ? U : never;
+    readonly [
+      K in keyof T as T[K] extends WithReadonly
+        ? T[K] extends WithOptional ? never : K
+        : never
+    ]: T[K] extends Predicate<infer U> ? U : never;
+  }
+  // Non readonly/Optional
+  & {
+    [
+      K in keyof T as T[K] extends WithReadonly ? never
+        : T[K] extends WithOptional ? K
+        : never
+    ]?: T[K] extends Predicate<infer U> ? U : never;
+  }
+  // Non readonly/Non optional
+  & {
+    [
+      K in keyof T as T[K] extends WithReadonly ? never
+        : T[K] extends WithOptional ? never
+        : K
+    ]: T[K] extends Predicate<infer U> ? U : never;
   }
 >;
