@@ -1,6 +1,6 @@
 export const snapshot = {};
 
-snapshot[`isRequiredOf<T> > returns properly named function 1`] = `
+snapshot[`isRequiredOf<T> > returns properly named predicate function 1`] = `
 "isObjectOf({
   a: isNumber,
   b: isUnionOf([
@@ -12,7 +12,7 @@ snapshot[`isRequiredOf<T> > returns properly named function 1`] = `
 })"
 `;
 
-snapshot[`isRequiredOf<T> > returns properly named function 2`] = `
+snapshot[`isRequiredOf<T> > returns properly named predicate function 2`] = `
 "isObjectOf({
   a: isNumber,
   b: isUnionOf([

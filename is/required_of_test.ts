@@ -13,22 +13,11 @@ Deno.test("isRequiredOf<T>", async (t) => {
     c: as.Optional(is.Boolean),
     d: as.Readonly(is.String),
   });
-  await t.step("returns properly named function", async (t) => {
+  await t.step("returns properly named predicate function", async (t) => {
     await assertSnapshot(t, isRequiredOf(pred).name);
-    // Nestable (no effect)
     await assertSnapshot(t, isRequiredOf(isRequiredOf(pred)).name);
   });
-  await t.step("returns proper type predicate", () => {
-    const a: unknown = { a: 0, b: "a", c: true };
-    if (isRequiredOf(pred)(a)) {
-      assertType<
-        Equal<
-          typeof a,
-          { a: number; b: string | undefined; c: boolean; readonly d: string }
-        >
-      >(true);
-    }
-  });
+
   await t.step("returns true on Required<T> object", () => {
     assertEquals(
       isRequiredOf(pred)({ a: undefined, b: undefined, c: undefined }),
@@ -41,6 +30,7 @@ Deno.test("isRequiredOf<T>", async (t) => {
       "Object does not have required properties",
     );
   });
+
   await t.step("returns false on non Required<T> object", () => {
     assertEquals(isRequiredOf(pred)("a"), false, "Value is not an object");
     assertEquals(
@@ -48,5 +38,17 @@ Deno.test("isRequiredOf<T>", async (t) => {
       false,
       "Object have a different type property",
     );
+  });
+
+  await t.step("predicated type is correct", () => {
+    const a: unknown = { a: 0, b: "a", c: true };
+    if (isRequiredOf(pred)(a)) {
+      assertType<
+        Equal<
+          typeof a,
+          { a: number; b: string | undefined; c: boolean; readonly d: string }
+        >
+      >(true);
+    }
   });
 });

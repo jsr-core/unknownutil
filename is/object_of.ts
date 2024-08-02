@@ -4,20 +4,22 @@ import {
   annotate,
   type AsOptional,
   type AsReadonly,
-  type WithPredObj,
+  type IsPredObj,
 } from "../_annotation.ts";
 import type { Predicate } from "../type.ts";
 
 /**
  * Return a type predicate function that returns `true` if the type of `x` is `ObjectOf<T>`.
  *
- * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
+ * Use {@linkcode isRecordOf} if you want to check if the type of `x` is a record of `T`.
  *
- * If {@linkcode asOptional} is specified in the predicate function, the property becomes optional.
- * If {@linkcode asReadonly} is specified in the predicate function, the property becomes readonly.
+ * If {@linkcode asOptional} is specified in the predicate function in `predObj`, the property becomes optional.
+ * If {@linkcode asReadonly} is specified in the predicate function in `predObj`, the property becomes readonly.
  *
  * The number of keys of `x` must be greater than or equal to the number of keys of `predObj`.
  * Use {@linkcode isStrictOf} if you want to check the exact number of keys.
+ *
+ * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
  * ```ts
  * import { as, is } from "@core/unknownutil";
@@ -36,7 +38,7 @@ import type { Predicate } from "../type.ts";
  */
 export function isObjectOf<
   T extends Record<PropertyKey, Predicate<unknown>>,
->(predObj: T): Predicate<ObjectOf<T>> & WithPredObj<T> {
+>(predObj: T): Predicate<ObjectOf<T>> & IsPredObj<T> {
   return annotate(
     rewriteName(
       (x: unknown): x is ObjectOf<T> => {

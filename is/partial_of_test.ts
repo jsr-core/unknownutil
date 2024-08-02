@@ -13,12 +13,30 @@ Deno.test("isPartialOf<T>", async (t) => {
     c: as.Optional(is.Boolean),
     d: as.Readonly(is.String),
   });
-  await t.step("returns properly named function", async (t) => {
+
+  await t.step("returns properly named predicate function", async (t) => {
     await assertSnapshot(t, isPartialOf(pred).name);
-    // Nestable (no effect)
     await assertSnapshot(t, isPartialOf(isPartialOf(pred)).name);
   });
-  await t.step("returns proper type predicate", () => {
+
+  await t.step("returns true on Partial<T> object", () => {
+    assertEquals(
+      isPartialOf(pred)({ a: undefined, b: undefined, c: undefined }),
+      true,
+    );
+    assertEquals(isPartialOf(pred)({}), true);
+  });
+
+  await t.step("returns false on non Partial<T> object", () => {
+    assertEquals(isPartialOf(pred)("a"), false, "Value is not an object");
+    assertEquals(
+      isPartialOf(pred)({ a: 0, b: "a", c: "" }),
+      false,
+      "Object have a different type property",
+    );
+  });
+
+  await t.step("predicated type is correct", () => {
     const a: unknown = { a: 0, b: "a", c: true };
     if (isPartialOf(pred)(a)) {
       assertType<
@@ -28,20 +46,5 @@ Deno.test("isPartialOf<T>", async (t) => {
         >
       >(true);
     }
-  });
-  await t.step("returns true on Partial<T> object", () => {
-    assertEquals(
-      isPartialOf(pred)({ a: undefined, b: undefined, c: undefined }),
-      true,
-    );
-    assertEquals(isPartialOf(pred)({}), true);
-  });
-  await t.step("returns false on non Partial<T> object", () => {
-    assertEquals(isPartialOf(pred)("a"), false, "Value is not an object");
-    assertEquals(
-      isPartialOf(pred)({ a: 0, b: "a", c: "" }),
-      false,
-      "Object have a different type property",
-    );
   });
 });

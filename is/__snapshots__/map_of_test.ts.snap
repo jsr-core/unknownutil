@@ -1,9 +1,0 @@
-export const snapshot = {};
-
-snapshot[`isMapOf<T> > returns properly named function 1`] = `"isMapOf(isNumber, undefined)"`;
-
-snapshot[`isMapOf<T> > returns properly named function 2`] = `"isMapOf((anonymous), undefined)"`;
-
-snapshot[`isMapOf<T, K> > returns properly named function 1`] = `"isMapOf(isNumber, isString)"`;
-
-snapshot[`isMapOf<T, K> > returns properly named function 2`] = `"isMapOf((anonymous), isString)"`;

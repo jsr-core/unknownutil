@@ -1,10 +1,12 @@
 import { rewriteName } from "../_funcutil.ts";
-import { hasAnnotation, type WithPredObj } from "../_annotation.ts";
+import { hasAnnotation, type IsPredObj } from "../_annotation.ts";
 import type { Predicate } from "../type.ts";
 import { isObjectOf } from "./object_of.ts";
 
 /**
  * Return a type predicate function that returns `true` if the type of `x` is `IntersectionOf<T>`.
+ *
+ * Use {@linkcode isUnionOf} to check if the type of `x` is a union of `T`.
  *
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
@@ -40,17 +42,14 @@ import { isObjectOf } from "./object_of.ts";
  */
 export function isIntersectionOf<
   T extends readonly [
-    Predicate<unknown> & WithPredObj<Record<PropertyKey, Predicate<unknown>>>,
-    ...(
-      & Predicate<unknown>
-      & WithPredObj<Record<PropertyKey, Predicate<unknown>>>
-    )[],
+    Predicate<unknown> & IsPredObj,
+    ...(Predicate<unknown> & IsPredObj)[],
   ],
 >(
   preds: T,
 ):
   & Predicate<IntersectionOf<T>>
-  & WithPredObj<Record<PropertyKey, Predicate<unknown>>>;
+  & IsPredObj;
 export function isIntersectionOf<
   T extends readonly [Predicate<unknown>],
 >(
@@ -62,7 +61,7 @@ export function isIntersectionOf<
   preds: T,
 ):
   & Predicate<IntersectionOf<T>>
-  & WithPredObj<Record<PropertyKey, Predicate<unknown>>>;
+  & IsPredObj;
 export function isIntersectionOf<
   T extends readonly [Predicate<unknown>, ...Predicate<unknown>[]],
 >(
@@ -70,7 +69,7 @@ export function isIntersectionOf<
 ):
   | Predicate<unknown>
   | Predicate<IntersectionOf<T>>
-    & WithPredObj<Record<PropertyKey, Predicate<unknown>>> {
+    & IsPredObj {
   const predObj = {};
   const restPreds = preds.filter((pred) => {
     if (!hasAnnotation(pred, "predObj")) {

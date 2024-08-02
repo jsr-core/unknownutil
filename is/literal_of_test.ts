@@ -1,32 +1,79 @@
 import { assertEquals } from "@std/assert";
-import { assertSnapshot } from "@std/testing/snapshot";
 import { assertType } from "@std/testing/types";
-import { type Equal, testWithExamples } from "../_testutil.ts";
+import type { Equal } from "../_testutil.ts";
 import { isLiteralOf } from "./literal_of.ts";
 
 Deno.test("isLiteralOf<T>", async (t) => {
-  await t.step("returns properly named function", async (t) => {
-    await assertSnapshot(t, isLiteralOf("hello").name);
-    await assertSnapshot(t, isLiteralOf(100).name);
-    await assertSnapshot(t, isLiteralOf(100n).name);
-    await assertSnapshot(t, isLiteralOf(true).name);
-    await assertSnapshot(t, isLiteralOf(null).name);
-    await assertSnapshot(t, isLiteralOf(undefined).name);
-    await assertSnapshot(t, isLiteralOf(Symbol("asdf")).name);
+  await t.step("returns properly named predicate function", () => {
+    assertEquals(typeof isLiteralOf("hello"), "function");
+    assertEquals(isLiteralOf("hello").name, `isLiteralOf("hello")`);
+    assertEquals(isLiteralOf(100).name, `isLiteralOf(100)`);
+    assertEquals(isLiteralOf(100n).name, `isLiteralOf(100n)`);
+    assertEquals(isLiteralOf(true).name, `isLiteralOf(true)`);
+    assertEquals(isLiteralOf(false).name, `isLiteralOf(false)`);
+    assertEquals(isLiteralOf(null).name, `isLiteralOf(null)`);
+    assertEquals(isLiteralOf(undefined).name, `isLiteralOf(undefined)`);
+    assertEquals(isLiteralOf(Symbol("asdf")).name, `isLiteralOf(Symbol(asdf))`);
   });
-  await t.step("returns proper type predicate", () => {
-    const pred = "hello";
-    const a: unknown = "hello";
-    if (isLiteralOf(pred)(a)) {
+
+  await t.step("returns true on literal T", () => {
+    const s = Symbol("asdf");
+    assertEquals(isLiteralOf("hello")("hello"), true);
+    assertEquals(isLiteralOf(100)(100), true);
+    assertEquals(isLiteralOf(100n)(100n), true);
+    assertEquals(isLiteralOf(true)(true), true);
+    assertEquals(isLiteralOf(false)(false), true);
+    assertEquals(isLiteralOf(null)(null), true);
+    assertEquals(isLiteralOf(undefined)(undefined), true);
+    assertEquals(isLiteralOf(s)(s), true);
+  });
+
+  await t.step("returns false on non literal T", () => {
+    const s = Symbol("asdf");
+    assertEquals(isLiteralOf(100)("hello"), false);
+    assertEquals(isLiteralOf(100n)(100), false);
+    assertEquals(isLiteralOf(true)(100n), false);
+    assertEquals(isLiteralOf(false)(true), false);
+    assertEquals(isLiteralOf(null)(false), false);
+    assertEquals(isLiteralOf(undefined)(null), false);
+    assertEquals(isLiteralOf(s)(undefined), false);
+    assertEquals(isLiteralOf("hello")(s), false);
+  });
+
+  await t.step("predicated type is correct", () => {
+    const s = Symbol("asdf");
+    const a: unknown = undefined;
+
+    if (isLiteralOf("hello")(a)) {
       assertType<Equal<typeof a, "hello">>(true);
     }
-  });
-  await t.step("returns true on literal T", () => {
-    const pred = "hello";
-    assertEquals(isLiteralOf(pred)("hello"), true);
-  });
-  await t.step("returns false on non literal T", async (t) => {
-    const pred = "hello";
-    await testWithExamples(t, isLiteralOf(pred));
+
+    if (isLiteralOf(100)(a)) {
+      assertType<Equal<typeof a, 100>>(true);
+    }
+
+    if (isLiteralOf(100n)(a)) {
+      assertType<Equal<typeof a, 100n>>(true);
+    }
+
+    if (isLiteralOf(true)(a)) {
+      assertType<Equal<typeof a, true>>(true);
+    }
+
+    if (isLiteralOf(false)(a)) {
+      assertType<Equal<typeof a, false>>(true);
+    }
+
+    if (isLiteralOf(null)(a)) {
+      assertType<Equal<typeof a, null>>(true);
+    }
+
+    if (isLiteralOf(undefined)(a)) {
+      assertType<Equal<typeof a, undefined>>(true);
+    }
+
+    if (isLiteralOf(s)(a)) {
+      assertType<Equal<typeof a, typeof s>>(true);
+    }
   });
 });

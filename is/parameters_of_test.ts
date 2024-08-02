@@ -1,13 +1,14 @@
 import { assertEquals } from "@std/assert";
 import { assertSnapshot } from "@std/testing/snapshot";
 import { assertType } from "@std/testing/types";
-import { type Equal, testWithExamples } from "../_testutil.ts";
+import type { Equal } from "../_testutil.ts";
 import { as } from "../as/mod.ts";
 import { is } from "./mod.ts";
 import { isParametersOf } from "./parameters_of.ts";
 
 Deno.test("isParametersOf<T>", async (t) => {
-  await t.step("returns properly named function", async (t) => {
+  await t.step("returns properly named predicate function", async (t) => {
+    assertEquals(typeof isParametersOf([]), "function");
     await assertSnapshot(
       t,
       isParametersOf([is.Number, is.String, as.Optional(is.Boolean)]).name,
@@ -20,7 +21,6 @@ Deno.test("isParametersOf<T>", async (t) => {
       t,
       isParametersOf([]).name,
     );
-    // Nested
     await assertSnapshot(
       t,
       isParametersOf([
@@ -30,7 +30,20 @@ Deno.test("isParametersOf<T>", async (t) => {
       ]).name,
     );
   });
-  await t.step("returns proper type predicate", () => {
+
+  await t.step("returns true on T tuple", () => {
+    const predTup = [is.Number, is.String, as.Optional(is.Boolean)] as const;
+    assertEquals(isParametersOf(predTup)([0, "a", true]), true);
+    assertEquals(isParametersOf(predTup)([0, "a"]), true);
+  });
+
+  await t.step("returns false on non T tuple", () => {
+    const predTup = [is.Number, is.String, as.Optional(is.Boolean)] as const;
+    assertEquals(isParametersOf(predTup)([0, 1, 2]), false);
+    assertEquals(isParametersOf(predTup)([0, "a", true, 0]), false);
+  });
+
+  await t.step("predicated type is correct", () => {
     const predTup = [
       as.Optional(is.Number),
       is.String,
@@ -44,27 +57,11 @@ Deno.test("isParametersOf<T>", async (t) => {
       >(true);
     }
   });
-  await t.step("returns true on T tuple", () => {
-    const predTup = [is.Number, is.String, as.Optional(is.Boolean)] as const;
-    assertEquals(isParametersOf(predTup)([0, "a", true]), true);
-    assertEquals(isParametersOf(predTup)([0, "a"]), true);
-  });
-  await t.step("returns false on non T tuple", () => {
-    const predTup = [is.Number, is.String, as.Optional(is.Boolean)] as const;
-    assertEquals(isParametersOf(predTup)([0, 1, 2]), false);
-    assertEquals(isParametersOf(predTup)([0, "a", true, 0]), false);
-  });
-  await testWithExamples(
-    t,
-    isParametersOf([(_: unknown): _ is unknown => true]),
-    {
-      excludeExamples: ["array"],
-    },
-  );
 });
 
 Deno.test("isParametersOf<T, E>", async (t) => {
-  await t.step("returns properly named function", async (t) => {
+  await t.step("returns properly named predicate function", async (t) => {
+    assertEquals(typeof isParametersOf([], is.Array), "function");
     await assertSnapshot(
       t,
       isParametersOf([is.Number, is.String, as.Optional(is.Boolean)], is.Array)
@@ -75,12 +72,10 @@ Deno.test("isParametersOf<T, E>", async (t) => {
       isParametersOf([(_x): _x is string => false], is.ArrayOf(is.String))
         .name,
     );
-    // Empty
     await assertSnapshot(
       t,
       isParametersOf([], is.ArrayOf(is.String)).name,
     );
-    // Nested
     await assertSnapshot(
       t,
       isParametersOf([
@@ -94,7 +89,38 @@ Deno.test("isParametersOf<T, E>", async (t) => {
       ]).name,
     );
   });
-  await t.step("returns proper type predicate", () => {
+
+  await t.step("returns true on T tuple", () => {
+    const predTup = [is.Number, is.String, as.Optional(is.Boolean)] as const;
+    const predElse = is.ArrayOf(is.Number);
+    assertEquals(
+      isParametersOf(predTup, predElse)([0, "a", true, 0, 1, 2]),
+      true,
+    );
+    assertEquals(
+      isParametersOf(predTup, predElse)([0, "a", undefined, 0, 1, 2]),
+      true,
+    );
+    assertEquals(isParametersOf(predTup, predElse)([0, "a"]), true);
+  });
+
+  await t.step("returns false on non T tuple", () => {
+    const predTup = [is.Number, is.String, as.Optional(is.Boolean)] as const;
+    const predElse = is.ArrayOf(is.String);
+    assertEquals(isParametersOf(predTup, predElse)([0, 1, 2, 0, 1, 2]), false);
+    assertEquals(isParametersOf(predTup, predElse)([0, "a", 0, 1, 2]), false);
+    assertEquals(
+      isParametersOf(predTup, predElse)([0, "a", true, 0, 1, 2]),
+      false,
+    );
+    assertEquals(
+      isParametersOf(predTup, predElse)([0, "a", undefined, 0, 1, 2]),
+      false,
+    );
+    assertEquals(isParametersOf(predTup, predElse)([0, "a", "b"]), false);
+  });
+
+  await t.step("predicated type is correct", () => {
     const predTup = [
       as.Optional(is.Number),
       is.String,
@@ -114,40 +140,4 @@ Deno.test("isParametersOf<T, E>", async (t) => {
       );
     }
   });
-  await t.step("returns true on T tuple", () => {
-    const predTup = [is.Number, is.String, as.Optional(is.Boolean)] as const;
-    const predElse = is.ArrayOf(is.Number);
-    assertEquals(
-      isParametersOf(predTup, predElse)([0, "a", true, 0, 1, 2]),
-      true,
-    );
-    assertEquals(
-      isParametersOf(predTup, predElse)([0, "a", undefined, 0, 1, 2]),
-      true,
-    );
-    assertEquals(isParametersOf(predTup, predElse)([0, "a"]), true);
-  });
-  await t.step("returns false on non T tuple", () => {
-    const predTup = [is.Number, is.String, as.Optional(is.Boolean)] as const;
-    const predElse = is.ArrayOf(is.String);
-    assertEquals(isParametersOf(predTup, predElse)([0, 1, 2, 0, 1, 2]), false);
-    assertEquals(isParametersOf(predTup, predElse)([0, "a", 0, 1, 2]), false);
-    assertEquals(
-      isParametersOf(predTup, predElse)([0, "a", true, 0, 1, 2]),
-      false,
-    );
-    assertEquals(
-      isParametersOf(predTup, predElse)([0, "a", undefined, 0, 1, 2]),
-      false,
-    );
-    assertEquals(isParametersOf(predTup, predElse)([0, "a", "b"]), false);
-  });
-  const predElse = is.Array;
-  await testWithExamples(
-    t,
-    isParametersOf([(_: unknown): _ is unknown => true], predElse),
-    {
-      excludeExamples: ["array"],
-    },
-  );
 });

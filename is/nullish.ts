@@ -1,6 +1,9 @@
 /**
  * Return `true` if the type of `x` is `null` or `undefined`.
  *
+ * Use {@linkcode isNull} to check if the type of `x` is `null`.
+ * Use {@linkcode isUndefined} to check if the type of `x` is `undefined`.
+ *
  * ```ts
  * import { is } from "@core/unknownutil";
  *

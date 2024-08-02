@@ -1,7 +1,7 @@
 export const snapshot = {};
 
-snapshot[`isUniformTupleOf<T> > returns properly named function 1`] = `"isUniformTupleOf(3, undefined)"`;
+snapshot[`isUniformTupleOf<T> > returns properly named predicate function 1`] = `"isUniformTupleOf(3, undefined)"`;
 
-snapshot[`isUniformTupleOf<T> > returns properly named function 2`] = `"isUniformTupleOf(3, isNumber)"`;
+snapshot[`isUniformTupleOf<T> > returns properly named predicate function 2`] = `"isUniformTupleOf(3, isNumber)"`;
 
-snapshot[`isUniformTupleOf<T> > returns properly named function 3`] = `"isUniformTupleOf(3, (anonymous))"`;
+snapshot[`isUniformTupleOf<T> > returns properly named predicate function 3`] = `"isUniformTupleOf(3, (anonymous))"`;

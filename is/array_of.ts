@@ -5,6 +5,8 @@ import { isArray } from "./array.ts";
 /**
  * Return a type predicate function that returns `true` if the type of `x` is `T[]`.
  *
+ * Use {@linkcode isArray} to check if the type of `x` is an array of `unknown`.
+ *
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
  * ```ts

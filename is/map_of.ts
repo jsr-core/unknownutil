@@ -5,6 +5,8 @@ import { isMap } from "./map.ts";
 /**
  * Return a type predicate function that returns `true` if the type of `x` is `Map<K, T>`.
  *
+ * Use {@linkcode isMap} to check if the type of `x` is a map of `unknown`.
+ *
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
  * ```ts
@@ -36,8 +38,7 @@ export function isMapOf<T, K>(
   return rewriteName(
     (x: unknown): x is Map<K, T> => {
       if (!isMap(x)) return false;
-      for (const entry of x.entries()) {
-        const [k, v] = entry;
+      for (const [k, v] of x.entries()) {
         if (!pred(v)) return false;
         if (predKey && !predKey(k)) return false;
       }

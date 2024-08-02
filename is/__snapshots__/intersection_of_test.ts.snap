@@ -1,15 +1,15 @@
 export const snapshot = {};
 
-snapshot[`isIntersectionOf<T> > returns properly named function 1`] = `
+snapshot[`isIntersectionOf<T> > returns properly named predicate function 1`] = `"isString"`;
+
+snapshot[`isIntersectionOf<T> > returns properly named predicate function 2`] = `
 "isObjectOf({
   a: isNumber,
   b: isString
 })"
 `;
 
-snapshot[`isIntersectionOf<T> > returns properly named function 2`] = `"isString"`;
-
-snapshot[`isIntersectionOf<T> > returns properly named function 3`] = `
+snapshot[`isIntersectionOf<T> > returns properly named predicate function 3`] = `
 "isIntersectionOf([
   isFunction,
   isObjectOf({b: isString})

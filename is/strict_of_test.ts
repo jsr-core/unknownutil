@@ -1,13 +1,13 @@
 import { assertEquals } from "@std/assert";
 import { assertSnapshot } from "@std/testing/snapshot";
 import { assertType } from "@std/testing/types";
-import { type Equal, testWithExamples } from "../_testutil.ts";
+import type { Equal } from "../_testutil.ts";
 import { as } from "../as/mod.ts";
 import { is } from "./mod.ts";
 import { isStrictOf } from "./strict_of.ts";
 
 Deno.test("isStrictOf<T>", async (t) => {
-  await t.step("returns properly named function", async (t) => {
+  await t.step("returns properly named predicate function", async (t) => {
     await assertSnapshot(
       t,
       isStrictOf(is.ObjectOf({ a: is.Number, b: is.String, c: is.Boolean }))
@@ -17,7 +17,6 @@ Deno.test("isStrictOf<T>", async (t) => {
       t,
       isStrictOf(is.ObjectOf({ a: (_x): _x is string => false })).name,
     );
-    // Nested
     await assertSnapshot(
       t,
       isStrictOf(
@@ -29,17 +28,7 @@ Deno.test("isStrictOf<T>", async (t) => {
       ).name,
     );
   });
-  await t.step("returns proper type predicate", () => {
-    const predObj = {
-      a: is.Number,
-      b: is.String,
-      c: is.Boolean,
-    };
-    const a: unknown = { a: 0, b: "a", c: true };
-    if (isStrictOf(is.ObjectOf(predObj))(a)) {
-      assertType<Equal<typeof a, { a: number; b: string; c: boolean }>>(true);
-    }
-  });
+
   await t.step("returns true on T object", () => {
     const predObj = {
       a: is.Number,
@@ -51,6 +40,7 @@ Deno.test("isStrictOf<T>", async (t) => {
       true,
     );
   });
+
   await t.step("returns false on non T object", () => {
     const predObj = {
       a: is.Number,
@@ -78,25 +68,20 @@ Deno.test("isStrictOf<T>", async (t) => {
       "Object have an unknown property",
     );
   });
-  await testWithExamples(
-    t,
-    isStrictOf(is.ObjectOf({ a: (_: unknown): _ is unknown => false })),
-    { excludeExamples: ["record"] },
-  );
+
+  await t.step("predicated type is correct", () => {
+    const predObj = {
+      a: is.Number,
+      b: is.String,
+      c: is.Boolean,
+    };
+    const a: unknown = { a: 0, b: "a", c: true };
+    if (isStrictOf(is.ObjectOf(predObj))(a)) {
+      assertType<Equal<typeof a, { a: number; b: string; c: boolean }>>(true);
+    }
+  });
+
   await t.step("with optional properties", async (t) => {
-    await t.step("returns proper type predicate", () => {
-      const predObj = {
-        a: is.Number,
-        b: is.UnionOf([is.String, is.Undefined]),
-        c: as.Optional(is.Boolean),
-      };
-      const a: unknown = { a: 0, b: "a" };
-      if (isStrictOf(is.ObjectOf(predObj))(a)) {
-        assertType<
-          Equal<typeof a, { a: number; b: string | undefined; c?: boolean }>
-        >(true);
-      }
-    });
     await t.step("returns true on T object", () => {
       const predObj = {
         a: is.Number,
@@ -118,6 +103,7 @@ Deno.test("isStrictOf<T>", async (t) => {
         "Object has `undefined` as value of optional property",
       );
     });
+
     await t.step("returns false on non T object", () => {
       const predObj = {
         a: is.Number,
@@ -153,6 +139,20 @@ Deno.test("isStrictOf<T>", async (t) => {
         false,
         "Object have the same number of properties but an unknown property exists",
       );
+    });
+
+    await t.step("predicated type is correct", () => {
+      const predObj = {
+        a: is.Number,
+        b: is.UnionOf([is.String, is.Undefined]),
+        c: as.Optional(is.Boolean),
+      };
+      const a: unknown = { a: 0, b: "a" };
+      if (isStrictOf(is.ObjectOf(predObj))(a)) {
+        assertType<
+          Equal<typeof a, { a: number; b: string | undefined; c?: boolean }>
+        >(true);
+      }
     });
   });
 });

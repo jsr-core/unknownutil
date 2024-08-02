@@ -1,6 +1,6 @@
 export const snapshot = {};
 
-snapshot[`isStrictOf<T> > returns properly named function 1`] = `
+snapshot[`isStrictOf<T> > returns properly named predicate function 1`] = `
 "isStrictOf(isObjectOf({
   a: isNumber,
   b: isString,
@@ -8,9 +8,9 @@ snapshot[`isStrictOf<T> > returns properly named function 1`] = `
 }))"
 `;
 
-snapshot[`isStrictOf<T> > returns properly named function 2`] = `"isStrictOf(isObjectOf({a: a}))"`;
+snapshot[`isStrictOf<T> > returns properly named predicate function 2`] = `"isStrictOf(isObjectOf({a: a}))"`;
 
-snapshot[`isStrictOf<T> > returns properly named function 3`] = `
+snapshot[`isStrictOf<T> > returns properly named predicate function 3`] = `
 "isStrictOf(isObjectOf({
   a: isStrictOf(isObjectOf({
     b: isStrictOf(isObjectOf({c: isBoolean}))

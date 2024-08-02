@@ -46,6 +46,11 @@ export type AsReadonly<T = unknown> = {
 /**
  * Annotation for predObj.
  */
-export type WithPredObj<T extends Record<PropertyKey, Predicate<unknown>>> = {
+export type IsPredObj<
+  T extends Record<PropertyKey, Predicate<unknown>> = Record<
+    PropertyKey,
+    Predicate<unknown>
+  >,
+> = {
   predObj: T;
 };

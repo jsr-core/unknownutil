@@ -5,6 +5,8 @@ import { isArray } from "./array.ts";
 /**
  * Return a type predicate function that returns `true` if the type of `x` is `TupleOf<T>` or `TupleOf<T, E>`.
  *
+ * Use {@linkcode isUniformTupleOf} to check if the type of `x` is a tuple of uniform types.
+ *
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
  * ```ts

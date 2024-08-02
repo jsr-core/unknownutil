@@ -1,9 +1,20 @@
 import { rewriteName } from "../_funcutil.ts";
-import type { WithPredObj } from "../_annotation.ts";
+import type { IsPredObj } from "../_annotation.ts";
 import type { Predicate } from "../type.ts";
 
 /**
  * Return a type predicate function that returns `true` if the type of `x` is strictly follow the `ObjectOf<T>`.
+ *
+ * It only supports modifing a predicate function annotated with `IsPredObj`, usually returned by the followings
+ *
+ * - {@linkcode isIntersectionOf}
+ * - {@linkcode isObjectOf}
+ * - {@linkcode isOmitOf}
+ * - {@linkcode isPartialOf}
+ * - {@linkcode isPickOf}
+ * - {@linkcode isReadonlyOf}
+ * - {@linkcode isRequiredOf}
+ * - {@linkcode isStrictOf}
  *
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
@@ -25,12 +36,10 @@ export function isStrictOf<
   T extends Record<PropertyKey, unknown>,
   P extends Record<PropertyKey, Predicate<unknown>>,
 >(
-  pred:
-    & Predicate<T>
-    & WithPredObj<P>,
+  pred: Predicate<T> & IsPredObj<P>,
 ):
   & Predicate<T>
-  & WithPredObj<P> {
+  & IsPredObj<P> {
   const s = new Set(Object.keys(pred.predObj));
   return rewriteName(
     (x: unknown): x is T => {
@@ -41,5 +50,5 @@ export function isStrictOf<
     },
     "isStrictOf",
     pred,
-  ) as Predicate<T> & WithPredObj<P>;
+  ) as Predicate<T> & IsPredObj<P>;
 }

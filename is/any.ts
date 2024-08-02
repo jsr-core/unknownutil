@@ -1,6 +1,8 @@
 /**
  * Assume `x is `any` and always return `true` regardless of the type of `x`.
  *
+ * Use {@linkcode isUnknown} to assume that a value is `unknown`.
+ *
  * ```ts
  * import { is } from "@core/unknownutil";
  *

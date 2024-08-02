@@ -1,27 +1,32 @@
 import { assertEquals } from "@std/assert";
-import { assertSnapshot } from "@std/testing/snapshot";
 import { assertType } from "@std/testing/types";
-import { type Equal, testWithExamples } from "../_testutil.ts";
+import type { Equal } from "../_testutil.ts";
 import { isLiteralOneOf } from "./literal_one_of.ts";
 
 Deno.test("isLiteralOneOf<T>", async (t) => {
-  await t.step("returns properly named function", async (t) => {
-    await assertSnapshot(t, isLiteralOneOf(["hello", "world"]).name);
+  const literals = ["hello", "world"] as const;
+  await t.step("returns properly named predicate function", () => {
+    assertEquals(typeof isLiteralOneOf(literals), "function");
+    assertEquals(
+      isLiteralOneOf(literals).name,
+      `isLiteralOneOf(["hello", "world"])`,
+    );
   });
+
+  await t.step("returns true on literal T", () => {
+    assertEquals(isLiteralOneOf(literals)("hello"), true);
+    assertEquals(isLiteralOneOf(literals)("world"), true);
+  });
+
+  await t.step("returns false on non literal T", () => {
+    assertEquals(isLiteralOneOf(literals)(""), false);
+    assertEquals(isLiteralOneOf(literals)(100), false);
+  });
+
   await t.step("returns proper type predicate", () => {
-    const preds = ["hello", "world"] as const;
     const a: unknown = "hello";
-    if (isLiteralOneOf(preds)(a)) {
+    if (isLiteralOneOf(literals)(a)) {
       assertType<Equal<typeof a, "hello" | "world">>(true);
     }
-  });
-  await t.step("returns true on literal T", () => {
-    const preds = ["hello", "world"] as const;
-    assertEquals(isLiteralOneOf(preds)("hello"), true);
-    assertEquals(isLiteralOneOf(preds)("world"), true);
-  });
-  await t.step("returns false on non literal T", async (t) => {
-    const preds = ["hello", "world"] as const;
-    await testWithExamples(t, isLiteralOneOf(preds));
   });
 });

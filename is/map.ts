@@ -1,6 +1,8 @@
 /**
  * Return `true` if the type of `x` is `Map<unknown, unknown>`.
  *
+ * Use {@linkcode isMapOf} to check if the type of `x` is a map of `T`.
+ *
  * ```ts
  * import { is } from "@core/unknownutil";
  *

@@ -1,5 +1,5 @@
 import { rewriteName } from "../_funcutil.ts";
-import type { WithPredObj } from "../_annotation.ts";
+import type { IsPredObj } from "../_annotation.ts";
 import type { Predicate } from "../type.ts";
 
 /**
@@ -25,10 +25,10 @@ export function isReadonlyOf<
   T extends Record<PropertyKey, unknown>,
   P extends Record<PropertyKey, Predicate<unknown>>,
 >(
-  pred: Predicate<T> & WithPredObj<P>,
+  pred: Predicate<T> & IsPredObj<P>,
 ):
   & Predicate<Readonly<T>>
-  & WithPredObj<P>;
+  & IsPredObj<P>;
 export function isReadonlyOf<
   T extends Record<PropertyKey, unknown>,
 >(

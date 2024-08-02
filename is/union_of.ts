@@ -5,6 +5,8 @@ import type { Predicate } from "../type.ts";
 /**
  * Return a type predicate function that returns `true` if the type of `x` is `UnionOf<T>`.
  *
+ * Use {@linkcode isIntersectionOf} to check if the type of `x` is an intersection of `T`.
+ *
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
  * ```ts

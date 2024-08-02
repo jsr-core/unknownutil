@@ -5,10 +5,10 @@ import { isRecord } from "./record.ts";
 /**
  * Return a type predicate function that returns `true` if the type of `x` satisfies `Record<K, T>`.
  *
- * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
- *
  * Note that this function only check if the `x` satisfies the `Record<K, T>` type.
  * Use {@linkcode isRecordObjectOf} instead if you want to check if the `x` is an instance of `Object`.
+ *
+ * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
  * ```ts
  * import { is } from "@core/unknownutil";

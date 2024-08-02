@@ -1,3 +1,0 @@
-export const snapshot = {};
-
-snapshot[`isLiteralOneOf<T> > returns properly named function 1`] = `'isLiteralOneOf(["hello", "world"])'`;
