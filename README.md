@@ -10,10 +10,10 @@ A utility pack for handling `unknown` type.
 
 ## Usage
 
-It provides `is` module for type predicate functions and `assert`, `ensure`, and
-`maybe` helper functions.
+It provides `is` and `as` module for type predicate functions and `assert`,
+`ensure`, and `maybe` helper functions.
 
-### is\*
+### is\* and as\*
 
 Type predicate function is a function which returns `true` if a given value is
 expected type. For example, `isString` (or `is.String`) returns `true` if a
@@ -28,7 +28,8 @@ if (is.String(a)) {
 }
 ```
 
-For more complex types, you can use `is*Of` (or `is.*Of`) functions like:
+For more complex types, you can use `is*Of` (or `is.*Of`) functions and `as*`
+(or `as.*`) like:
 
 ```typescript
 import { as, is, PredicateType } from "@core/unknownutil";
@@ -230,11 +231,6 @@ const a: unknown = "Hello";
 // `maybe` returns `string | undefined` so it suites with `??`
 const _: string = maybe(a, is.String) ?? "default value";
 ```
-
-## Migration
-
-See [GitHub Wiki](https://github.com/jsr-core/unknownutil/wiki) for migration to
-v3 from v2 or v2 from v1.
 
 ## License
 

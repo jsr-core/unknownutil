@@ -6,7 +6,7 @@
  * It provides `is` module for type predicate functions and `assert`, `ensure`, and
  * `maybe` helper functions.
  *
- * ### is\*
+ * ### is\* and as\*
  *
  * Type predicate function is a function which returns `true` if a given value is
  * expected type. For example, `isString` (or `is.String`) returns `true` if a
@@ -21,7 +21,8 @@
  * }
  * ```
  *
- * For more complex types, you can use `is*Of` (or `is.*Of`) functions like:
+ * For more complex types, you can use `is*Of` (or `is.*Of`) functions and `as*`
+ * (or `as.*`) functions like:
  *
  * ```typescript
  * import {
