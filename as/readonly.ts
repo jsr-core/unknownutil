@@ -2,13 +2,18 @@ import { rewriteName } from "../_funcutil.ts";
 import type { Predicate } from "../type.ts";
 import {
   annotate,
+  type AsReadonly,
   hasAnnotation,
   unannotate,
-  type WithReadonly,
 } from "../_annotation.ts";
 
 /**
- * Return an `Readonly` annotated type predicate function that returns `true` if the type of `x` is `T`.
+ * Annotate the given predicate function as readonly.
+ *
+ * Use this function to annotate a predicate function of `predObj` in {@linkcode isObjectOf}.
+ *
+ * Use {@linkcode asUnreadonly} to remove the annotation.
+ * Use {@linkcode hasReadonly} to check if a predicate function has annotated with this function.
  *
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
@@ -26,23 +31,21 @@ import {
  */
 export function asReadonly<P extends Predicate<unknown>>(
   pred: P,
-): P & WithReadonly {
+): P & AsReadonly {
   if (hasAnnotation(pred, "readonly")) {
-    return pred as P & WithReadonly;
+    return pred as P & AsReadonly;
   }
   return rewriteName(
-    annotate(
-      (x: unknown) => pred(x),
-      "readonly",
-      pred,
-    ),
+    annotate((x) => pred(x), "readonly", pred),
     "asReadonly",
     pred,
-  ) as unknown as P & WithReadonly;
+  ) as unknown as P & AsReadonly;
 }
 
 /**
- * Return an `Readonly` un-annotated type predicate function that returns `true` if the type of `x` is `T`.
+ * Unannotate the annotated predicate function with {@linkcode asReadonly}.
+ *
+ * Use this function to unannotate a predicate function of `predObj` in {@linkcode isObjectOf}.
  *
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
@@ -75,6 +78,6 @@ export function hasReadonly<
   P extends Predicate<unknown>,
 >(
   pred: P,
-): pred is P & WithReadonly {
+): pred is P & AsReadonly {
   return hasAnnotation(pred, "readonly");
 }

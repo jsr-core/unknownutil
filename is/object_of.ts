@@ -2,9 +2,9 @@ import type { FlatType } from "../_typeutil.ts";
 import { rewriteName } from "../_funcutil.ts";
 import {
   annotate,
-  type WithOptional,
+  type AsOptional,
+  type AsReadonly,
   type WithPredObj,
-  type WithReadonly,
 } from "../_annotation.ts";
 import type { Predicate } from "../type.ts";
 
@@ -63,32 +63,32 @@ type ObjectOf<T extends Record<PropertyKey, Predicate<unknown>>> = FlatType<
   // Readonly/Optional
   & {
     readonly [
-      K in keyof T as T[K] extends WithReadonly
-        ? T[K] extends WithOptional ? K : never
+      K in keyof T as T[K] extends AsReadonly
+        ? T[K] extends AsOptional ? K : never
         : never
     ]?: T[K] extends Predicate<infer U> ? U : never;
   }
   // Readonly/Non optional
   & {
     readonly [
-      K in keyof T as T[K] extends WithReadonly
-        ? T[K] extends WithOptional ? never : K
+      K in keyof T as T[K] extends AsReadonly
+        ? T[K] extends AsOptional ? never : K
         : never
     ]: T[K] extends Predicate<infer U> ? U : never;
   }
   // Non readonly/Optional
   & {
     [
-      K in keyof T as T[K] extends WithReadonly ? never
-        : T[K] extends WithOptional ? K
+      K in keyof T as T[K] extends AsReadonly ? never
+        : T[K] extends AsOptional ? K
         : never
     ]?: T[K] extends Predicate<infer U> ? U : never;
   }
   // Non readonly/Non optional
   & {
     [
-      K in keyof T as T[K] extends WithReadonly ? never
-        : T[K] extends WithOptional ? never
+      K in keyof T as T[K] extends AsReadonly ? never
+        : T[K] extends AsOptional ? never
         : K
     ]: T[K] extends Predicate<infer U> ? U : never;
   }

@@ -1,5 +1,5 @@
 import { rewriteName } from "../_funcutil.ts";
-import type { WithOptional } from "../_annotation.ts";
+import type { AsOptional } from "../_annotation.ts";
 import { hasOptional } from "../as/optional.ts";
 import type { Predicate, PredicateType } from "../type.ts";
 import { isArray } from "./array.ts";
@@ -116,7 +116,7 @@ type ParametersOf<T> = T extends readonly [] ? []
   : T extends readonly [...infer P, infer R]
   // Tuple of predicates
     ? P extends Predicate<unknown>[]
-      ? R extends Predicate<unknown> & WithOptional<unknown>
+      ? R extends Predicate<unknown> & AsOptional<unknown>
         // Last parameter is optional
         ? [...ParametersOf<P>, PredicateType<R>?]
         // Last parameter is NOT optional

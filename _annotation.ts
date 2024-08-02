@@ -32,14 +32,14 @@ export function hasAnnotation<F extends Fn, N extends string>(
 /**
  * Annotation for optional.
  */
-export type WithOptional<T = unknown> = {
+export type AsOptional<T = unknown> = {
   optional: Predicate<T>;
 };
 
 /**
  * Annotation for readonly.
  */
-export type WithReadonly<T = unknown> = {
+export type AsReadonly<T = unknown> = {
   readonly: Predicate<T>;
 };
 
