@@ -1,0 +1,45 @@
+export const snapshot = {};
+
+snapshot[`isTupleOf<T> > returns properly named predicate function 1`] = `
+"isTupleOf([
+  isNumber,
+  isString,
+  isBoolean
+])"
+`;
+
+snapshot[`isTupleOf<T> > returns properly named predicate function 2`] = `"isTupleOf([(anonymous)])"`;
+
+snapshot[`isTupleOf<T> > returns properly named predicate function 3`] = `
+"isTupleOf([
+  isTupleOf([
+    isTupleOf([
+      isNumber,
+      isString,
+      isBoolean
+    ])
+  ])
+])"
+`;
+
+snapshot[`isTupleOf<T, E> > returns properly named predicate function 1`] = `
+"isTupleOf([
+  isNumber,
+  isString,
+  isBoolean
+], isArray)"
+`;
+
+snapshot[`isTupleOf<T, E> > returns properly named predicate function 2`] = `"isTupleOf([(anonymous)], isArrayOf(isString))"`;
+
+snapshot[`isTupleOf<T, E> > returns properly named predicate function 3`] = `
+"isTupleOf([
+  isTupleOf([
+    isTupleOf([
+      isNumber,
+      isString,
+      isBoolean
+    ], isArray)
+  ], isArray)
+])"
+`;

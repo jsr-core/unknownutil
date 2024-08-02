@@ -1,0 +1,10 @@
+export const snapshot = {};
+
+snapshot[`isPickOf<T, K> > returns properly named predicate function 1`] = `
+"isObjectOf({
+  a: isNumber,
+  c: isBoolean
+})"
+`;
+
+snapshot[`isPickOf<T, K> > returns properly named predicate function 2`] = `"isObjectOf({a: isNumber})"`;

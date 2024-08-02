@@ -1,36 +1,19 @@
 # unknownutil
 
 [![jsr](https://jsr.io/badges/@core/unknownutil)](https://jsr.io/@core/unknownutil)
-[![npm](https://img.shields.io/npm/v/unknownutil?logo=npm&logoColor=white)](https://www.npmjs.com/package/unknownutil)
-[![denoland](https://img.shields.io/github/v/release/jsr-core/unknownutil?logo=deno&label=denoland)](https://deno.land/x/unknownutil)
-[![deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/unknownutil/mod.ts)
 [![test](https://github.com/jsr-core/unknownutil/workflows/Test/badge.svg)](https://github.com/jsr-core/unknownutil/actions?query=workflow%3ATest)
 [![codecov](https://codecov.io/github/jsr-core/unknownutil/graph/badge.svg?token=pfbLRGU5AM)](https://codecov.io/github/jsr-core/unknownutil)
 
 A utility pack for handling `unknown` type.
 
-[deno]: https://deno.land/
-
-> [!WARNING]
->
-> The package on [deno.land] and [npm] is deprecated. Use the package on
-> [jsr.io] instead.
->
-> ```
-> deno add @core/unknownutil
-> npx jsr add @core/unknownutil
-> ```
-
-[deno.land]: https://deno.land/x/unknownutil
-[npm]: https://www.npmjs.com/package/unknownutil
 [jsr.io]: https://jsr.io/@core/unknownutil
 
 ## Usage
 
-It provides `is` module for type predicate functions and `assert`, `ensure`, and
-`maybe` helper functions.
+It provides `is` and `as` module for type predicate functions and `assert`,
+`ensure`, and `maybe` helper functions.
 
-### is\*
+### is\* and as\*
 
 Type predicate function is a function which returns `true` if a given value is
 expected type. For example, `isString` (or `is.String`) returns `true` if a
@@ -45,10 +28,11 @@ if (is.String(a)) {
 }
 ```
 
-For more complex types, you can use `is*Of` (or `is.*Of`) functions like:
+For more complex types, you can use `is*Of` (or `is.*Of`) functions and `as*`
+(or `as.*`) like:
 
 ```typescript
-import { is, PredicateType } from "@core/unknownutil";
+import { as, is, PredicateType } from "@core/unknownutil";
 
 const isArticle = is.ObjectOf({
   title: is.String,
@@ -62,8 +46,8 @@ const isArticle = is.ObjectOf({
       }),
     ]),
   ),
-  createTime: is.OptionalOf(is.InstanceOf(Date)),
-  updateTime: is.OptionalOf(is.InstanceOf(Date)),
+  createTime: as.Optional(is.InstanceOf(Date)),
+  updateTime: as.Optional(is.InstanceOf(Date)),
 });
 
 // Infer the type of `Article` from the definition of `isArticle`
@@ -94,7 +78,7 @@ Additionally, you can manipulate the predicate function returned from
 similar to TypeScript's `Pick`, `Omit`, `Partial`, `Required` utility types.
 
 ```typescript
-import { is } from "@core/unknownutil";
+import { as, is } from "@core/unknownutil";
 
 const isArticle = is.ObjectOf({
   title: is.String,
@@ -108,8 +92,8 @@ const isArticle = is.ObjectOf({
       }),
     ]),
   ),
-  createTime: is.OptionalOf(is.InstanceOf(Date)),
-  updateTime: is.OptionalOf(is.InstanceOf(Date)),
+  createTime: as.Optional(is.InstanceOf(Date)),
+  updateTime: as.Optional(is.InstanceOf(Date)),
 });
 
 const isArticleCreateParams = is.PickOf(isArticle, ["title", "body", "refs"]);
@@ -146,8 +130,8 @@ const isArticleUpdateParams = is.OmitOf(isArticleCreateParams, ["title"]);
 const isArticlePatchParams = is.PartialOf(isArticleUpdateParams);
 // is equivalent to
 //const isArticlePatchParams = is.ObjectOf({
-//  body: is.OptionalOf(is.String),
-//  refs: is.OptionalOf(is.ArrayOf(
+//  body: as.Optional(is.String),
+//  refs: as.Optional(is.ArrayOf(
 //    is.UnionOf([
 //      is.String,
 //      is.ObjectOf({
@@ -247,11 +231,6 @@ const a: unknown = "Hello";
 // `maybe` returns `string | undefined` so it suites with `??`
 const _: string = maybe(a, is.String) ?? "default value";
 ```
-
-## Migration
-
-See [GitHub Wiki](https://github.com/jsr-core/unknownutil/wiki) for migration to
-v3 from v2 or v2 from v1.
 
 ## License
 

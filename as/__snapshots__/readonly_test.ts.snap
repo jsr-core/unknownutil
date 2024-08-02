@@ -1,0 +1,11 @@
+export const snapshot = {};
+
+snapshot[`asReadonly<T> > returns properly named function 1`] = `"asReadonly(isNumber)"`;
+
+snapshot[`asReadonly<T> > returns properly named function 2`] = `"asReadonly(isNumber)"`;
+
+snapshot[`asUnreadonly<T> > returns properly named function 1`] = `"isNumber"`;
+
+snapshot[`asUnreadonly<T> > returns properly named function 2`] = `"isNumber"`;
+
+snapshot[`asUnreadonly<T> > returns properly named function 3`] = `"isNumber"`;

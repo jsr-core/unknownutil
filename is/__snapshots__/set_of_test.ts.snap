@@ -1,0 +1,5 @@
+export const snapshot = {};
+
+snapshot[`isSetOf<T> > returns properly named predicate function 1`] = `"isSetOf(isNumber)"`;
+
+snapshot[`isSetOf<T> > returns properly named predicate function 2`] = `"isSetOf((anonymous))"`;

@@ -59,20 +59,6 @@ jobs:
           deno bench
         timeout-minutes: 5
 
-  build-npm:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: denoland/setup-deno@v1
-        with:
-          deno-version: ${{ env.DENO_VERSION }}
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          registry-url: "https://registry.npmjs.org"
-      - name: Build
-        run: deno task build-npm
-
   jsr-publish:
     runs-on: ubuntu-latest
     steps:

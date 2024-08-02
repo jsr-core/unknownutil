@@ -1,0 +1,9 @@
+export const snapshot = {};
+
+snapshot[`isUnionOf<T> > returns properly named predicate function 1`] = `
+"isUnionOf([
+  isNumber,
+  isString,
+  isBoolean
+])"
+`;

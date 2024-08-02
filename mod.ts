@@ -6,7 +6,7 @@
  * It provides `is` module for type predicate functions and `assert`, `ensure`, and
  * `maybe` helper functions.
  *
- * ### is\*
+ * ### is\* and as\*
  *
  * Type predicate function is a function which returns `true` if a given value is
  * expected type. For example, `isString` (or `is.String`) returns `true` if a
@@ -21,10 +21,12 @@
  * }
  * ```
  *
- * For more complex types, you can use `is*Of` (or `is.*Of`) functions like:
+ * For more complex types, you can use `is*Of` (or `is.*Of`) functions and `as*`
+ * (or `as.*`) functions like:
  *
  * ```typescript
  * import {
+ *   as,
  *   is,
  *   PredicateType,
  * } from "@core/unknownutil";
@@ -41,8 +43,8 @@
  *       }),
  *     ]),
  *   ),
- *   createTime: is.OptionalOf(is.InstanceOf(Date)),
- *   updateTime: is.OptionalOf(is.InstanceOf(Date)),
+ *   createTime: as.Optional(is.InstanceOf(Date)),
+ *   updateTime: as.Optional(is.InstanceOf(Date)),
  * });
  *
  * // Infer the type of `Article` from the definition of `isArticle`
@@ -73,7 +75,7 @@
  * similar to TypeScript's `Pick`, `Omit`, `Partial`, `Required` utility types.
  *
  * ```typescript
- * import { is } from "@core/unknownutil";
+ * import { as, is } from "@core/unknownutil";
  *
  * const isArticle = is.ObjectOf({
  *   title: is.String,
@@ -87,8 +89,8 @@
  *       }),
  *     ]),
  *   ),
- *   createTime: is.OptionalOf(is.InstanceOf(Date)),
- *   updateTime: is.OptionalOf(is.InstanceOf(Date)),
+ *   createTime: as.Optional(is.InstanceOf(Date)),
+ *   updateTime: as.Optional(is.InstanceOf(Date)),
  * });
  *
  * const isArticleCreateParams = is.PickOf(isArticle, ["title", "body", "refs"]);
@@ -125,8 +127,8 @@
  * const isArticlePatchParams = is.PartialOf(isArticleUpdateParams);
  * // is equivalent to
  * //const isArticlePatchParams = is.ObjectOf({
- * //  body: is.OptionalOf(is.String),
- * //  refs: is.OptionalOf(is.ArrayOf(
+ * //  body: as.Optional(is.String),
+ * //  refs: as.Optional(is.ArrayOf(
  * //    is.UnionOf([
  * //      is.String,
  * //      is.ObjectOf({
@@ -239,6 +241,11 @@
  * @module
  */
 
-export * from "./is.ts";
-export * from "./metadata.ts";
-export * from "./util.ts";
+export type * from "./type.ts";
+
+export * from "./as/mod.ts";
+export * from "./is/mod.ts";
+
+export * from "./assert.ts";
+export * from "./ensure.ts";
+export * from "./maybe.ts";

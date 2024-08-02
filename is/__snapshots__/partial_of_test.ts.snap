@@ -1,0 +1,25 @@
+export const snapshot = {};
+
+snapshot[`isPartialOf<T> > returns properly named predicate function 1`] = `
+"isObjectOf({
+  a: asOptional(isNumber),
+  b: asOptional(isUnionOf([
+    isString,
+    isUndefined
+  ])),
+  c: asOptional(isBoolean),
+  d: asOptional(asReadonly(isString))
+})"
+`;
+
+snapshot[`isPartialOf<T> > returns properly named predicate function 2`] = `
+"isObjectOf({
+  a: asOptional(isNumber),
+  b: asOptional(isUnionOf([
+    isString,
+    isUndefined
+  ])),
+  c: asOptional(isBoolean),
+  d: asOptional(asReadonly(isString))
+})"
+`;

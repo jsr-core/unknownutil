@@ -1,0 +1,47 @@
+export const snapshot = {};
+
+snapshot[`isReadonlyOf<T> > with isRecord > returns properly named predicate function 1`] = `"isReadonlyOf(isRecord)"`;
+
+snapshot[`isReadonlyOf<T> > with isRecord > returns properly named predicate function 2`] = `"isReadonlyOf(isRecord)"`;
+
+snapshot[`isReadonlyOf<T> > with isObjectOf > returns properly named predicate function 1`] = `
+"isReadonlyOf(isObjectOf({
+  a: isNumber,
+  b: isUnionOf([
+    isString,
+    isUndefined
+  ]),
+  c: asReadonly(isBoolean)
+}))"
+`;
+
+snapshot[`isReadonlyOf<T> > with isObjectOf > returns properly named predicate function 2`] = `
+"isReadonlyOf(isObjectOf({
+  a: isNumber,
+  b: isUnionOf([
+    isString,
+    isUndefined
+  ]),
+  c: asReadonly(isBoolean)
+}))"
+`;
+
+snapshot[`isReadonlyOf<T> > with isTupleOf > returns properly named predicate function 1`] = `
+"isReadonlyOf(isTupleOf([
+  isNumber,
+  isString,
+  asReadonly(isBoolean)
+]))"
+`;
+
+snapshot[`isReadonlyOf<T> > with isTupleOf > returns properly named predicate function 2`] = `
+"isReadonlyOf(isTupleOf([
+  isNumber,
+  isString,
+  asReadonly(isBoolean)
+]))"
+`;
+
+snapshot[`isReadonlyOf<T> > with isUniformTupleOf > returns properly named predicate function 1`] = `"isReadonlyOf(isUniformTupleOf(3, isNumber))"`;
+
+snapshot[`isReadonlyOf<T> > with isUniformTupleOf > returns properly named predicate function 2`] = `"isReadonlyOf(isUniformTupleOf(3, isNumber))"`;

@@ -1,0 +1,9 @@
+export const snapshot = {};
+
+snapshot[`isRecordObjectOf<T> > returns properly named predicate function 1`] = `"isRecordObjectOf(isNumber, undefined)"`;
+
+snapshot[`isRecordObjectOf<T> > returns properly named predicate function 2`] = `"isRecordObjectOf((anonymous), undefined)"`;
+
+snapshot[`isRecordObjectOf<T, K> > returns properly named predicate function 1`] = `"isRecordObjectOf(isNumber, isString)"`;
+
+snapshot[`isRecordObjectOf<T, K> > returns properly named predicate function 2`] = `"isRecordObjectOf((anonymous), isString)"`;

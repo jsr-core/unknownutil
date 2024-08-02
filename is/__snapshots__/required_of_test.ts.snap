@@ -1,0 +1,25 @@
+export const snapshot = {};
+
+snapshot[`isRequiredOf<T> > returns properly named predicate function 1`] = `
+"isObjectOf({
+  a: isNumber,
+  b: isUnionOf([
+    isString,
+    isUndefined
+  ]),
+  c: isBoolean,
+  d: asReadonly(isString)
+})"
+`;
+
+snapshot[`isRequiredOf<T> > returns properly named predicate function 2`] = `
+"isObjectOf({
+  a: isNumber,
+  b: isUnionOf([
+    isString,
+    isUndefined
+  ]),
+  c: isBoolean,
+  d: asReadonly(isString)
+})"
+`;
