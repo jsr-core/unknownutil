@@ -2,7 +2,6 @@ name: Test
 
 env:
   DENO_VERSION: 1.x
-  NODE_VERSION: 16.x
 
 on:
   push:
