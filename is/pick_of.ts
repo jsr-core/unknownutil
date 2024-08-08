@@ -43,11 +43,15 @@ export function isPickOf<
 ):
   & Predicate<FlatType<Pick<T, K>>>
   & IsPredObj<P> {
-  const s = new Set(keys);
-  const predObj = Object.fromEntries(
-    Object.entries(pred.predObj).filter(([k]) => s.has(k as K)),
-  );
-  return isObjectOf(predObj) as
+  const omitKeys = new Set([
+    ...Object.keys(pred.predObj),
+    ...Object.getOwnPropertySymbols(pred.predObj),
+  ]).difference(new Set(keys));
+  const predObj = { ...pred.predObj };
+  for (const key of omitKeys) {
+    delete predObj[key];
+  }
+  return isObjectOf(predObj as Record<PropertyKey, Predicate<unknown>>) as
     & Predicate<FlatType<Pick<T, K>>>
     & IsPredObj<P>;
 }
