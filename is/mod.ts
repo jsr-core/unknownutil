@@ -40,84 +40,86 @@ import { isUnknown } from "./unknown.ts";
 
 /**
  * Type predicate function collection.
+ *
+ * @namespace
+ * @borrows isAny as Any
+ * @borrows isArray as Array
+ * @borrows isArrayOf as ArrayOf
+ * @borrows isAsyncFunction as AsyncFunction
+ * @borrows isBigint as Bigint
+ * @borrows isBoolean as Boolean
+ * @borrows isFunction as Function
+ * @borrows isInstanceOf as InstanceOf
+ * @borrows isIntersectionOf as IntersectionOf
+ * @borrows isLiteralOf as LiteralOf
+ * @borrows isLiteralOneOf as LiteralOneOf
+ * @borrows isMap as Map
+ * @borrows isMapOf as MapOf
+ * @borrows isNull as Null
+ * @borrows isNullish as Nullish
+ * @borrows isNumber as Number
+ * @borrows isObjectOf as ObjectOf
+ * @borrows isOmitOf as OmitOf
+ * @borrows isParametersOf as ParametersOf
+ * @borrows isPartialOf as PartialOf
+ * @borrows isPickOf as PickOf
+ * @borrows isPrimitive as Primitive
+ * @borrows isReadonlyOf as ReadonlyOf
+ * @borrows isRecord as Record
+ * @borrows isRecordObject as RecordObject
+ * @borrows isRecordObjectOf as RecordObjectOf
+ * @borrows isRecordOf as RecordOf
+ * @borrows isRequiredOf as RequiredOf
+ * @borrows isSet as Set
+ * @borrows isSetOf as SetOf
+ * @borrows isStrictOf as StrictOf
+ * @borrows isString as String
+ * @borrows isSymbol as Symbol
+ * @borrows isSyncFunction as SyncFunction
+ * @borrows isTupleOf as TupleOf
+ * @borrows isUndefined as Undefined
+ * @borrows isUniformTupleOf as UniformTupleOf
+ * @borrows isUnionOf as UnionOf
+ * @borrows isUnknown as Unknown
  */
 export const is = {
-  /** @inheritdoc */
   Any: isAny,
-  /** @inheritdoc */
   Array: isArray,
-  /** @inheritdoc */
   ArrayOf: isArrayOf,
-  /** @inheritdoc */
   AsyncFunction: isAsyncFunction,
-  /** @inheritdoc */
   Bigint: isBigint,
-  /** @inheritdoc */
   Boolean: isBoolean,
-  /** @inheritdoc */
   Function: isFunction,
-  /** @inheritdoc */
   InstanceOf: isInstanceOf,
-  /** @inheritdoc */
   IntersectionOf: isIntersectionOf,
-  /** @inheritdoc */
   LiteralOf: isLiteralOf,
-  /** @inheritdoc */
   LiteralOneOf: isLiteralOneOf,
-  /** @inheritdoc */
   Map: isMap,
-  /** @inheritdoc */
   MapOf: isMapOf,
-  /** @inheritdoc */
   Null: isNull,
-  /** @inheritdoc */
   Nullish: isNullish,
-  /** @inheritdoc */
   Number: isNumber,
-  /** @inheritdoc */
   ObjectOf: isObjectOf,
-  /** @inheritdoc */
   OmitOf: isOmitOf,
-  /** @inheritdoc */
   ParametersOf: isParametersOf,
-  /** @inheritdoc */
   PartialOf: isPartialOf,
-  /** @inheritdoc */
   PickOf: isPickOf,
-  /** @inheritdoc */
   Primitive: isPrimitive,
-  /** @inheritdoc */
   ReadonlyOf: isReadonlyOf,
-  /** @inheritdoc */
   Record: isRecord,
-  /** @inheritdoc */
   RecordObject: isRecordObject,
-  /** @inheritdoc */
   RecordObjectOf: isRecordObjectOf,
-  /** @inheritdoc */
   RecordOf: isRecordOf,
-  /** @inheritdoc */
   RequiredOf: isRequiredOf,
-  /** @inheritdoc */
   Set: isSet,
-  /** @inheritdoc */
   SetOf: isSetOf,
-  /** @inheritdoc */
   StrictOf: isStrictOf,
-  /** @inheritdoc */
   String: isString,
-  /** @inheritdoc */
   Symbol: isSymbol,
-  /** @inheritdoc */
   SyncFunction: isSyncFunction,
-  /** @inheritdoc */
   TupleOf: isTupleOf,
-  /** @inheritdoc */
   Undefined: isUndefined,
-  /** @inheritdoc */
   UniformTupleOf: isUniformTupleOf,
-  /** @inheritdoc */
   UnionOf: isUnionOf,
-  /** @inheritdoc */
   Unknown: isUnknown,
 } as const;
