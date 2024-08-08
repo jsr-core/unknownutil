@@ -42,8 +42,8 @@ import { isUnknown } from "./unknown.ts";
  * Type predicate function collection.
  *
  * @namespace
- * @borrows isAny as Any
- * @borrows isArray as Array
+ * @borrows module:unknownutil/is/any.isAny as Any
+ * @borrows {@link module:unknownutil/is/any.isArray} as Array
  * @borrows isArrayOf as ArrayOf
  * @borrows isAsyncFunction as AsyncFunction
  * @borrows isBigint as Bigint
