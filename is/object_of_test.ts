@@ -64,7 +64,7 @@ Deno.test("isObjectOf<T>", async (t) => {
     const predObj = {
       getFullYear: is.Function,
     };
-    assertEquals(isObjectOf(predObj)(date), true, "Value is not an object");
+    assertEquals(isObjectOf(predObj)(date), true);
   });
 
   await t.step("predicated type is correct", () => {
