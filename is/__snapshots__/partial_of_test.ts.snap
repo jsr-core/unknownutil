@@ -23,3 +23,27 @@ snapshot[`isPartialOf<T> > returns properly named predicate function 2`] = `
   d: asOptional(asReadonly(isString))
 })"
 `;
+
+snapshot[`isPartialOf<T> > with symbol properties > returns properly named predicate function 1`] = `
+"isObjectOf({
+  a: asOptional(isNumber),
+  Symbol(b): asOptional(isUnionOf([
+    isString,
+    isUndefined
+  ])),
+  Symbol(c): asOptional(isBoolean),
+  Symbol(c): asOptional(asReadonly(isString))
+})"
+`;
+
+snapshot[`isPartialOf<T> > with symbol properties > returns properly named predicate function 2`] = `
+"isObjectOf({
+  a: asOptional(isNumber),
+  Symbol(b): asOptional(isUnionOf([
+    isString,
+    isUndefined
+  ])),
+  Symbol(c): asOptional(isBoolean),
+  Symbol(c): asOptional(asReadonly(isString))
+})"
+`;

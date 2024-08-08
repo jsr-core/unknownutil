@@ -42,9 +42,14 @@ export function isPartialOf<
 ):
   & Predicate<FlatType<Partial<T>>>
   & IsPredObj<P> {
-  const predObj = Object.fromEntries(
-    Object.entries(pred.predObj).map(([k, v]) => [k, asOptional(v)]),
-  ) as Record<PropertyKey, Predicate<unknown>>;
+  const keys = [
+    ...Object.keys(pred.predObj),
+    ...Object.getOwnPropertySymbols(pred.predObj),
+  ];
+  const predObj: Record<PropertyKey, Predicate<unknown>> = { ...pred.predObj };
+  for (const key of keys) {
+    predObj[key] = asOptional(predObj[key]);
+  }
   return isObjectOf(predObj) as
     & Predicate<FlatType<Partial<T>>>
     & IsPredObj<P>;
