@@ -24,7 +24,6 @@
     "./is/literal-one-of": "./is/literal_one_of.ts",
     "./is/map": "./is/map.ts",
     "./is/map-of": "./is/map_of.ts",
-    "./is/mod": "./is/mod.ts",
     "./is/null": "./is/null.ts",
     "./is/nullish": "./is/nullish.ts",
     "./is/number": "./is/number.ts",
