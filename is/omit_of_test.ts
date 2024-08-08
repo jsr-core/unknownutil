@@ -54,4 +54,57 @@ Deno.test("isOmitOf<T, K>", async (t) => {
       >(true);
     }
   });
+
+  await t.step("with symbol properties", async (t) => {
+    const b = Symbol("b");
+    const c = Symbol("c");
+    const pred = is.ObjectOf({
+      a: is.Number,
+      [b]: is.String,
+      [c]: is.Boolean,
+    });
+
+    await t.step("returns properly named predicate function", async (t) => {
+      assertEquals(typeof isOmitOf(pred, [b]), "function");
+      await assertSnapshot(t, isOmitOf(pred, [b]).name);
+      await assertSnapshot(t, isOmitOf(isOmitOf(pred, [b]), [c]).name);
+    });
+
+    await t.step("returns true on Omit<T, K> object", () => {
+      assertEquals(
+        isOmitOf(pred, [b])({ a: 0, [b]: undefined, [c]: true }),
+        true,
+      );
+      assertEquals(isOmitOf(pred, [b, c])({ a: 0 }), true);
+    });
+
+    await t.step("returns false on non Omit<T, K> object", () => {
+      assertEquals(
+        isOmitOf(pred, [b])("a"),
+        false,
+        "Value is not an object",
+      );
+      assertEquals(
+        isOmitOf(pred, [b])({ a: 0, [b]: "a", [c]: "" }),
+        false,
+        "Object have a different type property",
+      );
+    });
+
+    await t.step("predicated type is correct", () => {
+      const x: unknown = { a: 0, [b]: "a", [c]: true };
+
+      if (isOmitOf(pred, [b])(x)) {
+        assertType<
+          Equal<typeof x, { a: number; [c]: boolean }>
+        >(true);
+      }
+
+      if (isOmitOf(isOmitOf(pred, [b]), [c])(x)) {
+        assertType<
+          Equal<typeof x, { a: number }>
+        >(true);
+      }
+    });
+  });
 });
