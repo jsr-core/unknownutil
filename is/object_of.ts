@@ -48,10 +48,7 @@ export function isObjectOf<
           Array.isArray(x)
         ) return false;
         // Check each values
-        for (const k in predObj) {
-          if (!predObj[k]((x as T)[k])) return false;
-        }
-        return true;
+        return Object.keys(predObj).every((k) => predObj[k]((x as T)[k]));
       },
       "isObjectOf",
       predObj,

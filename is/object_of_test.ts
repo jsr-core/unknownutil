@@ -98,4 +98,46 @@ Deno.test("isObjectOf<T>", async (t) => {
       >(true);
     }
   });
+
+  await t.step("if 'predObj' has prototype properties", async (t) => {
+    const prototypeObj = {
+      a: is.Number,
+      b: is.Boolean,
+    };
+    // deno-lint-ignore ban-types
+    const predObj2 = Object.assign(Object.create(prototypeObj) as {}, {
+      c: is.String,
+    });
+
+    await t.step("returns true on T object that omits prototype", () => {
+      assertEquals(isObjectOf(predObj2)({ c: "a" }), true);
+      assertEquals(
+        isObjectOf(predObj2)({ c: "a", d: "ignored" }),
+        true,
+      );
+      assertEquals(
+        isObjectOf(predObj2)(Object.assign(() => void 0, { c: "a" })),
+        true,
+      );
+    });
+
+    await t.step("returns false on non T object that omits prototype", () => {
+      assertEquals(isObjectOf(predObj2)("a"), false, "Value is not an object");
+      assertEquals(
+        isObjectOf(predObj2)({ a: 0, b: true, c: 1 }),
+        false,
+        "Object have a different type property",
+      );
+      assertEquals(
+        isObjectOf(predObj2)({ a: 0, b: true }),
+        false,
+        "Object does not have one property",
+      );
+      assertEquals(
+        isObjectOf({ 0: is.String })(["a"]),
+        false,
+        "Value is not an object",
+      );
+    });
+  });
 });
