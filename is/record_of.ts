@@ -39,7 +39,10 @@ export function isRecordOf<T, K extends PropertyKey = PropertyKey>(
   return rewriteName(
     (x: unknown): x is Record<K, T> => {
       if (!isRecord(x)) return false;
-      const keys = Object.keys(x);
+      const keys = [
+        ...Object.keys(x),
+        ...Object.getOwnPropertySymbols(x),
+      ];
       for (const k of keys) {
         if (!pred(x[k])) return false;
         if (predKey && !predKey(k)) return false;
