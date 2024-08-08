@@ -31,12 +31,14 @@ Deno.test("isObjectOf<T>", async (t) => {
     assertEquals(
       isObjectOf(predObj)({ a: 0, b: "a", c: true, d: "ignored" }),
       true,
+      "Undefined properties are ignored",
     );
     assertEquals(
       isObjectOf(predObj)(
         Object.assign(() => void 0, { a: 0, b: "a", c: true }),
       ),
       true,
+      "Function are treated as an object",
     );
   });
 
@@ -64,7 +66,7 @@ Deno.test("isObjectOf<T>", async (t) => {
     const predObj = {
       getFullYear: is.Function,
     };
-    assertEquals(isObjectOf(predObj)(date), true, "Value is not an object");
+    assertEquals(isObjectOf(predObj)(date), true);
   });
 
   await t.step("predicated type is correct", () => {
@@ -98,4 +100,56 @@ Deno.test("isObjectOf<T>", async (t) => {
       >(true);
     }
   });
+
+  await t.step(
+    "does not affect prototype properties of 'predObj'",
+    async (t) => {
+      const prototypeObj = {
+        a: is.Number,
+        b: is.Boolean,
+      };
+      // deno-lint-ignore ban-types
+      const predObj = Object.assign(Object.create(prototypeObj) as {}, {
+        c: is.String,
+      });
+
+      await t.step("returns true on T object", () => {
+        assertEquals(isObjectOf(predObj)({ c: "a" }), true);
+        assertEquals(
+          isObjectOf(predObj)({ a: "ignored", b: "ignored", c: "a" }),
+          true,
+          "Predicates defined in the prototype are ignored",
+        );
+        assertEquals(
+          isObjectOf(predObj)({ c: "a", d: "ignored" }),
+          true,
+          "Undefined properties are ignored",
+        );
+        assertEquals(
+          isObjectOf(predObj)(Object.assign(() => void 0, { c: "a" })),
+          true,
+          "Function are treated as an object",
+        );
+      });
+
+      await t.step("returns false on non T object", () => {
+        assertEquals(isObjectOf(predObj)("a"), false, "Value is not an object");
+        assertEquals(
+          isObjectOf(predObj)({ a: 0, b: true, c: 1 }),
+          false,
+          "Object have a different type property",
+        );
+        assertEquals(
+          isObjectOf(predObj)({ a: 0, b: true }),
+          false,
+          "Object does not have one property",
+        );
+        assertEquals(
+          isObjectOf({ 0: is.String })(["a"]),
+          false,
+          "Value is not an object",
+        );
+      });
+    },
+  );
 });
