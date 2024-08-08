@@ -42,43 +42,82 @@ import { isUnknown } from "./unknown.ts";
  * Type predicate function collection.
  */
 export const is = {
+  /** @inheritdoc */
   Any: isAny,
+  /** @inheritdoc */
   Array: isArray,
+  /** @inheritdoc */
   ArrayOf: isArrayOf,
+  /** @inheritdoc */
   AsyncFunction: isAsyncFunction,
+  /** @inheritdoc */
   Bigint: isBigint,
+  /** @inheritdoc */
   Boolean: isBoolean,
+  /** @inheritdoc */
   Function: isFunction,
+  /** @inheritdoc */
   InstanceOf: isInstanceOf,
+  /** @inheritdoc */
   IntersectionOf: isIntersectionOf,
+  /** @inheritdoc */
   LiteralOf: isLiteralOf,
+  /** @inheritdoc */
   LiteralOneOf: isLiteralOneOf,
+  /** @inheritdoc */
   Map: isMap,
+  /** @inheritdoc */
   MapOf: isMapOf,
+  /** @inheritdoc */
   Null: isNull,
+  /** @inheritdoc */
   Nullish: isNullish,
+  /** @inheritdoc */
   Number: isNumber,
+  /** @inheritdoc */
   ObjectOf: isObjectOf,
+  /** @inheritdoc */
   OmitOf: isOmitOf,
+  /** @inheritdoc */
   ParametersOf: isParametersOf,
+  /** @inheritdoc */
   PartialOf: isPartialOf,
+  /** @inheritdoc */
   PickOf: isPickOf,
+  /** @inheritdoc */
   Primitive: isPrimitive,
+  /** @inheritdoc */
   ReadonlyOf: isReadonlyOf,
+  /** @inheritdoc */
   Record: isRecord,
+  /** @inheritdoc */
   RecordObject: isRecordObject,
+  /** @inheritdoc */
   RecordObjectOf: isRecordObjectOf,
+  /** @inheritdoc */
   RecordOf: isRecordOf,
+  /** @inheritdoc */
   RequiredOf: isRequiredOf,
+  /** @inheritdoc */
   Set: isSet,
+  /** @inheritdoc */
   SetOf: isSetOf,
+  /** @inheritdoc */
   StrictOf: isStrictOf,
+  /** @inheritdoc */
   String: isString,
+  /** @inheritdoc */
   Symbol: isSymbol,
+  /** @inheritdoc */
   SyncFunction: isSyncFunction,
+  /** @inheritdoc */
   TupleOf: isTupleOf,
+  /** @inheritdoc */
   Undefined: isUndefined,
+  /** @inheritdoc */
   UniformTupleOf: isUniformTupleOf,
+  /** @inheritdoc */
   UnionOf: isUnionOf,
+  /** @inheritdoc */
   Unknown: isUnknown,
 } as const;
