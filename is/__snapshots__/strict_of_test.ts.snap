@@ -17,3 +17,19 @@ snapshot[`isStrictOf<T> > returns properly named predicate function 3`] = `
   }))
 }))"
 `;
+
+snapshot[`isStrictOf<T> > with symbol properties > returns properly named predicate function 1`] = `
+"isStrictOf(isObjectOf({
+  a: isNumber,
+  Symbol(b): isString,
+  Symbol(c): isBoolean
+}))"
+`;
+
+snapshot[`isStrictOf<T> > with symbol properties > returns properly named predicate function 2`] = `
+"isStrictOf(isObjectOf({
+  a: isStrictOf(isObjectOf({
+    Symbol(b): isStrictOf(isObjectOf({Symbol(c): isBoolean}))
+  }))
+}))"
+`;

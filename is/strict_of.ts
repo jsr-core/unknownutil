@@ -40,15 +40,18 @@ export function isStrictOf<
 ):
   & Predicate<T>
   & IsPredObj<P> {
-  const s = new Set(Object.keys(pred.predObj));
+  const s = new Set(getKeys(pred.predObj));
   return rewriteName(
     (x: unknown): x is T => {
       if (!pred(x)) return false;
-      // deno-lint-ignore no-explicit-any
-      const ks = Object.keys(x as any);
-      return ks.length <= s.size && ks.every((k) => s.has(k));
+      const ks = new Set(getKeys(x));
+      return ks.difference(s).size === 0;
     },
     "isStrictOf",
     pred,
   ) as Predicate<T> & IsPredObj<P>;
+}
+
+function getKeys(o: Record<PropertyKey, unknown>) {
+  return [...Object.keys(o), ...Object.getOwnPropertySymbols(o)];
 }
