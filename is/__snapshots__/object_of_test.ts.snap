@@ -17,3 +17,19 @@ snapshot[`isObjectOf<T> > returns properly named predicate function 3`] = `
   })
 })"
 `;
+
+snapshot[`isObjectOf<T> > with symbol properties > returns properly named predicate function 1`] = `
+"isObjectOf({
+  a: isNumber,
+  b: isString,
+  Symbol(s): isBoolean
+})"
+`;
+
+snapshot[`isObjectOf<T> > with symbol properties > returns properly named predicate function 2`] = `
+"isObjectOf({
+  Symbol(a): isObjectOf({
+    Symbol(b): isObjectOf({Symbol(c): isBoolean})
+  })
+})"
+`;

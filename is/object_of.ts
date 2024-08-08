@@ -48,7 +48,10 @@ export function isObjectOf<
           Array.isArray(x)
         ) return false;
         // Check each values
-        return Object.keys(predObj).every((k) => predObj[k]((x as T)[k]));
+        return [
+          ...Object.keys(predObj),
+          ...Object.getOwnPropertySymbols(predObj),
+        ].every((k) => predObj[k]((x as T)[k]));
       },
       "isObjectOf",
       predObj,
