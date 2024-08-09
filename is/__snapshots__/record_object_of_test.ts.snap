@@ -7,3 +7,7 @@ snapshot[`isRecordObjectOf<T> > returns properly named predicate function 2`] = 
 snapshot[`isRecordObjectOf<T, K> > returns properly named predicate function 1`] = `"isRecordObjectOf(isNumber, isString)"`;
 
 snapshot[`isRecordObjectOf<T, K> > returns properly named predicate function 2`] = `"isRecordObjectOf((anonymous), isString)"`;
+
+snapshot[`isRecordObjectOf<T, K> > with symbol properties > returns properly named predicate function 1`] = `"isRecordObjectOf(isNumber, isSymbol)"`;
+
+snapshot[`isRecordObjectOf<T, K> > with symbol properties > returns properly named predicate function 2`] = `"isRecordObjectOf((anonymous), isSymbol)"`;
