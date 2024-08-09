@@ -29,6 +29,29 @@ Deno.test("isRecordOf<T>", async (t) => {
       assertType<Equal<typeof a, Record<PropertyKey, number>>>(true);
     }
   });
+
+  await t.step("checks only object's own properties", async (t) => {
+    await t.step("returns true on T record", () => {
+      assertEquals(
+        isRecordOf(is.Number)(
+          Object.assign(Object.create({ p: "ignore" }), { a: 0 }),
+        ),
+        true,
+      );
+      assertEquals(
+        isRecordOf(is.String)(
+          Object.assign(Object.create({ p: 0 /* ignore */ }), { a: "a" }),
+        ),
+        true,
+      );
+      assertEquals(
+        isRecordOf(is.Boolean)(
+          Object.assign(Object.create({ p: "ignore" }), { a: true }),
+        ),
+        true,
+      );
+    });
+  });
 });
 
 Deno.test("isRecordOf<T, K>", async (t) => {
@@ -63,5 +86,35 @@ Deno.test("isRecordOf<T, K>", async (t) => {
     if (isRecordOf(is.Number, is.String)(a)) {
       assertType<Equal<typeof a, Record<string, number>>>(true);
     }
+  });
+
+  await t.step("checks only object's own properties", async (t) => {
+    await t.step("returns true on T record", () => {
+      assertEquals(
+        isRecordOf(is.Number, is.String)(
+          Object.assign(Object.create({ p: "ignore" }), { a: 0 }),
+        ),
+        true,
+      );
+      assertEquals(
+        isRecordOf(is.String, is.String)(
+          Object.assign(Object.create({ p: 0 /* ignore */ }), { a: "a" }),
+        ),
+        true,
+      );
+      assertEquals(
+        isRecordOf(is.Boolean, is.String)(
+          Object.assign(Object.create({ p: "ignore" }), { a: true }),
+        ),
+        true,
+      );
+      assertEquals(
+        isRecordOf(is.String, is.Number)(
+          Object.assign(Object.create({ p: "ignore" }), {/* empty */}),
+        ),
+        true,
+        "No own properties",
+      );
+    });
   });
 });
