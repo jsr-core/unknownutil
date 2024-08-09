@@ -23,3 +23,27 @@ snapshot[`isRequiredOf<T> > returns properly named predicate function 2`] = `
   d: asReadonly(isString)
 })"
 `;
+
+snapshot[`isRequiredOf<T> > with symbol properties > returns properly named predicate function 1`] = `
+"isObjectOf({
+  a: isNumber,
+  Symbol(b): isUnionOf([
+    isString,
+    isUndefined
+  ]),
+  Symbol(c): isBoolean,
+  Symbol(d): asReadonly(isString)
+})"
+`;
+
+snapshot[`isRequiredOf<T> > with symbol properties > returns properly named predicate function 2`] = `
+"isObjectOf({
+  a: isNumber,
+  Symbol(b): isUnionOf([
+    isString,
+    isUndefined
+  ]),
+  Symbol(c): isBoolean,
+  Symbol(d): asReadonly(isString)
+})"
+`;

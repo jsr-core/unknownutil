@@ -152,4 +152,120 @@ Deno.test("isObjectOf<T>", async (t) => {
       });
     },
   );
+
+  await t.step("with symbol properties", async (t) => {
+    const s = Symbol("s");
+    const predObj = {
+      a: is.Number,
+      b: is.String,
+      [s]: is.Boolean,
+    };
+
+    await t.step("returns properly named predicate function", async (t) => {
+      await assertSnapshot(t, isObjectOf(predObj).name);
+      await assertSnapshot(
+        t,
+        isObjectOf({
+          [Symbol("a")]: isObjectOf({
+            [Symbol("b")]: isObjectOf({ [Symbol("c")]: is.Boolean }),
+          }),
+        }).name,
+      );
+    });
+
+    await t.step("returns true on T object", () => {
+      assertEquals(isObjectOf(predObj)({ a: 0, b: "a", [s]: true }), true);
+      assertEquals(
+        isObjectOf(predObj)({ a: 0, b: "a", [s]: true, d: "ignored" }),
+        true,
+        "Undefined properties are ignored",
+      );
+      assertEquals(
+        isObjectOf(predObj)({
+          a: 0,
+          b: "a",
+          [s]: true,
+          [Symbol("t")]: "ignored",
+        }),
+        true,
+        "Undefined symbol properties are ignored",
+      );
+      assertEquals(
+        isObjectOf(predObj)(
+          Object.assign(() => void 0, { a: 0, b: "a", [s]: true }),
+        ),
+        true,
+        "Function are treated as an object",
+      );
+    });
+
+    await t.step("returns false on non T object", () => {
+      assertEquals(isObjectOf(predObj)("a"), false, "Value is not an object");
+      assertEquals(
+        isObjectOf(predObj)({ a: 0, b: "a", [s]: "" }),
+        false,
+        "Object have a different type symbol property",
+      );
+      assertEquals(
+        isObjectOf(predObj)({ a: 0, b: "a" }),
+        false,
+        "Object does not have symbol property",
+      );
+      const arrayWithSymbolProp = ["ignored"];
+      // deno-lint-ignore no-explicit-any
+      (arrayWithSymbolProp as any)[s] = true;
+      assertEquals(
+        isObjectOf({ [s]: is.Boolean })(arrayWithSymbolProp),
+        false,
+        "Value is not an object",
+      );
+    });
+
+    await t.step("predicated type is correct", () => {
+      const a = Symbol("a");
+      const b = Symbol("b");
+      const c = Symbol("c");
+      const d = Symbol("d");
+      const e = Symbol("e");
+      const f = Symbol("f");
+      const predObj2 = {
+        [a]: as.Readonly(as.Optional(is.String)),
+        [b]: as.Optional(as.Readonly(is.String)),
+        [c]: as.Readonly(is.String),
+        [d]: as.Optional(is.String),
+        [e]: as.Unreadonly(as.Unoptional(as.Readonly(as.Optional(is.String)))),
+        [f]: as.Unoptional(as.Unreadonly(as.Optional(as.Readonly(is.String)))),
+      };
+      const x: unknown = {};
+
+      if (isObjectOf(predObj)(x)) {
+        assertType<
+          Equal<
+            typeof x,
+            {
+              a: number;
+              b: string;
+              [s]: boolean;
+            }
+          >
+        >(true);
+      }
+
+      if (isObjectOf(predObj2)(x)) {
+        assertType<
+          Equal<
+            typeof x,
+            {
+              readonly [a]?: string;
+              readonly [b]?: string;
+              readonly [c]: string;
+              [d]?: string;
+              [e]: string;
+              [f]: string;
+            }
+          >
+        >(true);
+      }
+    });
+  });
 });

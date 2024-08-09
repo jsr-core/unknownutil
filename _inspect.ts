@@ -44,9 +44,8 @@ function inspectRecord(
   options: InspectOptions,
 ): string {
   const { threshold = defaultThreshold } = options;
-  const vs = Object.entries(value).map(([k, v]) =>
-    `${k}: ${inspect(v, options)}`
-  );
+  const vs = [...Object.keys(value), ...Object.getOwnPropertySymbols(value)]
+    .map((k) => `${k.toString()}: ${inspect(value[k], options)}`);
   const s = vs.join(", ");
   if (s.length <= threshold) return `{${s}}`;
   const m = vs.join(",\n");

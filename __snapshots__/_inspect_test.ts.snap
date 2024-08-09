@@ -30,6 +30,24 @@ snapshot[`inspect > record 3`] = `
 
 snapshot[`inspect > record 4`] = `"{a: {b: {c: 0}}}"`;
 
+snapshot[`inspect > record 5`] = `"{Symbol(a): 0}"`;
+
+snapshot[`inspect > record 6`] = `
+"{
+  a: 0,
+  c: true,
+  Symbol(b): 1
+}"
+`;
+
+snapshot[`inspect > record 7`] = `
+"{
+  Symbol(a): {
+    Symbol(b): {Symbol(c): 0}
+  }
+}"
+`;
+
 snapshot[`inspect > function 1`] = `"inspect"`;
 
 snapshot[`inspect > function 2`] = `"(anonymous)"`;

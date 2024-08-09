@@ -43,11 +43,11 @@ export function isOmitOf<
 ):
   & Predicate<FlatType<Omit<T, K>>>
   & IsPredObj<P> {
-  const s = new Set(keys);
-  const predObj = Object.fromEntries(
-    Object.entries(pred.predObj).filter(([k]) => !s.has(k as K)),
-  );
-  return isObjectOf(predObj) as
+  const predObj = { ...pred.predObj };
+  for (const key of keys) {
+    delete predObj[key];
+  }
+  return isObjectOf(predObj as Record<PropertyKey, Predicate<unknown>>) as
     & Predicate<FlatType<Omit<T, K>>>
     & IsPredObj<P>;
 }

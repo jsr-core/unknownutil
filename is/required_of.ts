@@ -42,9 +42,14 @@ export function isRequiredOf<
 ):
   & Predicate<FlatType<Required<T>>>
   & IsPredObj<P> {
-  const predObj = Object.fromEntries(
-    Object.entries(pred.predObj).map(([k, v]) => [k, asUnoptional(v)]),
-  );
+  const keys = [
+    ...Object.keys(pred.predObj),
+    ...Object.getOwnPropertySymbols(pred.predObj),
+  ];
+  const predObj: Record<PropertyKey, Predicate<unknown>> = { ...pred.predObj };
+  for (const key of keys) {
+    predObj[key] = asUnoptional(predObj[key]);
+  }
   return isObjectOf(predObj) as
     & Predicate<FlatType<Required<T>>>
     & IsPredObj<P>;

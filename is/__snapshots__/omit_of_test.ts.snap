@@ -8,3 +8,12 @@ snapshot[`isOmitOf<T, K> > returns properly named predicate function 1`] = `
 `;
 
 snapshot[`isOmitOf<T, K> > returns properly named predicate function 2`] = `"isObjectOf({a: isNumber})"`;
+
+snapshot[`isOmitOf<T, K> > with symbol properties > returns properly named predicate function 1`] = `
+"isObjectOf({
+  a: isNumber,
+  Symbol(c): isBoolean
+})"
+`;
+
+snapshot[`isOmitOf<T, K> > with symbol properties > returns properly named predicate function 2`] = `"isObjectOf({a: isNumber})"`;

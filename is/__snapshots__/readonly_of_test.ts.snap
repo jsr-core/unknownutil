@@ -45,3 +45,25 @@ snapshot[`isReadonlyOf<T> > with isTupleOf > returns properly named predicate fu
 snapshot[`isReadonlyOf<T> > with isUniformTupleOf > returns properly named predicate function 1`] = `"isReadonlyOf(isUniformTupleOf(3, isNumber))"`;
 
 snapshot[`isReadonlyOf<T> > with isUniformTupleOf > returns properly named predicate function 2`] = `"isReadonlyOf(isUniformTupleOf(3, isNumber))"`;
+
+snapshot[`isReadonlyOf<T> > with symbol properties > with isObjectOf > returns properly named predicate function 1`] = `
+"isReadonlyOf(isObjectOf({
+  a: isNumber,
+  Symbol(b): isUnionOf([
+    isString,
+    isUndefined
+  ]),
+  Symbol(c): asReadonly(isBoolean)
+}))"
+`;
+
+snapshot[`isReadonlyOf<T> > with symbol properties > with isObjectOf > returns properly named predicate function 2`] = `
+"isReadonlyOf(isObjectOf({
+  a: isNumber,
+  Symbol(b): isUnionOf([
+    isString,
+    isUndefined
+  ]),
+  Symbol(c): asReadonly(isBoolean)
+}))"
+`;
