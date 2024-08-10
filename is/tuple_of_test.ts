@@ -43,7 +43,7 @@ Deno.test("isTupleOf<T>", async (t) => {
   });
 });
 
-Deno.test("isTupleOf<T, E>", async (t) => {
+Deno.test("isTupleOf<T, R>", async (t) => {
   await t.step("returns properly named predicate function", async (t) => {
     await assertSnapshot(
       t,
@@ -67,27 +67,27 @@ Deno.test("isTupleOf<T, E>", async (t) => {
 
   await t.step("returns true on T tuple", () => {
     const predTup = [is.Number, is.String, is.Boolean] as const;
-    const predElse = is.ArrayOf(is.Number);
-    assertEquals(isTupleOf(predTup, predElse)([0, "a", true, 0, 1, 2]), true);
+    const predRest = is.ArrayOf(is.Number);
+    assertEquals(isTupleOf(predTup, predRest)([0, "a", true, 0, 1, 2]), true);
   });
 
   await t.step("returns false on non T tuple", () => {
     const predTup = [is.Number, is.String, is.Boolean] as const;
-    const predElse = is.ArrayOf(is.String);
-    assertEquals(isTupleOf(predTup, predElse)([0, 1, 2, 0, 1, 2]), false);
-    assertEquals(isTupleOf(predTup, predElse)([0, "a", 0, 1, 2]), false);
+    const predRest = is.ArrayOf(is.String);
+    assertEquals(isTupleOf(predTup, predRest)([0, 1, 2, 0, 1, 2]), false);
+    assertEquals(isTupleOf(predTup, predRest)([0, "a", 0, 1, 2]), false);
     assertEquals(
-      isTupleOf(predTup, predElse)([0, "a", true, 0, 0, 1, 2]),
+      isTupleOf(predTup, predRest)([0, "a", true, 0, 0, 1, 2]),
       false,
     );
-    assertEquals(isTupleOf(predTup, predElse)([0, "a", true, 0, 1, 2]), false);
+    assertEquals(isTupleOf(predTup, predRest)([0, "a", true, 0, 1, 2]), false);
   });
 
   await t.step("predicated type is correct", () => {
     const predTup = [is.Number, is.String, is.Boolean] as const;
-    const predElse = is.ArrayOf(is.Number);
+    const predRest = is.ArrayOf(is.Number);
     const a: unknown = [0, "a", true, 0, 1, 2];
-    if (isTupleOf(predTup, predElse)(a)) {
+    if (isTupleOf(predTup, predRest)(a)) {
       assertType<Equal<typeof a, [number, string, boolean, ...number[]]>>(
         true,
       );

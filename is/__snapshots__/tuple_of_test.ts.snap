@@ -22,7 +22,7 @@ snapshot[`isTupleOf<T> > returns properly named predicate function 3`] = `
 ])"
 `;
 
-snapshot[`isTupleOf<T, E> > returns properly named predicate function 1`] = `
+snapshot[`isTupleOf<T, R> > returns properly named predicate function 1`] = `
 "isTupleOf([
   isNumber,
   isString,
@@ -30,9 +30,9 @@ snapshot[`isTupleOf<T, E> > returns properly named predicate function 1`] = `
 ], isArray)"
 `;
 
-snapshot[`isTupleOf<T, E> > returns properly named predicate function 2`] = `"isTupleOf([(anonymous)], isArrayOf(isString))"`;
+snapshot[`isTupleOf<T, R> > returns properly named predicate function 2`] = `"isTupleOf([(anonymous)], isArrayOf(isString))"`;
 
-snapshot[`isTupleOf<T, E> > returns properly named predicate function 3`] = `
+snapshot[`isTupleOf<T, R> > returns properly named predicate function 3`] = `
 "isTupleOf([
   isTupleOf([
     isTupleOf([
