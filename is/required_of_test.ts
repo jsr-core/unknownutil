@@ -19,24 +19,30 @@ Deno.test("isRequiredOf<T>", async (t) => {
   });
 
   await t.step("returns true on Required<T> object", () => {
+    assertEquals(isRequiredOf(pred)({ a: 0, b: "a", c: true, d: "a" }), true);
     assertEquals(
-      isRequiredOf(pred)({ a: undefined, b: undefined, c: undefined }),
-      false,
-      "Object does not have required properties",
-    );
-    assertEquals(
-      isRequiredOf(pred)({}),
-      false,
-      "Object does not have required properties",
+      isRequiredOf(pred)({ a: 0, b: undefined, c: true, d: "a" }),
+      true,
+      "Union type contains 'undefined'",
     );
   });
 
   await t.step("returns false on non Required<T> object", () => {
     assertEquals(isRequiredOf(pred)("a"), false, "Value is not an object");
     assertEquals(
-      isRequiredOf(pred)({ a: 0, b: "a", c: "" }),
+      isRequiredOf(pred)({ a: 0, b: "a", c: 0, d: "a" }),
       false,
       "Object have a different type property",
+    );
+    assertEquals(
+      isRequiredOf(pred)({ a: 0, b: "a", d: "a" }),
+      false,
+      "Object does not have required properties",
+    );
+    assertEquals(
+      isRequiredOf(pred)({ a: 0, b: "a", c: undefined, d: "a" }),
+      false,
+      "Optional property that converted to required is 'undefined'",
     );
   });
 
@@ -69,23 +75,32 @@ Deno.test("isRequiredOf<T>", async (t) => {
 
     await t.step("returns true on Required<T> object", () => {
       assertEquals(
-        isRequiredOf(pred)({ a: undefined, [b]: undefined, [c]: undefined }),
-        false,
-        "Object does not have required properties",
+        isRequiredOf(pred)({ a: 0, [b]: "a", [c]: true, [d]: "a" }),
+        true,
       );
       assertEquals(
-        isRequiredOf(pred)({}),
-        false,
-        "Object does not have required properties",
+        isRequiredOf(pred)({ a: 0, [b]: undefined, [c]: true, [d]: "a" }),
+        true,
+        "Union type contains 'undefined'",
       );
     });
 
     await t.step("returns false on non Required<T> object", () => {
       assertEquals(isRequiredOf(pred)("a"), false, "Value is not an object");
       assertEquals(
-        isRequiredOf(pred)({ a: 0, [b]: "a", [c]: "" }),
+        isRequiredOf(pred)({ a: 0, [b]: "a", [c]: 0, [d]: "a" }),
         false,
         "Object have a different type property",
+      );
+      assertEquals(
+        isRequiredOf(pred)({ a: 0, [b]: "a", [d]: "a" }),
+        false,
+        "Object does not have required properties",
+      );
+      assertEquals(
+        isRequiredOf(pred)({ a: 0, [b]: "a", [c]: undefined, [d]: "a" }),
+        false,
+        "Optional property that converted to required is 'undefined'",
       );
     });
 
