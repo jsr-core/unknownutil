@@ -3,7 +3,7 @@ import type { Predicate, PredicateType } from "../type.ts";
 import { isArray } from "./array.ts";
 
 /**
- * Return a type predicate function that returns `true` if the type of `x` is `TupleOf<T>` or `TupleOf<T, E>`.
+ * Return a type predicate function that returns `true` if the type of `x` is `TupleOf<T>` or `TupleOf<T, R>`.
  *
  * Use {@linkcode isUniformTupleOf} to check if the type of `x` is a tuple of uniform types.
  *
@@ -19,7 +19,7 @@ import { isArray } from "./array.ts";
  * }
  * ```
  *
- * With `predElse`:
+ * With `predRest` to represent rest elements:
  *
  * ```ts
  * import { is } from "@core/unknownutil";
@@ -56,20 +56,20 @@ export function isTupleOf<
 
 export function isTupleOf<
   T extends readonly [Predicate<unknown>, ...Predicate<unknown>[]],
-  E extends Predicate<unknown[]>,
+  R extends Predicate<unknown[]>,
 >(
   predTup: T,
-  predElse: E,
-): Predicate<[...TupleOf<T>, ...PredicateType<E>]>;
+  predRest: R,
+): Predicate<[...TupleOf<T>, ...PredicateType<R>]>;
 
 export function isTupleOf<
   T extends readonly [Predicate<unknown>, ...Predicate<unknown>[]],
-  E extends Predicate<unknown[]>,
+  R extends Predicate<unknown[]>,
 >(
   predTup: T,
-  predElse?: E,
-): Predicate<TupleOf<T> | [...TupleOf<T>, ...PredicateType<E>]> {
-  if (!predElse) {
+  predRest?: R,
+): Predicate<TupleOf<T> | [...TupleOf<T>, ...PredicateType<R>]> {
+  if (!predRest) {
     return rewriteName(
       (x: unknown): x is TupleOf<T> => {
         if (!isArray(x) || x.length !== predTup.length) {
@@ -82,17 +82,17 @@ export function isTupleOf<
     );
   } else {
     return rewriteName(
-      (x: unknown): x is [...TupleOf<T>, ...PredicateType<E>] => {
+      (x: unknown): x is [...TupleOf<T>, ...PredicateType<R>] => {
         if (!isArray(x) || x.length < predTup.length) {
           return false;
         }
         const head = x.slice(0, predTup.length);
         const tail = x.slice(predTup.length);
-        return predTup.every((pred, i) => pred(head[i])) && predElse(tail);
+        return predTup.every((pred, i) => pred(head[i])) && predRest(tail);
       },
       "isTupleOf",
       predTup,
-      predElse,
+      predRest,
     );
   }
 }
