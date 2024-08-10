@@ -39,6 +39,10 @@ import type { Predicate } from "../type.ts";
 export function isObjectOf<
   T extends Record<PropertyKey, Predicate<unknown>>,
 >(predObj: T): Predicate<ObjectOf<T>> & IsPredObj<T> {
+  const preds: readonly [key: PropertyKey, pred: Predicate<unknown>][] = [
+    ...Object.keys(predObj),
+    ...Object.getOwnPropertySymbols(predObj),
+  ].map((k) => [k, predObj[k]]);
   return annotate(
     rewriteName(
       (x: unknown): x is ObjectOf<T> => {
@@ -47,11 +51,7 @@ export function isObjectOf<
           typeof x !== "object" && typeof x !== "function" ||
           Array.isArray(x)
         ) return false;
-        // Check each values
-        return [
-          ...Object.keys(predObj),
-          ...Object.getOwnPropertySymbols(predObj),
-        ].every((k) => predObj[k]((x as T)[k]));
+        return preds.every(([k, pred]) => pred((x as T)[k]));
       },
       "isObjectOf",
       predObj,
