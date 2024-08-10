@@ -28,7 +28,7 @@ import { isArray } from "./array.ts";
  * }
  * ```
  *
- * With `predElse`:
+ * With `predRest` to represent rest parameters:
  *
  * ```ts
  * import { as, is } from "@core/unknownutil";
@@ -71,18 +71,18 @@ export function isParametersOf<
   E extends Predicate<unknown[]>,
 >(
   predTup: T,
-  predElse: E,
+  predRest: E,
 ): Predicate<[...ParametersOf<T>, ...PredicateType<E>]>;
 export function isParametersOf<
   T extends readonly [...Predicate<unknown>[]],
   E extends Predicate<unknown[]>,
 >(
   predTup: T,
-  predElse?: E,
+  predRest?: E,
 ): Predicate<ParametersOf<T> | [...ParametersOf<T>, ...PredicateType<E>]> {
   const requiresLength = 1 +
     predTup.findLastIndex((pred) => !hasOptional(pred));
-  if (!predElse) {
+  if (!predRest) {
     return rewriteName(
       (x: unknown): x is ParametersOf<T> => {
         if (
@@ -103,11 +103,11 @@ export function isParametersOf<
         }
         const head = x.slice(0, predTup.length);
         const tail = x.slice(predTup.length);
-        return predTup.every((pred, i) => pred(head[i])) && predElse(tail);
+        return predTup.every((pred, i) => pred(head[i])) && predRest(tail);
       },
       "isParametersOf",
       predTup,
-      predElse,
+      predRest,
     );
   }
 }

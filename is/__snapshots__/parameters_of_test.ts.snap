@@ -24,7 +24,7 @@ snapshot[`isParametersOf<T> > returns properly named predicate function 4`] = `
 ])"
 `;
 
-snapshot[`isParametersOf<T, E> > returns properly named predicate function 1`] = `
+snapshot[`isParametersOf<T, R> > returns properly named predicate function 1`] = `
 "isParametersOf([
   isNumber,
   isString,
@@ -32,11 +32,11 @@ snapshot[`isParametersOf<T, E> > returns properly named predicate function 1`] =
 ], isArray)"
 `;
 
-snapshot[`isParametersOf<T, E> > returns properly named predicate function 2`] = `"isParametersOf([(anonymous)], isArrayOf(isString))"`;
+snapshot[`isParametersOf<T, R> > returns properly named predicate function 2`] = `"isParametersOf([(anonymous)], isArrayOf(isString))"`;
 
-snapshot[`isParametersOf<T, E> > returns properly named predicate function 3`] = `"isParametersOf([], isArrayOf(isString))"`;
+snapshot[`isParametersOf<T, R> > returns properly named predicate function 3`] = `"isParametersOf([], isArrayOf(isString))"`;
 
-snapshot[`isParametersOf<T, E> > returns properly named predicate function 4`] = `
+snapshot[`isParametersOf<T, R> > returns properly named predicate function 4`] = `
 "isParametersOf([
   isParametersOf([
     isParametersOf([
