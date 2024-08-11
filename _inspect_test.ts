@@ -25,6 +25,12 @@ Deno.test("inspect", async (t) => {
     await assertSnapshot(t, inspect({ a: 0, b: 1, c: 2 }));
     await assertSnapshot(t, inspect({ a: "a", b: 1, c: true }));
     await assertSnapshot(t, inspect({ a: { b: { c: 0 } } }));
+    await assertSnapshot(t, inspect({ [Symbol("a")]: 0 }));
+    await assertSnapshot(t, inspect({ a: 0, [Symbol("b")]: 1, c: true }));
+    await assertSnapshot(
+      t,
+      inspect({ [Symbol("a")]: { [Symbol("b")]: { [Symbol("c")]: 0 } } }),
+    );
   });
   await t.step("function", async (t) => {
     await assertSnapshot(t, inspect(inspect));

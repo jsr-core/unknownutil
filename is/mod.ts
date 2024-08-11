@@ -455,7 +455,7 @@ export const is: {
    * }
    * ```
    *
-   * With `predElse`:
+   * With `predRest` to represent rest parameters:
    *
    * ```ts
    * import { as, is } from "@core/unknownutil";
@@ -823,7 +823,7 @@ export const is: {
    */
   SyncFunction: typeof isSyncFunction;
   /**
-   * Return a type predicate function that returns `true` if the type of `x` is `TupleOf<T>` or `TupleOf<T, E>`.
+   * Return a type predicate function that returns `true` if the type of `x` is `TupleOf<T>` or `TupleOf<T, R>`.
    *
    * Use {@linkcode isUniformTupleOf} to check if the type of `x` is a tuple of uniform types.
    *
@@ -839,7 +839,7 @@ export const is: {
    * }
    * ```
    *
-   * With `predElse`:
+   * With `predRest` to represent rest elements:
    *
    * ```ts
    * import { is } from "@core/unknownutil";
