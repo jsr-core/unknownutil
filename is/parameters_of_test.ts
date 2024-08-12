@@ -35,11 +35,13 @@ Deno.test("isParametersOf<T>", async (t) => {
     const predTup = [is.Number, is.String, as.Optional(is.Boolean)] as const;
     assertEquals(isParametersOf(predTup)([0, "a", true]), true);
     assertEquals(isParametersOf(predTup)([0, "a"]), true);
+    assertEquals(isParametersOf(predTup)([0, "a", undefined]), true);
   });
 
   await t.step("returns false on non T tuple", () => {
     const predTup = [is.Number, is.String, as.Optional(is.Boolean)] as const;
     assertEquals(isParametersOf(predTup)([0, 1, 2]), false);
+    assertEquals(isParametersOf(predTup)([0]), false);
     assertEquals(isParametersOf(predTup)([0, "a", true, 0]), false);
   });
 
@@ -107,17 +109,42 @@ Deno.test("isParametersOf<T, R>", async (t) => {
   await t.step("returns false on non T tuple", () => {
     const predTup = [is.Number, is.String, as.Optional(is.Boolean)] as const;
     const predRest = is.ArrayOf(is.String);
-    assertEquals(isParametersOf(predTup, predRest)([0, 1, 2, 0, 1, 2]), false);
-    assertEquals(isParametersOf(predTup, predRest)([0, "a", 0, 1, 2]), false);
+    assertEquals(isParametersOf(predTup, predRest)("a"), false, "Not an array");
+    assertEquals(
+      isParametersOf(predTup, predRest)([0]),
+      false,
+      "Less than `predTup.length` - optional-count",
+    );
+    assertEquals(
+      isParametersOf(predTup, predRest)([0, 1, 2]),
+      false,
+      "Not match `predTup` and no rest elements",
+    );
+    assertEquals(
+      isParametersOf(predTup, predRest)([0, 1, 2, 0, 1, 2]),
+      false,
+      "Not match `predTup` and `predRest`",
+    );
     assertEquals(
       isParametersOf(predTup, predRest)([0, "a", true, 0, 1, 2]),
       false,
+      "Match `predTup` but not match `predRest`",
     );
     assertEquals(
       isParametersOf(predTup, predRest)([0, "a", undefined, 0, 1, 2]),
       false,
+      "Match `predTup` but not match `predRest`",
     );
-    assertEquals(isParametersOf(predTup, predRest)([0, "a", "b"]), false);
+    assertEquals(
+      isParametersOf(predTup, predRest)([0, "a", "b", "a", "b", "c"]),
+      false,
+      "Match `predRest` but not match `predTup`",
+    );
+    assertEquals(
+      isParametersOf(predTup, predRest)([0, "a", "a", "b", "c"]),
+      false,
+      "Match `predRest` but no optional parameters",
+    );
   });
 
   await t.step("predicated type is correct", () => {
