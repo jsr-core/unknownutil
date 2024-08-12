@@ -2,7 +2,8 @@ import { assertEquals } from "@std/assert";
 import { assertType } from "@std/testing/types";
 import { type Equal, testWithExamples } from "../_testutil.ts";
 import { is } from "../is/mod.ts";
-import { asReadonly, asUnreadonly } from "./readonly.ts";
+import type { AsReadonly } from "../_annotation.ts";
+import { asReadonly, asUnreadonly, hasReadonly } from "./readonly.ts";
 
 Deno.test("asReadonly<T>", async (t) => {
   await t.step("returns a property named predicate function", () => {
@@ -153,5 +154,25 @@ Deno.test("asUnreadonly<T>", async (t) => {
         );
       }
     });
+  });
+});
+
+Deno.test("hasReadonly<P>", async (t) => {
+  await t.step("returns true on AsReadonly<T> predicate", () => {
+    const pred = asReadonly(is.Number);
+    assertEquals(hasReadonly(pred), true);
+  });
+
+  await t.step("returns true on non AsReadonly<T> predicate", () => {
+    const pred = is.Number;
+    assertEquals(hasReadonly(pred), false);
+  });
+
+  await t.step("predicated type is correct", () => {
+    const pred = asReadonly(is.Number);
+    type P = typeof pred;
+    if (hasReadonly(pred)) {
+      assertType<Equal<typeof pred, P & AsReadonly>>(true);
+    }
   });
 });
