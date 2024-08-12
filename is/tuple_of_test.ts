@@ -68,19 +68,39 @@ Deno.test("isTupleOf<T, R>", async (t) => {
   await t.step("returns true on T tuple", () => {
     const predTup = [is.Number, is.String, is.Boolean] as const;
     const predRest = is.ArrayOf(is.Number);
+    assertEquals(isTupleOf(predTup, predRest)([0, "a", true]), true);
     assertEquals(isTupleOf(predTup, predRest)([0, "a", true, 0, 1, 2]), true);
   });
 
   await t.step("returns false on non T tuple", () => {
     const predTup = [is.Number, is.String, is.Boolean] as const;
     const predRest = is.ArrayOf(is.String);
-    assertEquals(isTupleOf(predTup, predRest)([0, 1, 2, 0, 1, 2]), false);
-    assertEquals(isTupleOf(predTup, predRest)([0, "a", 0, 1, 2]), false);
+    assertEquals(isTupleOf(predTup, predRest)("a"), false, "Not an array");
     assertEquals(
-      isTupleOf(predTup, predRest)([0, "a", true, 0, 0, 1, 2]),
+      isTupleOf(predTup, predRest)([0, "a"]),
       false,
+      "Less than `predTup.length`",
     );
-    assertEquals(isTupleOf(predTup, predRest)([0, "a", true, 0, 1, 2]), false);
+    assertEquals(
+      isTupleOf(predTup, predRest)([0, 1, 2]),
+      false,
+      "Not match `predTup` and no rest elements",
+    );
+    assertEquals(
+      isTupleOf(predTup, predRest)([0, 1, 2, 0, 1, 2]),
+      false,
+      "Not match `predTup` and `predRest`",
+    );
+    assertEquals(
+      isTupleOf(predTup, predRest)([0, "a", true, 0, 1, 2]),
+      false,
+      "Match `predTup` but not match `predRest`",
+    );
+    assertEquals(
+      isTupleOf(predTup, predRest)([0, "a", "b", "a", "b", "c"]),
+      false,
+      "Match `predRest` but not match `predTup`",
+    );
   });
 
   await t.step("predicated type is correct", () => {
