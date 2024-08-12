@@ -86,9 +86,8 @@ export function isTupleOf<
         if (!isArray(x) || x.length < predTup.length) {
           return false;
         }
-        const head = x.slice(0, predTup.length);
-        const tail = x.slice(predTup.length);
-        return predTup.every((pred, i) => pred(head[i])) && predRest(tail);
+        const rest = x.slice(predTup.length);
+        return predTup.every((pred, i) => pred(x[i])) && predRest(rest);
       },
       "isTupleOf",
       predTup,
