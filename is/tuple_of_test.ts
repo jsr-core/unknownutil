@@ -114,3 +114,118 @@ Deno.test("isTupleOf<T, R>", async (t) => {
     }
   });
 });
+
+Deno.test("isTupleOf<T, R, L>", async (t) => {
+  await t.step("returns properly named predicate function", async (t) => {
+    await assertSnapshot(
+      t,
+      isTupleOf([is.Number, is.String, is.Boolean], is.Array, [
+        is.Number,
+        is.String,
+        is.Boolean,
+      ]).name,
+    );
+    await assertSnapshot(
+      t,
+      isTupleOf([(_x): _x is string => false], is.ArrayOf(is.String), [
+        (_x): _x is string => false,
+      ])
+        .name,
+    );
+    await assertSnapshot(
+      t,
+      isTupleOf([
+        isTupleOf(
+          [isTupleOf([is.Number, is.String, is.Boolean], is.Array)],
+          is.Array,
+          [isTupleOf([is.Number, is.String, is.Boolean], is.Array)],
+        ),
+      ]).name,
+    );
+  });
+
+  await t.step("returns true on T tuple", () => {
+    const predTup = [is.Number, is.String, is.Boolean] as const;
+    const predRest = is.ArrayOf(is.Number);
+    const predTrail = [is.Number, is.String, is.Boolean] as const;
+    assertEquals(
+      isTupleOf(predTup, predRest, predTrail)([0, "a", true, 0, "a", true]),
+      true,
+    );
+    assertEquals(
+      isTupleOf(predTup, predRest, predTrail)(
+        [0, "a", true, 0, 1, 2, 0, "a", true],
+      ),
+      true,
+    );
+  });
+
+  await t.step("returns false on non T tuple", () => {
+    const predTup = [is.Number, is.String, is.Boolean] as const;
+    const predRest = is.ArrayOf(is.String);
+    const predTrail = [is.Number, is.String, is.Boolean] as const;
+    assertEquals(
+      isTupleOf(predTup, predRest, predTrail)("a"),
+      false,
+      "Not an array",
+    );
+    assertEquals(
+      isTupleOf(predTup, predRest, predTrail)([0, "a", true, 0, "a"]),
+      false,
+      "Less than `predTup.length + predTrail.length`",
+    );
+    assertEquals(
+      isTupleOf(predTup, predRest, predTrail)([0, 1, 2, 0, 1, 2, 0, 1, 2]),
+      false,
+      "Not match `predTup`, `predRest` and `predTrail`",
+    );
+    assertEquals(
+      isTupleOf(predTup, predRest, predTrail)([0, "a", true, 0, "a", "b"]),
+      false,
+      "Match `predTup` but not match `predTrail` and no rest elements",
+    );
+    assertEquals(
+      isTupleOf(predTup, predRest, predTrail)([0, "a", "b", 0, "a", true]),
+      false,
+      "Match `predTrail` but not match `predTup` and no rest elements",
+    );
+    assertEquals(
+      isTupleOf(predTup, predRest, predTrail)(
+        [0, "a", true, 0, 1, 2, 0, "a", true],
+      ),
+      false,
+      "Match `predTup` and `predTrail` but not match `predRest`",
+    );
+    assertEquals(
+      isTupleOf(predTup, predRest, predTrail)(
+        [0, "a", true, "a", "b", "c", 0, "a", "b"],
+      ),
+      false,
+      "Match `predTup` and `predRest` but not match `predTrail`",
+    );
+    assertEquals(
+      isTupleOf(predTup, predRest, predTrail)(
+        [0, "a", "b", "a", "b", "c", 0, "a", true],
+      ),
+      false,
+      "Match `predRest` and `predTrail` but not match `predTup`",
+    );
+  });
+
+  await t.step("predicated type is correct", () => {
+    const predTup = [is.Number, is.String, is.Boolean] as const;
+    const predRest = is.ArrayOf(is.Number);
+    const predTrail = [is.Number, is.String, is.Boolean] as const;
+    const a: unknown = [0, "a", true, 0, 1, 2, 0, "a", true];
+    if (isTupleOf(predTup, predRest, predTrail)(a)) {
+      assertType<
+        Equal<
+          typeof a,
+          [number, string, boolean, ...number[], number, string, boolean]
+        >
+      >(
+        true,
+      );
+    }
+  });
+});
