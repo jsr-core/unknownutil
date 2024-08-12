@@ -3,7 +3,7 @@ import type { Predicate, PredicateType } from "../type.ts";
 import { isArray } from "./array.ts";
 
 /**
- * Return a type predicate function that returns `true` if the type of `x` is `TupleOf<T>` or `TupleOf<T, R>`.
+ * Return a type predicate function that returns `true` if the type of `x` is `TupleOf<T>`.
  *
  * Use {@linkcode isUniformTupleOf} to check if the type of `x` is a tuple of uniform types.
  *
