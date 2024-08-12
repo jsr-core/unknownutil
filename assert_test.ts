@@ -30,6 +30,17 @@ Deno.test("assert", async (t) => {
   });
 
   await t.step(
+    "throws an `AssertError` on false predicate with an anonymous predicate",
+    () => {
+      assertThrows(
+        () => assert(x, (_x: unknown): _x is string => false),
+        AssertError,
+        `Expected a value that satisfies the predicate anonymous predicate, got symbol: undefined`,
+      );
+    },
+  );
+
+  await t.step(
     "throws an `AssertError` on false predicate with a custom name",
     () => {
       assertThrows(
