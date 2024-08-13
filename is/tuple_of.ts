@@ -126,9 +126,9 @@ export function isTupleOf<
         if (!isArray(x) || x.length < predTup.length) {
           return false;
         }
-        const rest = x.slice(0, -predTup.length);
-        const trail = x.slice(-predTup.length);
-        return predTup.every((pred, i) => pred(trail[i])) && predRest(rest);
+        const offset = x.length - predTup.length;
+        return predTup.every((pred, i) => pred(x[offset + i])) &&
+          predRest(x.slice(0, offset));
       },
       "isTupleOf",
       predRest,
@@ -154,8 +154,8 @@ export function isTupleOf<
         if (!isArray(x) || x.length < predTup.length) {
           return false;
         }
-        const rest = x.slice(predTup.length);
-        return predTup.every((pred, i) => pred(x[i])) && predRest(rest);
+        return predTup.every((pred, i) => pred(x[i])) &&
+          predRest(x.slice(predTup.length));
       },
       "isTupleOf",
       predTup,
@@ -169,11 +169,10 @@ export function isTupleOf<
         if (!isArray(x) || x.length < (predTup.length + predTrail.length)) {
           return false;
         }
-        const rest = x.slice(predTup.length, -predTrail.length);
-        const trail = x.slice(-predTrail.length);
+        const offset = x.length - predTrail.length;
         return predTup.every((pred, i) => pred(x[i])) &&
-          predTrail.every((pred, i) => pred(trail[i])) &&
-          predRest(rest);
+          predTrail.every((pred, i) => pred(x[offset + i])) &&
+          predRest(x.slice(predTup.length, offset));
       },
       "isTupleOf",
       predTup,
