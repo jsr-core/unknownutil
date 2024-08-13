@@ -23,7 +23,7 @@ export function isArrayOf<T>(
   pred: Predicate<T>,
 ): Predicate<T[]> {
   return rewriteName(
-    (x: unknown): x is T[] => isArray(x) && x.every(pred),
+    (x: unknown): x is T[] => isArray(x) && x.every((v) => pred(v)),
     "isArrayOf",
     pred,
   );
