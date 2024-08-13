@@ -3,7 +3,7 @@ import type { Predicate, PredicateType } from "../type.ts";
 import { isArray } from "./array.ts";
 
 /**
- * Return a type predicate function that returns `true` if the type of `x` is `TupleOf<T>` or `TupleOf<T, R>`.
+ * Return a type predicate function that returns `true` if the type of `x` is `TupleOf<T>`.
  *
  * Use {@linkcode isUniformTupleOf} to check if the type of `x` is a tuple of uniform types.
  *
@@ -19,7 +19,7 @@ import { isArray } from "./array.ts";
  * }
  * ```
  *
- * With `predRest` to represent rest elements:
+ * With `predRest` to represent rest elements or leading rest elements:
  *
  * ```ts
  * import { is } from "@core/unknownutil";
@@ -31,6 +31,30 @@ import { isArray } from "./array.ts";
  * const a: unknown = [0, "a", true, 0, 1, 2];
  * if (isMyType(a)) {
  *   const _: [number, string, boolean, ...number[]] = a;
+ * }
+ *
+ * const isMyTypeLeadingRest = is.TupleOf(
+ *   is.ArrayOf(is.Number),
+ *   [is.Number, is.String, is.Boolean],
+ * );
+ * if (isMyTypeLeadingRest(a)) {
+ *   const _: [...number[], number, string, boolean] = a;
+ * }
+ * ```
+ *
+ * With `predRest` and `predTrail` to represent middle rest elements:
+ *
+ * ```ts
+ * import { is } from "@core/unknownutil";
+ *
+ * const isMyType = is.TupleOf(
+ *   [is.Number, is.String, is.Boolean],
+ *   is.ArrayOf(is.Number),
+ *   [is.Number, is.String, is.Boolean],
+ * );
+ * const a: unknown = [0, "a", true, 0, 1, 2, 0, "a", true];
+ * if (isMyType(a)) {
+ *   const _: [number, string, boolean, ...number[], number, string, boolean] = a;
  * }
  * ```
  *
@@ -63,12 +87,56 @@ export function isTupleOf<
 ): Predicate<[...TupleOf<T>, ...PredicateType<R>]>;
 
 export function isTupleOf<
+  R extends Predicate<unknown[]>,
+  T extends readonly [Predicate<unknown>, ...Predicate<unknown>[]],
+>(
+  predRest: R,
+  predTup: T,
+): Predicate<[...PredicateType<R>, ...TupleOf<T>]>;
+
+export function isTupleOf<
   T extends readonly [Predicate<unknown>, ...Predicate<unknown>[]],
   R extends Predicate<unknown[]>,
+  L extends readonly [Predicate<unknown>, ...Predicate<unknown>[]],
 >(
   predTup: T,
-  predRest?: R,
-): Predicate<TupleOf<T> | [...TupleOf<T>, ...PredicateType<R>]> {
+  predRest: R,
+  predTrail: L,
+): Predicate<[...TupleOf<T>, ...PredicateType<R>, ...TupleOf<L>]>;
+
+export function isTupleOf<
+  T extends readonly [Predicate<unknown>, ...Predicate<unknown>[]],
+  R extends Predicate<unknown[]>,
+  L extends readonly [Predicate<unknown>, ...Predicate<unknown>[]],
+>(
+  predTupOrRest: T | R,
+  predRestOrTup?: R | T,
+  predTrail?: L,
+): Predicate<
+  | TupleOf<T>
+  | [...TupleOf<T>, ...PredicateType<R>]
+  | [...PredicateType<R>, ...TupleOf<T>]
+  | [...TupleOf<T>, ...PredicateType<R>, ...TupleOf<L>]
+> {
+  if (typeof predTupOrRest === "function") {
+    const predRest = predTupOrRest as R;
+    const predTup = predRestOrTup as T;
+    return rewriteName(
+      (x: unknown): x is [...PredicateType<R>, ...TupleOf<T>] => {
+        if (!isArray(x) || x.length < predTup.length) {
+          return false;
+        }
+        const offset = x.length - predTup.length;
+        return predTup.every((pred, i) => pred(x[offset + i])) &&
+          predRest(x.slice(0, offset));
+      },
+      "isTupleOf",
+      predRest,
+      predTup,
+    );
+  }
+  const predTup = predTupOrRest as T;
+  const predRest = predRestOrTup as R;
   if (!predRest) {
     return rewriteName(
       (x: unknown): x is TupleOf<T> => {
@@ -80,19 +148,36 @@ export function isTupleOf<
       "isTupleOf",
       predTup,
     );
-  } else {
+  } else if (!predTrail) {
     return rewriteName(
       (x: unknown): x is [...TupleOf<T>, ...PredicateType<R>] => {
         if (!isArray(x) || x.length < predTup.length) {
           return false;
         }
-        const head = x.slice(0, predTup.length);
-        const tail = x.slice(predTup.length);
-        return predTup.every((pred, i) => pred(head[i])) && predRest(tail);
+        return predTup.every((pred, i) => pred(x[i])) &&
+          predRest(x.slice(predTup.length));
       },
       "isTupleOf",
       predTup,
       predRest,
+    );
+  } else {
+    return rewriteName(
+      (
+        x: unknown,
+      ): x is [...TupleOf<T>, ...PredicateType<R>, ...TupleOf<L>] => {
+        if (!isArray(x) || x.length < (predTup.length + predTrail.length)) {
+          return false;
+        }
+        const offset = x.length - predTrail.length;
+        return predTup.every((pred, i) => pred(x[i])) &&
+          predTrail.every((pred, i) => pred(x[offset + i])) &&
+          predRest(x.slice(predTup.length, offset));
+      },
+      "isTupleOf",
+      predTup,
+      predRest,
+      predTrail,
     );
   }
 }

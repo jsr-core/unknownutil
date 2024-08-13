@@ -823,7 +823,7 @@ export const is: {
    */
   SyncFunction: typeof isSyncFunction;
   /**
-   * Return a type predicate function that returns `true` if the type of `x` is `TupleOf<T>` or `TupleOf<T, R>`.
+   * Return a type predicate function that returns `true` if the type of `x` is `TupleOf<T>`.
    *
    * Use {@linkcode isUniformTupleOf} to check if the type of `x` is a tuple of uniform types.
    *
@@ -839,7 +839,7 @@ export const is: {
    * }
    * ```
    *
-   * With `predRest` to represent rest elements:
+   * With `predRest` to represent rest elements or leading rest elements:
    *
    * ```ts
    * import { is } from "@core/unknownutil";
@@ -851,6 +851,30 @@ export const is: {
    * const a: unknown = [0, "a", true, 0, 1, 2];
    * if (isMyType(a)) {
    *   const _: [number, string, boolean, ...number[]] = a;
+   * }
+   *
+   * const isMyTypeLeadingRest = is.TupleOf(
+   *   is.ArrayOf(is.Number),
+   *   [is.Number, is.String, is.Boolean],
+   * );
+   * if (isMyTypeLeadingRest(a)) {
+   *   const _: [...number[], number, string, boolean] = a;
+   * }
+   * ```
+   *
+   * With `predRest` and `predTrail` to represent middle rest elements:
+   *
+   * ```ts
+   * import { is } from "@core/unknownutil";
+   *
+   * const isMyType = is.TupleOf(
+   *   [is.Number, is.String, is.Boolean],
+   *   is.ArrayOf(is.Number),
+   *   [is.Number, is.String, is.Boolean],
+   * );
+   * const a: unknown = [0, "a", true, 0, 1, 2, 0, "a", true];
+   * if (isMyType(a)) {
+   *   const _: [number, string, boolean, ...number[], number, string, boolean] = a;
    * }
    * ```
    *
