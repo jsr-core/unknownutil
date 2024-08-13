@@ -17,8 +17,11 @@ Deno.test("isTupleOf<T>", async (t) => {
     );
     await assertSnapshot(
       t,
-      isTupleOf([isTupleOf([isTupleOf([is.Number, is.String, is.Boolean])])])
-        .name,
+      isTupleOf([
+        isTupleOf([
+          isTupleOf([is.Number, is.String, is.Boolean]),
+        ]),
+      ]).name,
     );
   });
 
@@ -51,14 +54,21 @@ Deno.test("isTupleOf<T, R>", async (t) => {
     );
     await assertSnapshot(
       t,
-      isTupleOf([(_x): _x is string => false], is.ArrayOf(is.String))
-        .name,
+      isTupleOf(
+        [(_x): _x is string => false],
+        is.ArrayOf(is.String),
+      ).name,
     );
     await assertSnapshot(
       t,
       isTupleOf([
         isTupleOf(
-          [isTupleOf([is.Number, is.String, is.Boolean], is.Array)],
+          [
+            isTupleOf(
+              [is.Number, is.String, is.Boolean],
+              is.Array,
+            ),
+          ],
           is.Array,
         ),
       ]).name,
@@ -123,8 +133,10 @@ Deno.test("isTupleOf<R, T>", async (t) => {
     );
     await assertSnapshot(
       t,
-      isTupleOf(is.ArrayOf(is.String), [(_x): _x is string => false])
-        .name,
+      isTupleOf(
+        is.ArrayOf(is.String),
+        [(_x): _x is string => false],
+      ).name,
     );
     await assertSnapshot(
       t,
@@ -191,26 +203,37 @@ Deno.test("isTupleOf<T, R, L>", async (t) => {
   await t.step("returns properly named predicate function", async (t) => {
     await assertSnapshot(
       t,
-      isTupleOf([is.Number, is.String, is.Boolean], is.Array, [
-        is.Number,
-        is.String,
-        is.Boolean,
-      ]).name,
+      isTupleOf(
+        [is.Number, is.String, is.Boolean],
+        is.Array,
+        [is.Number, is.String, is.Boolean],
+      ).name,
     );
     await assertSnapshot(
       t,
-      isTupleOf([(_x): _x is string => false], is.ArrayOf(is.String), [
-        (_x): _x is string => false,
-      ])
-        .name,
+      isTupleOf(
+        [(_x): _x is string => false],
+        is.ArrayOf(is.String),
+        [(_x): _x is string => false],
+      ).name,
     );
     await assertSnapshot(
       t,
       isTupleOf([
         isTupleOf(
-          [isTupleOf([is.Number, is.String, is.Boolean], is.Array)],
+          [
+            isTupleOf(
+              [is.Number, is.String, is.Boolean],
+              is.Array,
+            ),
+          ],
           is.Array,
-          [isTupleOf([is.Number, is.String, is.Boolean], is.Array)],
+          [
+            isTupleOf(
+              [is.Number, is.String, is.Boolean],
+              is.Array,
+            ),
+          ],
         ),
       ]).name,
     );
