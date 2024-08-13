@@ -2,7 +2,8 @@ import { assertEquals } from "@std/assert";
 import { assertType } from "@std/testing/types";
 import { type Equal, testWithExamples } from "../_testutil.ts";
 import { is } from "../is/mod.ts";
-import { asOptional, asUnoptional } from "./optional.ts";
+import type { AsOptional } from "../_annotation.ts";
+import { asOptional, asUnoptional, hasOptional } from "./optional.ts";
 
 Deno.test("asOptional<T>", async (t) => {
   await t.step("returns a property named predicate function", () => {
@@ -151,5 +152,25 @@ Deno.test("asUnoptional<T>", async (t) => {
         );
       }
     });
+  });
+});
+
+Deno.test("hasOptional<P>", async (t) => {
+  await t.step("returns true on AsOptional<T> predicate", () => {
+    const pred = asOptional(is.Number);
+    assertEquals(hasOptional(pred), true);
+  });
+
+  await t.step("returns true on non AsOptional<T> predicate", () => {
+    const pred = is.Number;
+    assertEquals(hasOptional(pred), false);
+  });
+
+  await t.step("predicated type is correct", () => {
+    const pred = asOptional(is.Number);
+    type P = typeof pred;
+    if (hasOptional(pred)) {
+      assertType<Equal<typeof pred, P & AsOptional<number>>>(true);
+    }
   });
 });

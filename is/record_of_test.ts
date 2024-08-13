@@ -18,6 +18,7 @@ Deno.test("isRecordOf<T>", async (t) => {
   });
 
   await t.step("returns false on non T record", () => {
+    assertEquals(isRecordOf(is.String)("a"), false, "Not a Record");
     assertEquals(isRecordOf(is.String)({ a: 0 }), false);
     assertEquals(isRecordOf(is.Number)({ a: "a" }), false);
     assertEquals(isRecordOf(is.String)({ a: true }), false);
@@ -85,6 +86,7 @@ Deno.test("isRecordOf<T, K>", async (t) => {
   });
 
   await t.step("returns false on non T record", () => {
+    assertEquals(isRecordOf(is.String, is.String)("a"), false, "Not a Record");
     assertEquals(isRecordOf(is.String, is.String)({ a: 0 }), false);
     assertEquals(isRecordOf(is.Number, is.String)({ a: "a" }), false);
     assertEquals(isRecordOf(is.String, is.String)({ a: true }), false);
@@ -158,6 +160,11 @@ Deno.test("isRecordOf<T, K>", async (t) => {
     });
 
     await t.step("returns false on non T record", () => {
+      assertEquals(
+        isRecordOf(is.String, is.Symbol)("a"),
+        false,
+        "Not a Record",
+      );
       assertEquals(isRecordOf(is.String, is.Symbol)({ [a]: 0 }), false);
       assertEquals(isRecordOf(is.Number, is.Symbol)({ [a]: "a" }), false);
       assertEquals(isRecordOf(is.String, is.Symbol)({ [a]: true }), false);

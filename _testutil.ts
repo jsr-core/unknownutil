@@ -57,6 +57,8 @@ export type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends
 export function stringify(x: unknown): string {
   if (x instanceof Date) return `Date(${x.valueOf()})`;
   if (x instanceof Promise) return "Promise";
+  if (x instanceof Set) return `Set(${stringify([...x.values()])})`;
+  if (x instanceof Map) return `Map(${stringify([...x.entries()])})`;
   if (typeof x === "function") return x.toString();
   if (typeof x === "bigint") return `${x}n`;
   if (typeof x === "symbol") return x.toString();

@@ -18,6 +18,7 @@ Deno.test("isSetOf<T>", async (t) => {
   });
 
   await t.step("returns false on non T set", () => {
+    assertEquals(isSetOf(is.String)("a"), false, "Not a Set");
     assertEquals(isSetOf(is.String)(new Set([0, 1, 2])), false);
     assertEquals(isSetOf(is.Number)(new Set(["a", "b", "c"])), false);
     assertEquals(isSetOf(is.String)(new Set([true, false, true])), false);
