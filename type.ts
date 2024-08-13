@@ -1,4 +1,13 @@
 /**
+ * Notify that the value of the key does not satisfy the predicate.
+ */
+export type Notifier = (
+  key: PropertyKey,
+  value: unknown,
+  pred: Predicate<unknown>,
+) => void;
+
+/**
  * A type predicate function.
  *
  * ```ts
@@ -16,7 +25,7 @@
  * }) satisfies Predicate<Person>;
  * ```
  */
-export type Predicate<T> = (x: unknown) => x is T;
+export type Predicate<T> = (x: unknown, notifier?: Notifier) => x is T;
 
 /**
  * A type predicated by {@linkcode Predicate<T>}.
