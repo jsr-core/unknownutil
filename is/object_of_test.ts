@@ -2,6 +2,7 @@ import { assertEquals } from "@std/assert";
 import { assertSnapshot } from "@std/testing/snapshot";
 import { assertType } from "@std/testing/types";
 import type { Equal } from "../_testutil.ts";
+import type { Notifier, Predicate } from "../type.ts";
 import { is } from "./mod.ts";
 import { as } from "../as/mod.ts";
 import { isObjectOf } from "./object_of.ts";
@@ -267,5 +268,75 @@ Deno.test("isObjectOf<T>", async (t) => {
         >(true);
       }
     });
+  });
+
+  await t.step("with 'notifier' argument", async (t) => {
+    const pred = isObjectOf({
+      a: isObjectOf({
+        b: isObjectOf({
+          c: is.String,
+        }),
+      }),
+    });
+
+    await t.step(
+      "it is not invoked when x satisfies the predicate",
+      async (t) => {
+        const notified: [PropertyKey, unknown, Predicate<unknown>][] = [];
+        const notifier: Notifier = (key, value, pred) => {
+          notified.push([key, value, pred]);
+        };
+        assertEquals(pred({ a: { b: { c: "string" } } }, notifier), true);
+        await assertSnapshot(t, notified);
+      },
+    );
+
+    await t.step(
+      "it is not invoked when x does not satisfies the predicate (<root>)",
+      async (t) => {
+        const notified: [PropertyKey, unknown, Predicate<unknown>][] = [];
+        const notifier: Notifier = (key, value, pred) => {
+          notified.push([key, value, pred]);
+        };
+        assertEquals(pred(0, notifier), false);
+        await assertSnapshot(t, notified);
+      },
+    );
+
+    await t.step(
+      "it is invoked when x does not satisfies the predicate (a)",
+      async (t) => {
+        const notified: [PropertyKey, unknown, Predicate<unknown>][] = [];
+        const notifier: Notifier = (key, value, pred) => {
+          notified.push([key, value, pred]);
+        };
+        assertEquals(pred({ a: 0 }, notifier), false);
+        await assertSnapshot(t, notified);
+      },
+    );
+
+    await t.step(
+      "it is invoked when x does not satisfies the predicate (b)",
+      async (t) => {
+        const notified: [PropertyKey, unknown, Predicate<unknown>][] = [];
+        const notifier: Notifier = (key, value, pred) => {
+          notified.push([key, value, pred]);
+        };
+        assertEquals(pred({ a: { b: 0 } }, notifier), false);
+        await assertSnapshot(t, notified);
+      },
+    );
+
+    await t.step(
+      "it is invoked when x does not satisfies the predicate (c)",
+      async (t) => {
+        const notified: [PropertyKey, unknown, Predicate<unknown>][] = [];
+        const notifier: Notifier = (key, value, pred) => {
+          notified.push([key, value, pred]);
+        };
+        assertEquals(pred({ a: { b: { c: 0 } } }, notifier), false);
+        await assertSnapshot(t, notified);
+      },
+    );
   });
 });

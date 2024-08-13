@@ -5,6 +5,7 @@ import {
   defaultAssertMessageFactory,
   setAssertMessageFactory,
 } from "./assert.ts";
+import { is } from "./is/mod.ts";
 
 const x: unknown = Symbol("x");
 
@@ -61,6 +62,21 @@ Deno.test("assert", async (t) => {
       );
     },
   );
+
+  await t.step("throws an `AssertError` on isObjectOf", () => {
+    const pred = is.ObjectOf({
+      a: is.ObjectOf({
+        b: is.ObjectOf({
+          c: is.String,
+        }),
+      }),
+    });
+    assertThrows(
+      () => assert({ a: { b: { c: 0 } } }, pred),
+      AssertError,
+      `Expected a value that satisfies the predicate falsePredicate, got symbol: undefined`,
+    );
+  });
 });
 
 Deno.test("setAssertMessageFactory", async (t) => {

@@ -33,3 +33,66 @@ snapshot[`isObjectOf<T> > with symbol properties > returns properly named predic
   })
 })"
 `;
+
+snapshot[`isObjectOf<T> > with 'notifier' argument > it is not invoked when x satisfies the predicate 1`] = `[]`;
+
+snapshot[`isObjectOf<T> > with 'notifier' argument > it is invoked when x does not satisfies the predicate (c) 1`] = `
+[
+  [
+    "c",
+    0,
+    [Function: isString],
+  ],
+  [
+    "b",
+    {
+      c: 0,
+    },
+    [Function: isObjectOf({c: isString})],
+  ],
+  [
+    "a",
+    {
+      b: {
+        c: 0,
+      },
+    },
+    [Function: isObjectOf({
+  b: isObjectOf({c: isString})
+})],
+  ],
+]
+`;
+
+snapshot[`isObjectOf<T> > with 'notifier' argument > it is invoked when x does not satisfies the predicate (b) 1`] = `
+[
+  [
+    "b",
+    0,
+    [Function: isObjectOf({c: isString})],
+  ],
+  [
+    "a",
+    {
+      b: 0,
+    },
+    [Function: isObjectOf({
+  b: isObjectOf({c: isString})
+})],
+  ],
+]
+`;
+
+snapshot[`isObjectOf<T> > with 'notifier' argument > it is invoked when x does not satisfies the predicate (a) 1`] = `
+[
+  [
+    "a",
+    0,
+    [Function: isObjectOf({
+  b: isObjectOf({c: isString})
+})],
+  ],
+]
+`;
+
+snapshot[`isObjectOf<T> > with 'notifier' argument > it is invoked when x does not satisfies the predicate (<root>) 1`] = `[]`;

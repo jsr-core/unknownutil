@@ -44,9 +44,14 @@ export function isObjectOf<
     ...Object.getOwnPropertySymbols(predObj),
   ].map((k) => [k, predObj[k]]);
   const pred = rewriteName(
-    (x): x is ObjectOf<T> => {
+    (x, notifier): x is ObjectOf<T> => {
       if (!isRecordT<T>(x)) return false;
-      return preds.every(([k, pred]) => pred(x[k]));
+      return preds.every(([k, pred]) => {
+        const v = x[k];
+        if (pred(v, notifier)) return true;
+        notifier?.(k, v, pred);
+        return false;
+      });
     },
     "isObjectOf",
     predObj,

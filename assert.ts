@@ -1,4 +1,4 @@
-import type { Predicate } from "./type.ts";
+import type { Notifier, Predicate } from "./type.ts";
 
 /**
  * A factory function that generates assertion error messages.
@@ -7,6 +7,7 @@ export type AssertMessageFactory = (
   x: unknown,
   pred: Predicate<unknown>,
   name?: string,
+  keys?: PropertyKey[],
 ) => string;
 
 /**
@@ -20,9 +21,8 @@ export const defaultAssertMessageFactory: AssertMessageFactory = (
   const p = pred.name || "anonymous predicate";
   const t = typeof x;
   const v = JSON.stringify(x, null, 2);
-  return `Expected ${
-    name ?? "a value"
-  } that satisfies the predicate ${p}, got ${t}: ${v}`;
+  const n = name ?? "a value";
+  return `Expected ${n} that satisfies the predicate ${p}, got ${t}: ${v}`;
 };
 
 let assertMessageFactory = defaultAssertMessageFactory;
@@ -94,9 +94,26 @@ export function assert<T>(
   pred: Predicate<T>,
   options: { message?: string; name?: string } = {},
 ): asserts x is T {
-  if (!pred(x)) {
+  const ns: [
+    key: PropertyKey,
+    value: unknown,
+    pred: Predicate<unknown>,
+  ][] = [];
+  const notifier: Notifier = (key, value, pred) => {
+    ns.unshift([key, value, pred]);
+  };
+  if (!pred(x, notifier)) {
+    const cause = ns.length === 0 ? undefined : {
+      path: ns.map(([k]) => k),
+      value: ns[0][1],
+      pred: ns[0][2],
+    };
     throw new AssertError(
-      options.message ?? assertMessageFactory(x, pred, options.name),
+      options.message ?? assertMessageFactory(
+        x,
+        pred,
+        options.name,
+      ),
     );
   }
 }
