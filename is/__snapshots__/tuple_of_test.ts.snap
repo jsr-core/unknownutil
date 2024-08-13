@@ -39,7 +39,7 @@ snapshot[`isTupleOf<T, R> > returns properly named predicate function 3`] = `
       isNumber,
       isString,
       isBoolean
-    ], isArray)
+    ], isArrayOf(isString))
   ], isArray)
 ])"
 `;
@@ -57,7 +57,7 @@ snapshot[`isTupleOf<R, T> > returns properly named predicate function 2`] = `"is
 snapshot[`isTupleOf<R, T> > returns properly named predicate function 3`] = `
 "isTupleOf([
   isTupleOf(isArray, [
-    isTupleOf(isArray, [
+    isTupleOf(isArrayOf(isString), [
       isNumber,
       isString,
       isBoolean
@@ -72,9 +72,9 @@ snapshot[`isTupleOf<T, R, L> > returns properly named predicate function 1`] = `
   isString,
   isBoolean
 ], isArray, [
-  isNumber,
   isString,
-  isBoolean
+  isBoolean,
+  isNumber
 ])"
 `;
 
@@ -87,13 +87,21 @@ snapshot[`isTupleOf<T, R, L> > returns properly named predicate function 3`] = `
       isNumber,
       isString,
       isBoolean
-    ], isArray)
+    ], isArrayOf(isString), [
+      isString,
+      isBoolean,
+      isNumber
+    ])
   ], isArray, [
     isTupleOf([
       isNumber,
       isString,
       isBoolean
-    ], isArray)
+    ], isArrayOf(isNumber), [
+      isNumber,
+      isBoolean,
+      isString
+    ])
   ])
 ])"
 `;

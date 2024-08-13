@@ -66,7 +66,7 @@ Deno.test("isTupleOf<T, R>", async (t) => {
           [
             isTupleOf(
               [is.Number, is.String, is.Boolean],
-              is.Array,
+              is.ArrayOf(is.String),
             ),
           ],
           is.Array,
@@ -143,7 +143,12 @@ Deno.test("isTupleOf<R, T>", async (t) => {
       isTupleOf([
         isTupleOf(
           is.Array,
-          [isTupleOf(is.Array, [is.Number, is.String, is.Boolean])],
+          [
+            isTupleOf(
+              is.ArrayOf(is.String),
+              [is.Number, is.String, is.Boolean],
+            ),
+          ],
         ),
       ]).name,
     );
@@ -206,7 +211,7 @@ Deno.test("isTupleOf<T, R, L>", async (t) => {
       isTupleOf(
         [is.Number, is.String, is.Boolean],
         is.Array,
-        [is.Number, is.String, is.Boolean],
+        [is.String, is.Boolean, is.Number],
       ).name,
     );
     await assertSnapshot(
@@ -224,14 +229,16 @@ Deno.test("isTupleOf<T, R, L>", async (t) => {
           [
             isTupleOf(
               [is.Number, is.String, is.Boolean],
-              is.Array,
+              is.ArrayOf(is.String),
+              [is.String, is.Boolean, is.Number],
             ),
           ],
           is.Array,
           [
             isTupleOf(
               [is.Number, is.String, is.Boolean],
-              is.Array,
+              is.ArrayOf(is.Number),
+              [is.Number, is.Boolean, is.String],
             ),
           ],
         ),
