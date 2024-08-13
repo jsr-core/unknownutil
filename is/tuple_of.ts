@@ -102,7 +102,7 @@ export function isTupleOf<
   predTup: T,
   predRest: R,
   predTrail: L,
-): Predicate<[...TupleOf<T>, ...PredicateType<R>, ...TupleOf<T>]>;
+): Predicate<[...TupleOf<T>, ...PredicateType<R>, ...TupleOf<L>]>;
 
 export function isTupleOf<
   T extends readonly [Predicate<unknown>, ...Predicate<unknown>[]],
@@ -116,7 +116,7 @@ export function isTupleOf<
   | TupleOf<T>
   | [...TupleOf<T>, ...PredicateType<R>]
   | [...PredicateType<R>, ...TupleOf<T>]
-  | [...TupleOf<T>, ...PredicateType<R>, ...TupleOf<T>]
+  | [...TupleOf<T>, ...PredicateType<R>, ...TupleOf<L>]
 > {
   if (typeof predTupOrRest === "function") {
     const predRest = predTupOrRest as R;
@@ -163,7 +163,9 @@ export function isTupleOf<
     );
   } else {
     return rewriteName(
-      (x: unknown): x is [...TupleOf<T>, ...PredicateType<R>] => {
+      (
+        x: unknown,
+      ): x is [...TupleOf<T>, ...PredicateType<R>, ...TupleOf<L>] => {
         if (!isArray(x) || x.length < (predTup.length + predTrail.length)) {
           return false;
         }

@@ -317,13 +317,13 @@ Deno.test("isTupleOf<T, R, L>", async (t) => {
   await t.step("predicated type is correct", () => {
     const predTup = [is.Number, is.String, is.Boolean] as const;
     const predRest = is.ArrayOf(is.Number);
-    const predTrail = [is.Number, is.String, is.Boolean] as const;
-    const a: unknown = [0, "a", true, 0, 1, 2, 0, "a", true];
+    const predTrail = [is.Number, is.Boolean] as const;
+    const a: unknown = [0, "a", true, 0, 1, 2, 0, true];
     if (isTupleOf(predTup, predRest, predTrail)(a)) {
       assertType<
         Equal<
           typeof a,
-          [number, string, boolean, ...number[], number, string, boolean]
+          [number, string, boolean, ...number[], number, boolean]
         >
       >(
         true,
