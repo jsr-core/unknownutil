@@ -9,7 +9,7 @@ import {
 import type { Predicate } from "../type.ts";
 
 /**
- * Return a type predicate function that returns `true` if the type of `x` is `ObjectOf<T>`.
+ * Return a type predicate function that returns `true` if the type of `x` is/has `ObjectOf<T>`.
  *
  * Use {@linkcode isRecordOf} if you want to check if the type of `x` is a record of `T`.
  *
@@ -34,6 +34,12 @@ import type { Predicate } from "../type.ts";
  * if (isMyType(a)) {
  *   const _: { a: number; b: string; c?: boolean | undefined, readonly d: string } = a;
  * }
+ *
+ * // It also works for value with Object.assign
+ * const b: unknown = Object.assign(100, { a: 0, b: "a", d: "d" });
+ * if (isMyType(b)) {
+ *   const _: { a: number; b: string; c?: boolean | undefined, readonly d: string } = b;
+ * }
  * ```
  */
 export function isObjectOf<
@@ -45,20 +51,13 @@ export function isObjectOf<
   ].map((k) => [k, predObj[k]]);
   const pred = rewriteName(
     (x): x is ObjectOf<T> => {
-      if (!isObject(x)) return false;
+      if (x == null) return false;
       return preds.every(([k, pred]) => pred(x[k]));
     },
     "isObjectOf",
     predObj,
   );
   return annotate(pred, "predObj", predObj);
-}
-
-function isObject(x: unknown): x is Record<PropertyKey, unknown> {
-  if (x == null) return false;
-  if (typeof x !== "object" && typeof x !== "function") return false;
-  if (Array.isArray(x)) return false;
-  return true;
 }
 
 type ObjectOf<T extends Record<PropertyKey, Predicate<unknown>>> = FlatType<
