@@ -33,12 +33,30 @@ Deno.test("isObjectOf<T>", async (t) => {
       true,
       "Undefined properties are ignored",
     );
+  });
+
+  await t.step("returns true on value with T object assigned", () => {
+    const v = { a: 0, b: "a", c: true };
+    // Only 'null' and 'undefined' are not Object.assign-able
     assertEquals(
-      isObjectOf(predObj)(
-        Object.assign(() => void 0, { a: 0, b: "a", c: true }),
-      ),
+      isObjectOf(predObj)(Object.assign("string", v)),
       true,
-      "Function are treated as an object",
+      "string",
+    );
+    assertEquals(isObjectOf(predObj)(Object.assign(100, v)), true, "number");
+    assertEquals(isObjectOf(predObj)(Object.assign(100n, v)), true, "bigint");
+    assertEquals(isObjectOf(predObj)(Object.assign(true, v)), true, "boolean");
+    assertEquals(isObjectOf(predObj)(Object.assign([], v)), true, "array");
+    assertEquals(isObjectOf(predObj)(Object.assign({}, v)), true, "object");
+    assertEquals(
+      isObjectOf(predObj)(Object.assign(() => {}, v)),
+      true,
+      "function",
+    );
+    assertEquals(
+      isObjectOf(predObj)(Object.assign(Symbol("symbol"), v)),
+      true,
+      "symbol",
     );
   });
 
