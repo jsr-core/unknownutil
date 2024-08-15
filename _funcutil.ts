@@ -3,7 +3,8 @@ import { inspect } from "./_inspect.ts";
 /**
  * Rewrite the function name.
  */
-export function rewriteName<F extends (...args: unknown[]) => unknown>(
+// deno-lint-ignore no-explicit-any
+export function rewriteName<F extends (...args: any[]) => unknown>(
   fn: F,
   name: string,
   ...args: unknown[]

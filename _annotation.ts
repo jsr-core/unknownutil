@@ -1,6 +1,7 @@
 import type { Predicate } from "./type.ts";
 
-export type Fn = (...args: unknown[]) => unknown;
+// deno-lint-ignore no-explicit-any
+export type Fn = (...args: any[]) => unknown;
 
 export function annotate<F extends Fn, N extends string, V>(
   fn: F,

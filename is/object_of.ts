@@ -43,22 +43,22 @@ export function isObjectOf<
     ...Object.keys(predObj),
     ...Object.getOwnPropertySymbols(predObj),
   ].map((k) => [k, predObj[k]]);
-  return annotate(
-    rewriteName(
-      (x: unknown): x is ObjectOf<T> => {
-        if (
-          x == null ||
-          typeof x !== "object" && typeof x !== "function" ||
-          Array.isArray(x)
-        ) return false;
-        return preds.every(([k, pred]) => pred((x as T)[k]));
-      },
-      "isObjectOf",
-      predObj,
-    ),
-    "predObj",
+  const pred = rewriteName(
+    (x): x is ObjectOf<T> => {
+      if (!isObject(x)) return false;
+      return preds.every(([k, pred]) => pred(x[k]));
+    },
+    "isObjectOf",
     predObj,
   );
+  return annotate(pred, "predObj", predObj);
+}
+
+function isObject(x: unknown): x is Record<PropertyKey, unknown> {
+  if (x == null) return false;
+  if (typeof x !== "object" && typeof x !== "function") return false;
+  if (Array.isArray(x)) return false;
+  return true;
 }
 
 type ObjectOf<T extends Record<PropertyKey, Predicate<unknown>>> = FlatType<
