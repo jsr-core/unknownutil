@@ -61,7 +61,7 @@ export function asOptional<P extends Predicate<unknown>>(
 /**
  * Unannotate the annotated predicate function with {@linkcode asOptional}.
  *
- * Use this function to unannotate a predicate function of `predObj` in {@linkcode isObjectOf}.
+ * Use this function to unannotate a predicate function of `predObj` in {@linkcode [jsr:@core/unknownutil/is/object-of].isObjectOf}.
  *
  * Note that the annotated predicate function will return `true` if the type of `x` is `T`, indicating that
  * this function is not just for annotation but it also changes the behavior of the predicate function.
