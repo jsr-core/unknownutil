@@ -8,6 +8,7 @@ on:
     branches:
       - main
   pull_request:
+  workflow_dispatch:
 
 jobs:
   check:
@@ -36,6 +37,10 @@ jobs:
       - uses: denoland/setup-deno@v1
         with:
           deno-version: ${{ env.DENO_VERSION }}
+      - name: Cache
+        run: |
+          deno cache **/*.ts
+        timeout-minutes: 5
       - name: Test
         run: |
           deno task test:coverage
@@ -47,18 +52,6 @@ jobs:
           os: ${{ runner.os }}
           files: ./coverage.lcov
           token: ${{ secrets.CODECOV_TOKEN }}
-
-  bench:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: denoland/setup-deno@v1
-        with:
-          deno-version: ${{ env.DENO_VERSION }}
-      - name: Test
-        run: |
-          deno bench
-        timeout-minutes: 5
 
   jsr-publish:
     runs-on: ubuntu-latest

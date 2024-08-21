@@ -86,7 +86,7 @@ export const is: {
   /**
    * Assume `x is `any` and always return `true` regardless of the type of `x`.
    *
-   * Use {@linkcode isUnknown} to assume that a value is `unknown`.
+   * Use {@linkcode [is/unknown].isUnknown|isUnknown} to assume that a value is `unknown`.
    *
    * ```ts
    * import { is } from "@core/unknownutil";
@@ -101,7 +101,7 @@ export const is: {
   /**
    * Return `true` if the type of `x` is `unknown[]`.
    *
-   * Use {@linkcode isArrayOf} to check if the type of `x` is an array of `T`.
+   * Use {@linkcode [is/arrayt-of].isArrayOf|isArrayOf} to check if the type of `x` is an array of `T`.
    *
    * ```ts
    * import { is } from "@core/unknownutil";
@@ -116,7 +116,7 @@ export const is: {
   /**
    * Return a type predicate function that returns `true` if the type of `x` is `T[]`.
    *
-   * Use {@linkcode isArray} to check if the type of `x` is an array of `unknown`.
+   * Use {@linkcode [is/array].isArray|isArray} to check if the type of `x` is an array of `unknown`.
    *
    * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
    *
@@ -134,8 +134,8 @@ export const is: {
   /**
    * Return `true` if the type of `x` is `function` (async function).
    *
-   * Use {@linkcode isFunction} to check if the type of `x` is a function.
-   * Use {@linkcode isSyncFunction} to check if the type of `x` is a synchronous function.
+   * Use {@linkcode [is/function].isFunction|isFunction} to check if the type of `x` is a function.
+   * Use {@linkcode [is/sync-function].isSyncFunction|isSyncFunction} to check if the type of `x` is a synchronous function.
    *
    * ```ts
    * import { is } from "@core/unknownutil";
@@ -176,8 +176,8 @@ export const is: {
   /**
    * Return `true` if the type of `x` is `function`.
    *
-   * Use {@linkcode isSyncFunction} to check if the type of `x` is a synchronous function.
-   * Use {@linkcode isAsyncFunction} to check if the type of `x` is an asynchronous function.
+   * Use {@linkcode [is/sync-function].isSyncFunction|isSyncFunction} to check if the type of `x` is a synchronous function.
+   * Use {@linkcode [is/async-function].isAsyncFunction|isAsyncFunction} to check if the type of `x` is an asynchronous function.
    *
    * ```ts
    * import { is } from "@core/unknownutil";
@@ -208,7 +208,7 @@ export const is: {
   /**
    * Return a type predicate function that returns `true` if the type of `x` is `IntersectionOf<T>`.
    *
-   * Use {@linkcode isUnionOf} to check if the type of `x` is a union of `T`.
+   * Use {@linkcode [is/union-of].isUnionOf|isUnionOf} to check if the type of `x` is a union of `T`.
    *
    * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
    *
@@ -246,8 +246,8 @@ export const is: {
   /**
    * Return a type predicate function that returns `true` if the type of `x` is a literal type of `pred`.
    *
-   * Use {@linkcode isLiteral} to check if the type of `x` is a literal type.
-   * Use {@linkcode isLiteralOneOf} to check if the type of `x` is one of the literal type of `Primitive[]`.
+   * Use {@linkcode [is/literal].isLiteral|isLiteral} to check if the type of `x` is a literal type.
+   * Use {@linkcode [is/literal-one-of].isLiteralOneOf|isLiteralOneOf} to check if the type of `x` is one of the literal type of {@linkcode [type].Primitive|Primitive[]}.
    *
    * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
    *
@@ -265,8 +265,8 @@ export const is: {
   /**
    * Return a type predicate function that returns `true` if the type of `x` is one of literal type in `preds`.
    *
-   * Use {@linkcode isLiteral} to check if the type of `x` is a literal type.
-   * Use {@linkcode isLiteralOf} to check if the type of `x` is a literal type of `Primitive`.
+   * Use {@linkcode [is/literal].isLiteral|isLiteral} to check if the type of `x` is a literal type.
+   * Use {@linkcode [is/literal-of].isLiteralOf|isLiteralOf} to check if the type of `x` is a literal type of {@linkcode [type].Primitive|Primitive}.
    *
    * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
    *
@@ -284,7 +284,7 @@ export const is: {
   /**
    * Return `true` if the type of `x` is `Map<unknown, unknown>`.
    *
-   * Use {@linkcode isMapOf} to check if the type of `x` is a map of `T`.
+   * Use {@linkcode [is/map-of].isMapOf|isMapOf} to check if the type of `x` is a map of `T`.
    *
    * ```ts
    * import { is } from "@core/unknownutil";
@@ -299,7 +299,7 @@ export const is: {
   /**
    * Return a type predicate function that returns `true` if the type of `x` is `Map<K, T>`.
    *
-   * Use {@linkcode isMap} to check if the type of `x` is a map of `unknown`.
+   * Use {@linkcode [is/map].isMap|isMap} to check if the type of `x` is a map of `unknown`.
    *
    * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
    *
@@ -329,8 +329,8 @@ export const is: {
   /**
    * Return `true` if the type of `x` is `null`.
    *
-   * Use {@linkcode isUndefined} to check if the type of `x` is `undefined`.
-   * Use {@linkcode isNullish} to check if the type of `x` is `null` or `undefined`.
+   * Use {@linkcode [is/undefined].isUndefined|isUndefined} to check if the type of `x` is `undefined`.
+   * Use {@linkcode [is/nullish].isNullish|isNullish} to check if the type of `x` is `null` or `undefined`.
    *
    * ```ts
    * import { is } from "@core/unknownutil";
@@ -345,8 +345,8 @@ export const is: {
   /**
    * Return `true` if the type of `x` is `null` or `undefined`.
    *
-   * Use {@linkcode isNull} to check if the type of `x` is `null`.
-   * Use {@linkcode isUndefined} to check if the type of `x` is `undefined`.
+   * Use {@linkcode [is/null].isNull|isNull} to check if the type of `x` is `null`.
+   * Use {@linkcode [is/undefined].isUndefined|isUndefined} to check if the type of `x` is `undefined`.
    *
    * ```ts
    * import { is } from "@core/unknownutil";
@@ -374,13 +374,13 @@ export const is: {
   /**
    * Return a type predicate function that returns `true` if the type of `x` is `ObjectOf<T>`.
    *
-   * Use {@linkcode isRecordOf} if you want to check if the type of `x` is a record of `T`.
+   * Use {@linkcode [is/record-of].isRecordOf|isRecordOf} if you want to check if the type of `x` is a record of `T`.
    *
-   * If {@linkcode asOptional} is specified in the predicate function in `predObj`, the property becomes optional.
-   * If {@linkcode asReadonly} is specified in the predicate function in `predObj`, the property becomes readonly.
+   * If {@linkcode [as/optional].asOptional|asOptional} is specified in the predicate function in `predObj`, the property becomes optional.
+   * If {@linkcode [as/readonly].asReadonly|asReadonly} is specified in the predicate function in `predObj`, the property becomes readonly.
    *
    * The number of keys of `x` must be greater than or equal to the number of keys of `predObj`.
-   * Use {@linkcode isStrictOf} if you want to check the exact number of keys.
+   * Use {@linkcode [is/strict-of].isStrictOf|isStrictOf} if you want to check the exact number of keys.
    *
    * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
    *
@@ -405,14 +405,14 @@ export const is: {
    *
    * It only supports modifing a predicate function annotated with `IsPredObj`, usually returned by the followings
    *
-   * - {@linkcode isIntersectionOf}
-   * - {@linkcode isObjectOf}
-   * - {@linkcode isOmitOf}
-   * - {@linkcode isPartialOf}
-   * - {@linkcode isPickOf}
-   * - {@linkcode isReadonlyOf}
-   * - {@linkcode isRequiredOf}
-   * - {@linkcode isStrictOf}
+   * - {@linkcode [is/intersection-of].isIntersectionOf|isIntersectionOf}
+   * - {@linkcode [is/object-of].isObjectOf|isObjectOf}
+   * - {@linkcode [is/omit-of].isOmitOf|isOmitOf}
+   * - {@linkcode [is/partial-of].isPartialOf|isPartialOf}
+   * - {@linkcode [is/pick-of].isPickOf|isPickOf}
+   * - {@linkcode [is/readonly-of].isReadonlyOf|isReadonlyOf}
+   * - {@linkcode [is/required-of].isRequiredOf|isRequiredOf}
+   * - {@linkcode [is/strict-of].isStrictOf|isStrictOf}
    *
    * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
    *
@@ -434,7 +434,8 @@ export const is: {
   /**
    * Return a type predicate function that returns `true` if the type of `x` is `ParametersOf<T>` or `ParametersOf<T, E>`.
    *
-   * This is similar to {@linkcode isTupleOf}, but if {@linkcode asOptional} is specified at the trailing, the trailing elements becomes optional and makes variable-length tuple.
+   * This is similar to {@linkcode [is/tuple].isTupleOf|isTupleOf}, but if {@linkcode [as/optional].asOptional|asOptional}
+   * is specified at the trailing, the trailing elements becomes optional and makes variable-length tuple.
    *
    * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
    *
@@ -494,14 +495,14 @@ export const is: {
    *
    * It only supports modifing a predicate function annotated with `IsPredObj`, usually returned by the followings
    *
-   * - {@linkcode isIntersectionOf}
-   * - {@linkcode isObjectOf}
-   * - {@linkcode isOmitOf}
-   * - {@linkcode isPartialOf}
-   * - {@linkcode isPickOf}
-   * - {@linkcode isReadonlyOf}
-   * - {@linkcode isRequiredOf}
-   * - {@linkcode isStrictOf}
+   * - {@linkcode [is/intersection-of].isIntersectionOf|isIntersectionOf}
+   * - {@linkcode [is/object-of].isObjectOf|isObjectOf}
+   * - {@linkcode [is/omit-of].isOmitOf|isOmitOf}
+   * - {@linkcode [is/partial-of].isPartialOf|isPartialOf}
+   * - {@linkcode [is/pick-of].isPickOf|isPickOf}
+   * - {@linkcode [is/readonly-of].isReadonlyOf|isReadonlyOf}
+   * - {@linkcode [is/required-of].isRequiredOf|isRequiredOf}
+   * - {@linkcode [is/strict-of].isStrictOf|isStrictOf}
    *
    * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
    *
@@ -525,14 +526,14 @@ export const is: {
    *
    * It only supports modifing a predicate function annotated with `IsPredObj`, usually returned by the followings
    *
-   * - {@linkcode isIntersectionOf}
-   * - {@linkcode isObjectOf}
-   * - {@linkcode isOmitOf}
-   * - {@linkcode isPartialOf}
-   * - {@linkcode isPickOf}
-   * - {@linkcode isReadonlyOf}
-   * - {@linkcode isRequiredOf}
-   * - {@linkcode isStrictOf}
+   * - {@linkcode [is/intersection-of].isIntersectionOf|isIntersectionOf}
+   * - {@linkcode [is/object-of].isObjectOf|isObjectOf}
+   * - {@linkcode [is/omit-of].isOmitOf|isOmitOf}
+   * - {@linkcode [is/partial-of].isPartialOf|isPartialOf}
+   * - {@linkcode [is/pick-of].isPickOf|isPickOf}
+   * - {@linkcode [is/readonly-of].isReadonlyOf|isReadonlyOf}
+   * - {@linkcode [is/required-of].isRequiredOf|isRequiredOf}
+   * - {@linkcode [is/strict-of].isStrictOf|isStrictOf}
    *
    * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
    *
@@ -567,6 +568,17 @@ export const is: {
   /**
    * Return a type predicate function that returns `true` if the type of `x` is `Readonly<ObjectOf<T>>`.
    *
+   * It only supports modifing a predicate function annotated with `IsPredObj`, usually returned by the followings
+   *
+   * - {@linkcode [is/intersection-of].isIntersectionOf|isIntersectionOf}
+   * - {@linkcode [is/object-of].isObjectOf|isObjectOf}
+   * - {@linkcode [is/omit-of].isOmitOf|isOmitOf}
+   * - {@linkcode [is/partial-of].isPartialOf|isPartialOf}
+   * - {@linkcode [is/pick-of].isPickOf|isPickOf}
+   * - {@linkcode [is/readonly-of].isReadonlyOf|isReadonlyOf}
+   * - {@linkcode [is/required-of].isRequiredOf|isRequiredOf}
+   * - {@linkcode [is/strict-of].isStrictOf|isStrictOf}
+   *
    * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
    *
    * ```typescript
@@ -588,7 +600,7 @@ export const is: {
    * Return `true` if the type of `x` satisfies `Record<PropertyKey, unknown>`.
    *
    * Note that this function returns `true` for ambiguous instances like `Set`, `Map`, `Date`, `Promise`, etc.
-   * Use {@linkcode isRecordObject} instead if you want to check if `x` is an instance of `Object`.
+   * Use {@linkcode [is/record-object].isRecordObject|isRecordObject} instead if you want to check if `x` is an instance of `Object`.
    *
    * ```ts
    * import { is } from "@core/unknownutil";
@@ -609,7 +621,7 @@ export const is: {
    * Return `true` if the type of `x` is an object instance that satisfies `Record<PropertyKey, unknown>`.
    *
    * Note that this function check if the `x` is an instance of `Object`.
-   * Use {@linkcode isRecord} instead if you want to check if the `x` satisfies the `Record<PropertyKey, unknown>` type.
+   * Use {@linkcode [is/record].isRecord|isRecord} instead if you want to check if the `x` satisfies the `Record<PropertyKey, unknown>` type.
    *
    * ```ts
    * import { is } from "@core/unknownutil";
@@ -630,7 +642,7 @@ export const is: {
    * Return a type predicate function that returns `true` if the type of `x` is an Object instance that satisfies `Record<K, T>`.
    *
    * Note that this function check if the `x` is an instance of `Object`.
-   * Use {@linkcode isRecordOf} instead if you want to check if the `x` satisfies the `Record<K, T>` type.
+   * Use {@linkcode [is/record-of].isRecordOf|isRecordOf} instead if you want to check if the `x` satisfies the `Record<K, T>` type.
    *
    * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
    *
@@ -661,7 +673,7 @@ export const is: {
    * Return a type predicate function that returns `true` if the type of `x` satisfies `Record<K, T>`.
    *
    * Note that this function only check if the `x` satisfies the `Record<K, T>` type.
-   * Use {@linkcode isRecordObjectOf} instead if you want to check if the `x` is an instance of `Object`.
+   * Use {@linkcode [is/record-object-of].isRecordObjectOf|isRecordObjectOf} instead if you want to check if the `x` is an instance of `Object`.
    *
    * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
    *
@@ -693,14 +705,14 @@ export const is: {
    *
    * It only supports modifing a predicate function annotated with `IsPredObj`, usually returned by the followings
    *
-   * - {@linkcode isIntersectionOf}
-   * - {@linkcode isObjectOf}
-   * - {@linkcode isOmitOf}
-   * - {@linkcode isPartialOf}
-   * - {@linkcode isPickOf}
-   * - {@linkcode isReadonlyOf}
-   * - {@linkcode isRequiredOf}
-   * - {@linkcode isStrictOf}
+   * - {@linkcode [is/intersection-of].isIntersectionOf|isIntersectionOf}
+   * - {@linkcode [is/object-of].isObjectOf|isObjectOf}
+   * - {@linkcode [is/omit-of].isOmitOf|isOmitOf}
+   * - {@linkcode [is/partial-of].isPartialOf|isPartialOf}
+   * - {@linkcode [is/pick-of].isPickOf|isPickOf}
+   * - {@linkcode [is/readonly-of].isReadonlyOf|isReadonlyOf}
+   * - {@linkcode [is/required-of].isRequiredOf|isRequiredOf}
+   * - {@linkcode [is/strict-of].isStrictOf|isStrictOf}
    *
    * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
    *
@@ -722,7 +734,7 @@ export const is: {
   /**
    * Return `true` if the type of `x` is `Set<unknown>`.
    *
-   * Use {@linkcode isSetOf} to check if the type of `x` is a set of `T`.
+   * Use {@linkcode [is/set-of].isSetOf|isSetOf} to check if the type of `x` is a set of `T`.
    *
    * ```ts
    * import { is } from "@core/unknownutil";
@@ -737,7 +749,7 @@ export const is: {
   /**
    * Return a type predicate function that returns `true` if the type of `x` is `Set<T>`.
    *
-   * Use {@linkcode isSet} to check if the type of `x` is a set of `unknown`.
+   * Use {@linkcode [is/set].isSet|isSet} to check if the type of `x` is a set of `unknown`.
    *
    * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
    *
@@ -757,14 +769,14 @@ export const is: {
    *
    * It only supports modifing a predicate function annotated with `IsPredObj`, usually returned by the followings
    *
-   * - {@linkcode isIntersectionOf}
-   * - {@linkcode isObjectOf}
-   * - {@linkcode isOmitOf}
-   * - {@linkcode isPartialOf}
-   * - {@linkcode isPickOf}
-   * - {@linkcode isReadonlyOf}
-   * - {@linkcode isRequiredOf}
-   * - {@linkcode isStrictOf}
+   * - {@linkcode [is/intersection-of].isIntersectionOf|isIntersectionOf}
+   * - {@linkcode [is/object-of].isObjectOf|isObjectOf}
+   * - {@linkcode [is/omit-of].isOmitOf|isOmitOf}
+   * - {@linkcode [is/partial-of].isPartialOf|isPartialOf}
+   * - {@linkcode [is/pick-of].isPickOf|isPickOf}
+   * - {@linkcode [is/readonly-of].isReadonlyOf|isReadonlyOf}
+   * - {@linkcode [is/required-of].isRequiredOf|isRequiredOf}
+   * - {@linkcode [is/strict-of].isStrictOf|isStrictOf}
    *
    * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
    *
@@ -812,6 +824,9 @@ export const is: {
   /**
    * Return `true` if the type of `x` is `function` (non async function).
    *
+   * Use {@linkcode [is/function].isFunction|isFunction} to check if the type of `x` is a function.
+   * Use {@linkcode [is/async-function].isAsyncFunction|isAsyncFunction} to check if the type of `x` is an asynchronous function.
+   *
    * ```ts
    * import { is } from "@core/unknownutil";
    *
@@ -825,7 +840,7 @@ export const is: {
   /**
    * Return a type predicate function that returns `true` if the type of `x` is `TupleOf<T>`.
    *
-   * Use {@linkcode isUniformTupleOf} to check if the type of `x` is a tuple of uniform types.
+   * Use {@linkcode [is/uniform-tuple-of].isUniformTupleOf|isUniformTupleOf} to check if the type of `x` is a tuple of uniform types.
    *
    * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
    *
@@ -909,7 +924,7 @@ export const is: {
   /**
    * Return a type predicate function that returns `true` if the type of `x` is `UniformTupleOf<T>`.
    *
-   * Use {@linkcode isTupleOf} to check if the type of `x` is a tuple of `T`.
+   * Use {@linkcode [is/tuple-of].isTupleOf|isTupleOf} to check if the type of `x` is a tuple of `T`.
    *
    * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
    *
@@ -939,7 +954,7 @@ export const is: {
   /**
    * Return a type predicate function that returns `true` if the type of `x` is `UnionOf<T>`.
    *
-   * Use {@linkcode isIntersectionOf} to check if the type of `x` is an intersection of `T`.
+   * Use {@linkcode [is/intersection-of].isIntersectionOf|isIntersectionOf} to check if the type of `x` is an intersection of `T`.
    *
    * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
    *
@@ -971,7 +986,7 @@ export const is: {
   /**
    * Assume `x` is `unknown` and always return `true` regardless of the type of `x`.
    *
-   * Use {@linkcode isAny} to assume that the type of `x` is `any`.
+   * Use {@linkcode [is/any].isAny|isAny} to assume that the type of `x` is `any`.
    *
    * ```ts
    * import { is } from "@core/unknownutil";

@@ -5,7 +5,7 @@ import { isMap } from "./map.ts";
 /**
  * Return a type predicate function that returns `true` if the type of `x` is `Map<K, T>`.
  *
- * Use {@linkcode isMap} to check if the type of `x` is a map of `unknown`.
+ * Use {@linkcode [is/map].isMap|isMap} to check if the type of `x` is a map of `unknown`.
  *
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *

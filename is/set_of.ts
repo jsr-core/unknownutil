@@ -5,7 +5,7 @@ import { isSet } from "./set.ts";
 /**
  * Return a type predicate function that returns `true` if the type of `x` is `Set<T>`.
  *
- * Use {@linkcode isSet} to check if the type of `x` is a set of `unknown`.
+ * Use {@linkcode [is/set].isSet|isSet} to check if the type of `x` is a set of `unknown`.
  *
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *

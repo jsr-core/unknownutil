@@ -9,14 +9,14 @@ import { isObjectOf } from "./object_of.ts";
  *
  * It only supports modifing a predicate function annotated with `IsPredObj`, usually returned by the followings
  *
- * - {@linkcode isIntersectionOf}
- * - {@linkcode isObjectOf}
- * - {@linkcode isOmitOf}
- * - {@linkcode isPartialOf}
- * - {@linkcode isPickOf}
- * - {@linkcode isReadonlyOf}
- * - {@linkcode isRequiredOf}
- * - {@linkcode isStrictOf}
+ * - {@linkcode [is/intersection-of].isIntersectionOf|isIntersectionOf}
+ * - {@linkcode [is/object-of].isObjectOf|isObjectOf}
+ * - {@linkcode [is/omit-of].isOmitOf|isOmitOf}
+ * - {@linkcode [is/partial-of].isPartialOf|isPartialOf}
+ * - {@linkcode [is/pick-of].isPickOf|isPickOf}
+ * - {@linkcode [is/readonly-of].isReadonlyOf|isReadonlyOf}
+ * - {@linkcode [is/required-of].isRequiredOf|isRequiredOf}
+ * - {@linkcode [is/strict-of].isStrictOf|isStrictOf}
  *
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *

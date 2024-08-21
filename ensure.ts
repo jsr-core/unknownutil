@@ -4,7 +4,7 @@ import { assert } from "./assert.ts";
 /**
  * Ensures that the given value satisfies the provided predicate.
  *
- * It throws {@linkcode AssertError} if the value does not satisfy the predicate.
+ * It throws {@linkcode [assert].AssertError|AssertError} if the value does not satisfy the predicate.
  *
  * ```ts
  * import { ensure, is } from "@core/unknownutil";

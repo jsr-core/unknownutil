@@ -2,7 +2,7 @@
  * Return `true` if the type of `x` satisfies `Record<PropertyKey, unknown>`.
  *
  * Note that this function returns `true` for ambiguous instances like `Set`, `Map`, `Date`, `Promise`, etc.
- * Use {@linkcode isRecordObject} instead if you want to check if `x` is an instance of `Object`.
+ * Use {@linkcode [is/record-object].isRecordObject|isRecordObject} instead if you want to check if `x` is an instance of `Object`.
  *
  * ```ts
  * import { is } from "@core/unknownutil";

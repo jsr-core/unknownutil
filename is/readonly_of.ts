@@ -5,6 +5,17 @@ import type { Predicate } from "../type.ts";
 /**
  * Return a type predicate function that returns `true` if the type of `x` is `Readonly<ObjectOf<T>>`.
  *
+ * It only supports modifing a predicate function annotated with `IsPredObj`, usually returned by the followings
+ *
+ * - {@linkcode [is/intersection-of].isIntersectionOf|isIntersectionOf}
+ * - {@linkcode [is/object-of].isObjectOf|isObjectOf}
+ * - {@linkcode [is/omit-of].isOmitOf|isOmitOf}
+ * - {@linkcode [is/partial-of].isPartialOf|isPartialOf}
+ * - {@linkcode [is/pick-of].isPickOf|isPickOf}
+ * - {@linkcode [is/readonly-of].isReadonlyOf|isReadonlyOf}
+ * - {@linkcode [is/required-of].isRequiredOf|isRequiredOf}
+ * - {@linkcode [is/strict-of].isStrictOf|isStrictOf}
+ *
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
  * ```typescript

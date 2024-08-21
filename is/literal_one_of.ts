@@ -4,8 +4,8 @@ import type { Predicate, Primitive } from "../type.ts";
 /**
  * Return a type predicate function that returns `true` if the type of `x` is one of literal type in `preds`.
  *
- * Use {@linkcode isLiteral} to check if the type of `x` is a literal type.
- * Use {@linkcode isLiteralOf} to check if the type of `x` is a literal type of `Primitive`.
+ * Use {@linkcode [is/literal].isLiteral|isLiteral} to check if the type of `x` is a literal type.
+ * Use {@linkcode [is/literal-of].isLiteralOf|isLiteralOf} to check if the type of `x` is a literal type of {@linkcode [type].Primitive|Primitive}.
  *
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *

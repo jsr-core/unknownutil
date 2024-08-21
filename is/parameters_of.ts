@@ -7,7 +7,8 @@ import { isArray } from "./array.ts";
 /**
  * Return a type predicate function that returns `true` if the type of `x` is `ParametersOf<T>` or `ParametersOf<T, E>`.
  *
- * This is similar to {@linkcode isTupleOf}, but if {@linkcode asOptional} is specified at the trailing, the trailing elements becomes optional and makes variable-length tuple.
+ * This is similar to {@linkcode [is/tuple].isTupleOf|isTupleOf}, but if {@linkcode [as/optional].asOptional|asOptional}
+ * is specified at the trailing, the trailing elements becomes optional and makes variable-length tuple.
  *
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *

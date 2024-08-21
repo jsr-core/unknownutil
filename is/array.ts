@@ -1,7 +1,7 @@
 /**
  * Return `true` if the type of `x` is `unknown[]`.
  *
- * Use {@linkcode isArrayOf} to check if the type of `x` is an array of `T`.
+ * Use {@linkcode [is/arrayt-of].isArrayOf|isArrayOf} to check if the type of `x` is an array of `T`.
  *
  * ```ts
  * import { is } from "@core/unknownutil";

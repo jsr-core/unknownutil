@@ -2,7 +2,7 @@
  * Return `true` if the type of `x` is an object instance that satisfies `Record<PropertyKey, unknown>`.
  *
  * Note that this function check if the `x` is an instance of `Object`.
- * Use {@linkcode isRecord} instead if you want to check if the `x` satisfies the `Record<PropertyKey, unknown>` type.
+ * Use {@linkcode [is/record].isRecord|isRecord} instead if you want to check if the `x` satisfies the `Record<PropertyKey, unknown>` type.
  *
  * ```ts
  * import { is } from "@core/unknownutil";

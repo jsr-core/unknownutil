@@ -4,6 +4,8 @@ import { as } from "./mod.ts";
 
 const excludes = [
   "mod.ts",
+  "_*.ts",
+  "*_bench.ts",
   "*_test.ts",
 ];
 
