@@ -1,0 +1,30 @@
+name: Benchmark
+
+env:
+  DENO_VERSION: 1.x
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+jobs:
+  bench:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: ${{ env.DENO_VERSION }}
+      - name: Cache
+        run: |
+          deno cache **/*.ts
+      - name: Test
+        run: |
+          deno bench | tee bench.txt
+          echo '# 🚀 Benchmarks' >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          cat bench.txt | npx strip-ansi-cli >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+        timeout-minutes: 10
