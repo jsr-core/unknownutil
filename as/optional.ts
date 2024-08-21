@@ -10,7 +10,7 @@ import {
 /**
  * Annotate the given predicate function as optional.
  *
- * Use this function to annotate a predicate function of `predObj` in {@linkcode isObjectOf}.
+ * Use this function to annotate a predicate function of `predObj` in {@linkcode https://jsr.io/@core/unknownutil/doc/is/object-of/~/isObjectOf|isObjectOf}.
  *
  * Note that the annotated predicate function will return `true` if the type of `x` is `T` or `undefined`, indicating that
  * this function is not just for annotation but it also changes the behavior of the predicate function.
