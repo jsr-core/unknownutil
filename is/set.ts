@@ -1,7 +1,7 @@
 /**
  * Return `true` if the type of `x` is `Set<unknown>`.
  *
- * Use {@linkcode isSetOf} to check if the type of `x` is a set of `T`.
+ * Use {@linkcode [is/set-of].isSetOf|isSetOf} to check if the type of `x` is a set of `T`.
  *
  * ```ts
  * import { is } from "@core/unknownutil";

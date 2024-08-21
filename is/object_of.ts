@@ -11,13 +11,13 @@ import type { Predicate } from "../type.ts";
 /**
  * Return a type predicate function that returns `true` if the type of `x` is `ObjectOf<T>`.
  *
- * Use {@linkcode isRecordOf} if you want to check if the type of `x` is a record of `T`.
+ * Use {@linkcode [is/record-of].isRecordOf|isRecordOf} if you want to check if the type of `x` is a record of `T`.
  *
- * If {@linkcode asOptional} is specified in the predicate function in `predObj`, the property becomes optional.
- * If {@linkcode asReadonly} is specified in the predicate function in `predObj`, the property becomes readonly.
+ * If {@linkcode [as/optional].asOptional|asOptional} is specified in the predicate function in `predObj`, the property becomes optional.
+ * If {@linkcode [as/readonly].asReadonly|asReadonly} is specified in the predicate function in `predObj`, the property becomes readonly.
  *
  * The number of keys of `x` must be greater than or equal to the number of keys of `predObj`.
- * Use {@linkcode isStrictOf} if you want to check the exact number of keys.
+ * Use {@linkcode [is/strict-of].isStrictOf|isStrictOf} if you want to check the exact number of keys.
  *
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *

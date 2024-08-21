@@ -10,7 +10,7 @@ import {
 /**
  * Annotate the given predicate function as optional.
  *
- * Use this function to annotate a predicate function of `predObj` in {@linkcode isObjectOf}.
+ * Use this function to annotate a predicate function of `predObj` in {@linkcode [is/object-of].isObjectOf|isObjectOf}.
  *
  * Note that the annotated predicate function will return `true` if the type of `x` is `T` or `undefined`, indicating that
  * this function is not just for annotation but it also changes the behavior of the predicate function.
@@ -61,7 +61,7 @@ export function asOptional<P extends Predicate<unknown>>(
 /**
  * Unannotate the annotated predicate function with {@linkcode asOptional}.
  *
- * Use this function to unannotate a predicate function of `predObj` in {@linkcode isObjectOf}.
+ * Use this function to unannotate a predicate function of `predObj` in {@linkcode [is/object-of].isObjectOf|isObjectOf}.
  *
  * Note that the annotated predicate function will return `true` if the type of `x` is `T`, indicating that
  * this function is not just for annotation but it also changes the behavior of the predicate function.

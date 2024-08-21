@@ -6,7 +6,7 @@ import { isObjectOf } from "./object_of.ts";
 /**
  * Return a type predicate function that returns `true` if the type of `x` is `IntersectionOf<T>`.
  *
- * Use {@linkcode isUnionOf} to check if the type of `x` is a union of `T`.
+ * Use {@linkcode [is/union-of].isUnionOf|isUnionOf} to check if the type of `x` is a union of `T`.
  *
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
