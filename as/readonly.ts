@@ -10,7 +10,7 @@ import {
 /**
  * Annotate the given predicate function as readonly.
  *
- * Use this function to annotate a predicate function of `predObj` in {@linkcode https://jsr.io/@core/unknownutil/doc/is/object-of/~/isObjectOf|isObjectOf}.
+ * Use this function to annotate a predicate function of `predObj` in {@linkcode [is/object-of].isObjectOf}.
  *
  * Use {@linkcode asUnreadonly} to remove the annotation.
  * Use {@linkcode hasReadonly} to check if a predicate function has annotated with this function.
@@ -45,7 +45,7 @@ export function asReadonly<P extends Predicate<unknown>>(
 /**
  * Unannotate the annotated predicate function with {@linkcode asReadonly}.
  *
- * Use this function to unannotate a predicate function of `predObj` in {@linkcode [jsr:@core/unknownutil/is/object-of].isObjectOf}.
+ * Use this function to unannotate a predicate function of `predObj` in {@linkcode [../is/object-of].isObjectOf}.
  *
  * To enhance performance, users are advised to cache the return value of this function and mitigate the creation cost.
  *
