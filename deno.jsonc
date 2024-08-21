@@ -3,13 +3,11 @@
   "version": "0.0.0",
   "exports": {
     ".": "./mod.ts",
-    "./type": "./type.ts",
-    "./assert": "./assert.ts",
-    "./ensure": "./ensure.ts",
-    "./maybe": "./maybe.ts",
     "./as": "./as/mod.ts",
     "./as/optional": "./as/optional.ts",
     "./as/readonly": "./as/readonly.ts",
+    "./assert": "./assert.ts",
+    "./ensure": "./ensure.ts",
     "./is": "./is/mod.ts",
     "./is/any": "./is/any.ts",
     "./is/array": "./is/array.ts",
@@ -49,7 +47,9 @@
     "./is/undefined": "./is/undefined.ts",
     "./is/uniform-tuple-of": "./is/uniform_tuple_of.ts",
     "./is/union-of": "./is/union_of.ts",
-    "./is/unknown": "./is/unknown.ts"
+    "./is/unknown": "./is/unknown.ts",
+    "./maybe": "./maybe.ts",
+    "./type": "./type.ts"
   },
   "exclude": [
     ".coverage/**"
@@ -61,6 +61,7 @@
       "LICENSE"
     ],
     "exclude": [
+      "**/*_bench.ts",
       "**/*_test.ts",
       ".*"
     ]
