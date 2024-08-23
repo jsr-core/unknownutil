@@ -19,6 +19,7 @@
     "./is/function": "./is/function.ts",
     "./is/instance-of": "./is/instance_of.ts",
     "./is/intersection-of": "./is/intersection_of.ts",
+    "./is/jsonable": "./is/jsonable.ts",
     "./is/literal-of": "./is/literal_of.ts",
     "./is/literal-one-of": "./is/literal_one_of.ts",
     "./is/map": "./is/map.ts",
