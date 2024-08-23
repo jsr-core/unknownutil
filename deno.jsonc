@@ -15,6 +15,7 @@
     "./is/async-function": "./is/async_function.ts",
     "./is/bigint": "./is/bigint.ts",
     "./is/boolean": "./is/boolean.ts",
+    "./is/custom-jsonable": "./is/custom_jsonable.ts",
     "./is/function": "./is/function.ts",
     "./is/instance-of": "./is/instance_of.ts",
     "./is/intersection-of": "./is/intersection_of.ts",
