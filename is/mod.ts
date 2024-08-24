@@ -5,9 +5,11 @@ import { isArrayOf } from "./array_of.ts";
 import { isAsyncFunction } from "./async_function.ts";
 import { isBigint } from "./bigint.ts";
 import { isBoolean } from "./boolean.ts";
+import { isCustomJsonable } from "./custom_jsonable.ts";
 import { isFunction } from "./function.ts";
 import { isInstanceOf } from "./instance_of.ts";
 import { isIntersectionOf } from "./intersection_of.ts";
+import { isJsonable } from "./jsonable.ts";
 import { isLiteralOf } from "./literal_of.ts";
 import { isLiteralOneOf } from "./literal_one_of.ts";
 import { isMap } from "./map.ts";
@@ -45,9 +47,11 @@ export * from "./array_of.ts";
 export * from "./async_function.ts";
 export * from "./bigint.ts";
 export * from "./boolean.ts";
+export * from "./custom_jsonable.ts";
 export * from "./function.ts";
 export * from "./instance_of.ts";
 export * from "./intersection_of.ts";
+export * from "./jsonable.ts";
 export * from "./literal_of.ts";
 export * from "./literal_one_of.ts";
 export * from "./map.ts";
@@ -174,6 +178,25 @@ export const is: {
    */
   Boolean: typeof isBoolean;
   /**
+   * Returns true if `x` is {@linkcode CustomJsonable}, false otherwise.
+   *
+   * Use {@linkcode [is/jsonable].isJsonable|isJsonable} to check if the type of `x` is a JSON-serializable.
+   *
+   * ```ts
+   * import { is, CustomJsonable } from "@core/unknownutil";
+   *
+   * const a: unknown = Object.assign(42n, {
+   *   toJSON() {
+   *     return `${this}n`;
+   *   }
+   * });
+   * if (is.CustomJsonable(a)) {
+   *   const _: CustomJsonable = a;
+   * }
+   * ```
+   */
+  CustomJsonable: typeof isCustomJsonable;
+  /**
    * Return `true` if the type of `x` is `function`.
    *
    * Use {@linkcode [is/sync-function].isSyncFunction|isSyncFunction} to check if the type of `x` is a synchronous function.
@@ -243,6 +266,23 @@ export const is: {
    * ```
    */
   IntersectionOf: typeof isIntersectionOf;
+  /**
+   * Returns true if `x` is a JSON-serializable value, false otherwise.
+   *
+   * It does not check array or object properties recursively.
+   *
+   * Use {@linkcode [is/custom_jsonable].isCustomJsonable|isCustomJsonable} to check if the type of `x` has a custom `toJSON` method.
+   *
+   * ```ts
+   * import { is, Jsonable } from "@core/unknownutil";
+   *
+   * const a: unknown = "Hello, world!";
+   * if (is.Jsonable(a)) {
+   *   const _: Jsonable = a;
+   * }
+   * ```
+   */
+  Jsonable: typeof isJsonable;
   /**
    * Return a type predicate function that returns `true` if the type of `x` is a literal type of `pred`.
    *
@@ -1005,9 +1045,11 @@ export const is: {
   AsyncFunction: isAsyncFunction,
   Bigint: isBigint,
   Boolean: isBoolean,
+  CustomJsonable: isCustomJsonable,
   Function: isFunction,
   InstanceOf: isInstanceOf,
   IntersectionOf: isIntersectionOf,
+  Jsonable: isJsonable,
   LiteralOf: isLiteralOf,
   LiteralOneOf: isLiteralOneOf,
   Map: isMap,
