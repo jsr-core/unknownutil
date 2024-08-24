@@ -211,9 +211,22 @@ const a: unknown = "Hello";
 
 // `ensure` returns `string` or throws an `AssertError`
 const _: string = ensure(a, is.String);
+```
 
-// With custom message
-const __: string = ensure(a, is.String, { message: "a must be a string" });
+Use [`@core/errorutil/alter`](https://jsr.io/@core/errorutil/doc/alter/~/alter)
+to throw a custom error:
+
+```typescript
+import { alter } from "@core/errorutil/alter";
+import { ensure, is } from "@core/unknownutil";
+
+const a: unknown = 0;
+
+// The following throws an Error("a is not a string")
+const _: string = alter(
+  () => ensure(a, is.String),
+  new Error("a is not a string"),
+);
 ```
 
 ### maybe
