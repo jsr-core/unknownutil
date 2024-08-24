@@ -194,9 +194,22 @@ const a: unknown = "Hello";
 // `assert` does nothing or throws an `AssertError`
 assert(a, is.String);
 // a is now narrowed to string
+```
 
-// With custom message
-assert(a, is.String, { message: "a must be a string" });
+Use [`@core/errorutil/alter`](https://jsr.io/@core/errorutil/doc/alter/~/alter)
+to throw a custom error:
+
+```typescript
+import { alter } from "@core/errorutil/alter";
+import { assert, is } from "@core/unknownutil";
+
+const a: unknown = 0;
+
+// The following throws an Error("a is not a string")
+alter(
+  () => assert(a, is.String),
+  new Error("a is not a string"),
+);
 ```
 
 ### ensure
