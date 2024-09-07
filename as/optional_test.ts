@@ -34,7 +34,12 @@ Deno.test("asOptional<T>", async (t) => {
     await t.step("predicated type is correct", () => {
       const v: unknown = undefined;
       if (pred(v)) {
-        assertType<Equal<typeof v, { a: number; b?: number; c?: number }>>(
+        assertType<
+          Equal<
+            typeof v,
+            { a: number; b?: number | undefined; c?: number | undefined }
+          >
+        >(
           true,
         );
       }
@@ -71,7 +76,10 @@ Deno.test("asOptional<T>", async (t) => {
       const v: unknown = undefined;
       if (pred(v)) {
         assertType<
-          Equal<typeof v, [number, number?, number?]>
+          Equal<
+            typeof v,
+            [number, (number | undefined)?, (number | undefined)?]
+          >
         >(
           true,
         );

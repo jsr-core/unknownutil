@@ -1,6 +1,9 @@
 {
   "name": "@core/unknownutil",
   "version": "0.0.0",
+  "compilerOptions": {
+    "exactOptionalPropertyTypes": true
+  },
   "exports": {
     ".": "./mod.ts",
     "./as": "./as/mod.ts",

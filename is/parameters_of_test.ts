@@ -55,7 +55,15 @@ Deno.test("isParametersOf<T>", async (t) => {
     const a: unknown = [0, "a"];
     if (isParametersOf(predTup)(a)) {
       assertType<
-        Equal<typeof a, [number | undefined, string, string?, boolean?]>
+        Equal<
+          typeof a,
+          [
+            number | undefined,
+            string,
+            (string | undefined)?,
+            (boolean | undefined)?,
+          ]
+        >
       >(true);
     }
   });
@@ -160,7 +168,13 @@ Deno.test("isParametersOf<T, R>", async (t) => {
       assertType<
         Equal<
           typeof a,
-          [number | undefined, string, string?, boolean?, ...number[]]
+          [
+            number | undefined,
+            string,
+            (string | undefined)?,
+            (boolean | undefined)?,
+            ...number[],
+          ]
         >
       >(
         true,
