@@ -492,7 +492,7 @@ export const is: {
    * ] as const);
    * const a: unknown = [0, undefined, "a"];
    * if (isMyType(a)) {
-   *   const _: [number, string | undefined, boolean, number?, string?, boolean?] = a;
+   *   const _: [number, string | undefined, boolean, (number | undefined)?, (string | undefined)?, (boolean | undefined)?] = a;
    * }
    * ```
    *
@@ -511,7 +511,7 @@ export const is: {
    * );
    * const a: unknown = [0, "a", true, 0, 1, 2];
    * if (isMyType(a)) {
-   *   const _: [number, string?, boolean?, ...number[]] = a;
+   *   const _: [number, (string | undefined)?, (boolean | undefined)?, ...number[]] = a;
    * }
    * ```
    *
@@ -525,7 +525,7 @@ export const is: {
    * const isMyType = is.ParametersOf(predTup);
    * const a: unknown = [0, "a"];
    * if (isMyType(a)) {
-   *   const _: [number, string, boolean?] = a;
+   *   const _: [number, string, (boolean | undefined)?] = a;
    * }
    * ```
    */
@@ -766,7 +766,7 @@ export const is: {
    * }));
    * const a: unknown = { a: 0, b: "b", c: true, other: "other" };
    * if (isMyType(a)) {
-   *   const _: { a: number; b: string | undefined; c: boolean } = a;
+   *   const _: { a: number; b: string | undefined; c: boolean | undefined } = a;
    * }
    * ```
    */

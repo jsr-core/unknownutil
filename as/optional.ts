@@ -28,7 +28,7 @@ import {
  * });
  * const a: unknown = {};
  * if (isMyType(a)) {
- *   const _: {foo?: string} = a;
+ *   const _: {foo?: string | undefined} = a;
  * }
  * ```
  */

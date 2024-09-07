@@ -89,10 +89,10 @@ Deno.test("isObjectOf<T>", async (t) => {
         Equal<
           typeof a,
           {
-            readonly a?: string;
-            readonly b?: string;
+            readonly a?: string | undefined;
+            readonly b?: string | undefined;
             readonly c: string;
-            d?: string;
+            d?: string | undefined;
             e: string;
             f: string;
           }
@@ -256,10 +256,10 @@ Deno.test("isObjectOf<T>", async (t) => {
           Equal<
             typeof x,
             {
-              readonly [a]?: string;
-              readonly [b]?: string;
+              readonly [a]?: string | undefined;
+              readonly [b]?: string | undefined;
               readonly [c]: string;
-              [d]?: string;
+              [d]?: string | undefined;
               [e]: string;
               [f]: string;
             }

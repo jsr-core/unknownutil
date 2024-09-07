@@ -150,7 +150,10 @@ Deno.test("isStrictOf<T>", async (t) => {
       const a: unknown = { a: 0, b: "a" };
       if (isStrictOf(is.ObjectOf(predObj))(a)) {
         assertType<
-          Equal<typeof a, { a: number; b: string | undefined; c?: boolean }>
+          Equal<
+            typeof a,
+            { a: number; b: string | undefined; c?: boolean | undefined }
+          >
         >(true);
       }
     });
@@ -258,7 +261,10 @@ Deno.test("isStrictOf<T>", async (t) => {
       const a: unknown = { a: 0, [b]: "a" };
       if (isStrictOf(is.ObjectOf(predObj))(a)) {
         assertType<
-          Equal<typeof a, { a: number; [b]: string | undefined; [c]?: boolean }>
+          Equal<
+            typeof a,
+            { a: number; [b]: string | undefined; [c]?: boolean | undefined }
+          >
         >(true);
       }
     });

@@ -30,7 +30,7 @@ import { isObjectOf } from "./object_of.ts";
  * }));
  * const a: unknown = { a: 0, b: "b", c: true, other: "other" };
  * if (isMyType(a)) {
- *   const _: { a: number; b: string | undefined; c: boolean } = a;
+ *   const _: { a: number; b: string | undefined; c: boolean | undefined } = a;
  * }
  * ```
  */

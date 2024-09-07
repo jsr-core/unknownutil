@@ -52,7 +52,12 @@ Deno.test("isRequiredOf<T>", async (t) => {
       assertType<
         Equal<
           typeof a,
-          { a: number; b: string | undefined; c: boolean; readonly d: string }
+          {
+            a: number;
+            b: string | undefined;
+            c: boolean | undefined;
+            readonly d: string;
+          }
         >
       >(true);
     }
@@ -113,7 +118,7 @@ Deno.test("isRequiredOf<T>", async (t) => {
             {
               a: number;
               [b]: string | undefined;
-              [c]: boolean;
+              [c]: boolean | undefined;
               readonly [d]: string;
             }
           >

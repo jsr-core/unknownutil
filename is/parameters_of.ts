@@ -25,7 +25,7 @@ import { isArray } from "./array.ts";
  * ] as const);
  * const a: unknown = [0, undefined, "a"];
  * if (isMyType(a)) {
- *   const _: [number, string | undefined, boolean, number?, string?, boolean?] = a;
+ *   const _: [number, string | undefined, boolean, (number | undefined)?, (string | undefined)?, (boolean | undefined)?] = a;
  * }
  * ```
  *
@@ -44,7 +44,7 @@ import { isArray } from "./array.ts";
  * );
  * const a: unknown = [0, "a", true, 0, 1, 2];
  * if (isMyType(a)) {
- *   const _: [number, string?, boolean?, ...number[]] = a;
+ *   const _: [number, (string | undefined)?, (boolean | undefined)?, ...number[]] = a;
  * }
  * ```
  *
@@ -58,7 +58,7 @@ import { isArray } from "./array.ts";
  * const isMyType = is.ParametersOf(predTup);
  * const a: unknown = [0, "a"];
  * if (isMyType(a)) {
- *   const _: [number, string, boolean?] = a;
+ *   const _: [number, string, (boolean | undefined)?] = a;
  * }
  * ```
  */

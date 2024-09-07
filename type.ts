@@ -7,7 +7,7 @@
  * type Person = {
  *   name: string;
  *   age: number;
- *   address?: string;
+ *   address?: string | undefined;
  * };
  * const isPerson = is.ObjectOf({
  *   name: is.String,
@@ -34,7 +34,7 @@ export type Predicate<T> = (x: unknown) => x is T;
  * // type Person = {
  * //   name: string;
  * //   age: number;
- * //   address?: string;
+ * //   address?: string | undefined;
  * // };
  * ```
  */

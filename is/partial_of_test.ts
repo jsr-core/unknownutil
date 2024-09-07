@@ -42,7 +42,14 @@ Deno.test("isPartialOf<T>", async (t) => {
       assertType<
         Equal<
           typeof a,
-          Partial<{ a: number; b: string; c: boolean; readonly d: string }>
+          Partial<
+            {
+              a: number;
+              b: string | undefined;
+              c: boolean | undefined;
+              readonly d: string;
+            }
+          >
         >
       >(true);
     }
@@ -89,8 +96,8 @@ Deno.test("isPartialOf<T>", async (t) => {
             typeof a,
             Partial<{
               a: number;
-              [b]: string;
-              [c]: boolean;
+              [b]: string | undefined;
+              [c]: boolean | undefined;
               readonly [d]: string;
             }>
           >
