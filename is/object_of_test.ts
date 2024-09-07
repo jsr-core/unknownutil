@@ -1,7 +1,6 @@
 import { assertEquals } from "@std/assert";
 import { assertSnapshot } from "@std/testing/snapshot";
-import { assertType } from "@std/testing/types";
-import type { Equal } from "../_testutil.ts";
+import { assertType, type IsExact } from "@std/testing/types";
 import { is } from "./mod.ts";
 import { as } from "../as/mod.ts";
 import { isObjectOf } from "./object_of.ts";
@@ -81,12 +80,12 @@ Deno.test("isObjectOf<T>", async (t) => {
     const a: unknown = { a: 0, b: "a", c: true };
 
     if (isObjectOf(predObj)(a)) {
-      assertType<Equal<typeof a, { a: number; b: string; c: boolean }>>(true);
+      assertType<IsExact<typeof a, { a: number; b: string; c: boolean }>>(true);
     }
 
     if (isObjectOf(predObj2)(a)) {
       assertType<
-        Equal<
+        IsExact<
           typeof a,
           {
             readonly a?: string | undefined;
@@ -240,7 +239,7 @@ Deno.test("isObjectOf<T>", async (t) => {
 
       if (isObjectOf(predObj)(x)) {
         assertType<
-          Equal<
+          IsExact<
             typeof x,
             {
               a: number;
@@ -253,7 +252,7 @@ Deno.test("isObjectOf<T>", async (t) => {
 
       if (isObjectOf(predObj2)(x)) {
         assertType<
-          Equal<
+          IsExact<
             typeof x,
             {
               readonly [a]?: string | undefined;

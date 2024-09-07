@@ -1,7 +1,6 @@
 import { assertEquals } from "@std/assert";
 import { assertSnapshot } from "@std/testing/snapshot";
-import { assertType } from "@std/testing/types";
-import type { Equal } from "../_testutil.ts";
+import { assertType, type IsExact } from "@std/testing/types";
 import { is } from "./mod.ts";
 import { isIntersectionOf } from "./intersection_of.ts";
 
@@ -40,16 +39,16 @@ Deno.test("isIntersectionOf<T>", async (t) => {
     const a: unknown = undefined;
 
     if (isIntersectionOf([is.String])(a)) {
-      assertType<Equal<typeof a, string>>(true);
+      assertType<IsExact<typeof a, string>>(true);
     }
 
     if (isIntersectionOf(objPreds)(a)) {
-      assertType<Equal<typeof a, { a: number } & { b: string }>>(true);
+      assertType<IsExact<typeof a, { a: number } & { b: string }>>(true);
     }
 
     if (isIntersectionOf(mixPreds)(a)) {
       assertType<
-        Equal<
+        IsExact<
           typeof a,
           & ((...args: unknown[]) => unknown)
           & { b: string }
@@ -70,7 +69,7 @@ Deno.test("isIntersectionOf<T>", async (t) => {
 
     if (pred(a)) {
       assertType<
-        Equal<
+        IsExact<
           typeof a,
           { id: string } & ({ result: string } | { error: string })
         >
@@ -114,16 +113,16 @@ Deno.test("isIntersectionOf<T>", async (t) => {
       const a: unknown = undefined;
 
       if (isIntersectionOf([is.String])(a)) {
-        assertType<Equal<typeof a, string>>(true);
+        assertType<IsExact<typeof a, string>>(true);
       }
 
       if (isIntersectionOf(objPreds)(a)) {
-        assertType<Equal<typeof a, { a: number } & { [b]: string }>>(true);
+        assertType<IsExact<typeof a, { a: number } & { [b]: string }>>(true);
       }
 
       if (isIntersectionOf(mixPreds)(a)) {
         assertType<
-          Equal<
+          IsExact<
             typeof a,
             & ((...args: unknown[]) => unknown)
             & { [b]: string }
@@ -144,7 +143,7 @@ Deno.test("isIntersectionOf<T>", async (t) => {
 
       if (pred(a)) {
         assertType<
-          Equal<
+          IsExact<
             typeof a,
             { id: string } & ({ result: string } | { error: string })
           >

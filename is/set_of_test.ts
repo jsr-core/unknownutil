@@ -1,7 +1,6 @@
 import { assertEquals } from "@std/assert";
 import { assertSnapshot } from "@std/testing/snapshot";
-import { assertType } from "@std/testing/types";
-import type { Equal } from "../_testutil.ts";
+import { assertType, type IsExact } from "@std/testing/types";
 import { is } from "./mod.ts";
 import { isSetOf } from "./set_of.ts";
 
@@ -27,7 +26,7 @@ Deno.test("isSetOf<T>", async (t) => {
   await t.step("predicated type is correct", () => {
     const a: unknown = new Set([0, 1, 2]);
     if (isSetOf(is.Number)(a)) {
-      assertType<Equal<typeof a, Set<number>>>(true);
+      assertType<IsExact<typeof a, Set<number>>>(true);
     }
   });
 });

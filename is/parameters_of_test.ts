@@ -1,7 +1,6 @@
 import { assertEquals } from "@std/assert";
 import { assertSnapshot } from "@std/testing/snapshot";
-import { assertType } from "@std/testing/types";
-import type { Equal } from "../_testutil.ts";
+import { assertType, type IsExact } from "@std/testing/types";
 import { as } from "../as/mod.ts";
 import { is } from "./mod.ts";
 import { isParametersOf } from "./parameters_of.ts";
@@ -55,7 +54,7 @@ Deno.test("isParametersOf<T>", async (t) => {
     const a: unknown = [0, "a"];
     if (isParametersOf(predTup)(a)) {
       assertType<
-        Equal<
+        IsExact<
           typeof a,
           [
             number | undefined,
@@ -166,7 +165,7 @@ Deno.test("isParametersOf<T, R>", async (t) => {
     const a: unknown = [0, "a"];
     if (isParametersOf(predTup, predRest)(a)) {
       assertType<
-        Equal<
+        IsExact<
           typeof a,
           [
             number | undefined,

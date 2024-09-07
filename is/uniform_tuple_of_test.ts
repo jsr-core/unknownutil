@@ -1,7 +1,6 @@
 import { assertEquals } from "@std/assert";
 import { assertSnapshot } from "@std/testing/snapshot";
-import { assertType } from "@std/testing/types";
-import type { Equal } from "../_testutil.ts";
+import { assertType, type IsExact } from "@std/testing/types";
 import { is } from "./mod.ts";
 import { isUniformTupleOf } from "./uniform_tuple_of.ts";
 
@@ -30,12 +29,12 @@ Deno.test("isUniformTupleOf<T>", async (t) => {
     const a: unknown = [0, 1, 2, 3, 4];
     if (isUniformTupleOf(5)(a)) {
       assertType<
-        Equal<typeof a, [unknown, unknown, unknown, unknown, unknown]>
+        IsExact<typeof a, [unknown, unknown, unknown, unknown, unknown]>
       >(true);
     }
 
     if (isUniformTupleOf(5, is.Number)(a)) {
-      assertType<Equal<typeof a, [number, number, number, number, number]>>(
+      assertType<IsExact<typeof a, [number, number, number, number, number]>>(
         true,
       );
     }

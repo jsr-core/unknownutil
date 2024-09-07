@@ -1,6 +1,6 @@
 import { assertEquals } from "@std/assert";
-import { assertType } from "@std/testing/types";
-import { type Equal, testWithExamples } from "../_testutil.ts";
+import { assertType, type IsExact } from "@std/testing/types";
+import { testWithExamples } from "../_testutil.ts";
 import { is } from "../is/mod.ts";
 import type { AsReadonly } from "../_annotation.ts";
 import { asReadonly, asUnreadonly, hasReadonly } from "./readonly.ts";
@@ -35,7 +35,10 @@ Deno.test("asReadonly<T>", async (t) => {
       const v: unknown = undefined;
       if (pred(v)) {
         assertType<
-          Equal<typeof v, { a: number; readonly b: number; readonly c: number }>
+          IsExact<
+            typeof v,
+            { a: number; readonly b: number; readonly c: number }
+          >
         >(
           true,
         );
@@ -53,7 +56,7 @@ Deno.test("asReadonly<T>", async (t) => {
       const v: unknown = undefined;
       if (pred(v)) {
         assertType<
-          Equal<typeof v, [number, number, number]>
+          IsExact<typeof v, [number, number, number]>
         >(
           true,
         );
@@ -73,7 +76,7 @@ Deno.test("asReadonly<T>", async (t) => {
       const v: unknown = undefined;
       if (pred(v)) {
         assertType<
-          Equal<typeof v, [number, number, number]>
+          IsExact<typeof v, [number, number, number]>
         >(
           true,
         );
@@ -111,7 +114,7 @@ Deno.test("asUnreadonly<T>", async (t) => {
     await t.step("predicated type is correct", () => {
       const v: unknown = undefined;
       if (pred(v)) {
-        assertType<Equal<typeof v, { a: number; b: number; c: number }>>(
+        assertType<IsExact<typeof v, { a: number; b: number; c: number }>>(
           true,
         );
       }
@@ -128,7 +131,7 @@ Deno.test("asUnreadonly<T>", async (t) => {
       const v: unknown = undefined;
       if (pred(v)) {
         assertType<
-          Equal<typeof v, [number, number, number]>
+          IsExact<typeof v, [number, number, number]>
         >(
           true,
         );
@@ -148,7 +151,7 @@ Deno.test("asUnreadonly<T>", async (t) => {
       const v: unknown = undefined;
       if (pred(v)) {
         assertType<
-          Equal<typeof v, [number, number, number]>
+          IsExact<typeof v, [number, number, number]>
         >(
           true,
         );
@@ -172,7 +175,7 @@ Deno.test("hasReadonly<P>", async (t) => {
     const pred = asReadonly(is.Number);
     type P = typeof pred;
     if (hasReadonly(pred)) {
-      assertType<Equal<typeof pred, P & AsReadonly>>(true);
+      assertType<IsExact<typeof pred, P & AsReadonly>>(true);
     }
   });
 });

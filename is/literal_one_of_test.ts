@@ -1,6 +1,5 @@
 import { assertEquals } from "@std/assert";
-import { assertType } from "@std/testing/types";
-import type { Equal } from "../_testutil.ts";
+import { assertType, type IsExact } from "@std/testing/types";
 import { isLiteralOneOf } from "./literal_one_of.ts";
 
 Deno.test("isLiteralOneOf<T>", async (t) => {
@@ -26,7 +25,7 @@ Deno.test("isLiteralOneOf<T>", async (t) => {
   await t.step("returns proper type predicate", () => {
     const a: unknown = "hello";
     if (isLiteralOneOf(literals)(a)) {
-      assertType<Equal<typeof a, "hello" | "world">>(true);
+      assertType<IsExact<typeof a, "hello" | "world">>(true);
     }
   });
 });

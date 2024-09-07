@@ -1,6 +1,5 @@
 import { assertEquals } from "@std/assert";
-import { assertType } from "@std/testing/types";
-import type { Equal } from "../_testutil.ts";
+import { assertType, type IsExact } from "@std/testing/types";
 import { is } from "./mod.ts";
 import { isMapOf } from "./map_of.ts";
 
@@ -29,7 +28,7 @@ Deno.test("isMapOf<T>", async (t) => {
   await t.step("returns proper type predicate", () => {
     const a: unknown = undefined;
     if (isMapOf(is.Number)(a)) {
-      assertType<Equal<typeof a, Map<unknown, number>>>(true);
+      assertType<IsExact<typeof a, Map<unknown, number>>>(true);
     }
   });
 });
@@ -68,7 +67,7 @@ Deno.test("isMapOf<T, K>", async (t) => {
   await t.step("predicated type is correct", () => {
     const a: unknown = new Map([["a", 0]]);
     if (isMapOf(is.Number, is.String)(a)) {
-      assertType<Equal<typeof a, Map<string, number>>>(true);
+      assertType<IsExact<typeof a, Map<string, number>>>(true);
     }
   });
 });

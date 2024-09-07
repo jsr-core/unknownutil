@@ -1,6 +1,5 @@
 import { assertEquals } from "@std/assert";
-import { assertType } from "@std/testing/types";
-import type { Equal } from "../_testutil.ts";
+import { assertType, type IsExact } from "@std/testing/types";
 import { isLiteralOf } from "./literal_of.ts";
 
 Deno.test("isLiteralOf<T>", async (t) => {
@@ -45,35 +44,35 @@ Deno.test("isLiteralOf<T>", async (t) => {
     const a: unknown = undefined;
 
     if (isLiteralOf("hello")(a)) {
-      assertType<Equal<typeof a, "hello">>(true);
+      assertType<IsExact<typeof a, "hello">>(true);
     }
 
     if (isLiteralOf(100)(a)) {
-      assertType<Equal<typeof a, 100>>(true);
+      assertType<IsExact<typeof a, 100>>(true);
     }
 
     if (isLiteralOf(100n)(a)) {
-      assertType<Equal<typeof a, 100n>>(true);
+      assertType<IsExact<typeof a, 100n>>(true);
     }
 
     if (isLiteralOf(true)(a)) {
-      assertType<Equal<typeof a, true>>(true);
+      assertType<IsExact<typeof a, true>>(true);
     }
 
     if (isLiteralOf(false)(a)) {
-      assertType<Equal<typeof a, false>>(true);
+      assertType<IsExact<typeof a, false>>(true);
     }
 
     if (isLiteralOf(null)(a)) {
-      assertType<Equal<typeof a, null>>(true);
+      assertType<IsExact<typeof a, null>>(true);
     }
 
     if (isLiteralOf(undefined)(a)) {
-      assertType<Equal<typeof a, undefined>>(true);
+      assertType<IsExact<typeof a, undefined>>(true);
     }
 
     if (isLiteralOf(s)(a)) {
-      assertType<Equal<typeof a, typeof s>>(true);
+      assertType<IsExact<typeof a, typeof s>>(true);
     }
   });
 });
