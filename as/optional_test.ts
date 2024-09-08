@@ -1,6 +1,6 @@
 import { assertEquals } from "@std/assert";
-import { assertType } from "@std/testing/types";
-import { type Equal, testWithExamples } from "../_testutil.ts";
+import { assertType, type IsExact } from "@std/testing/types";
+import { testWithExamples } from "../_testutil.ts";
 import { is } from "../is/mod.ts";
 import type { AsOptional } from "../_annotation.ts";
 import { asOptional, asUnoptional, hasOptional } from "./optional.ts";
@@ -35,7 +35,7 @@ Deno.test("asOptional<T>", async (t) => {
       const v: unknown = undefined;
       if (pred(v)) {
         assertType<
-          Equal<
+          IsExact<
             typeof v,
             { a: number; b?: number | undefined; c?: number | undefined }
           >
@@ -56,7 +56,7 @@ Deno.test("asOptional<T>", async (t) => {
       const v: unknown = undefined;
       if (pred(v)) {
         assertType<
-          Equal<typeof v, [number, number | undefined, number | undefined]>
+          IsExact<typeof v, [number, number | undefined, number | undefined]>
         >(
           true,
         );
@@ -76,7 +76,7 @@ Deno.test("asOptional<T>", async (t) => {
       const v: unknown = undefined;
       if (pred(v)) {
         assertType<
-          Equal<
+          IsExact<
             typeof v,
             [number, (number | undefined)?, (number | undefined)?]
           >
@@ -117,7 +117,7 @@ Deno.test("asUnoptional<T>", async (t) => {
     await t.step("predicated type is correct", () => {
       const v: unknown = undefined;
       if (pred(v)) {
-        assertType<Equal<typeof v, { a: number; b: number; c: number }>>(
+        assertType<IsExact<typeof v, { a: number; b: number; c: number }>>(
           true,
         );
       }
@@ -134,7 +134,7 @@ Deno.test("asUnoptional<T>", async (t) => {
       const v: unknown = undefined;
       if (pred(v)) {
         assertType<
-          Equal<typeof v, [number, number, number]>
+          IsExact<typeof v, [number, number, number]>
         >(
           true,
         );
@@ -154,7 +154,7 @@ Deno.test("asUnoptional<T>", async (t) => {
       const v: unknown = undefined;
       if (pred(v)) {
         assertType<
-          Equal<typeof v, [number, number, number]>
+          IsExact<typeof v, [number, number, number]>
         >(
           true,
         );
@@ -178,7 +178,7 @@ Deno.test("hasOptional<P>", async (t) => {
     const pred = asOptional(is.Number);
     type P = typeof pred;
     if (hasOptional(pred)) {
-      assertType<Equal<typeof pred, P & AsOptional<number>>>(true);
+      assertType<IsExact<typeof pred, P & AsOptional<number>>>(true);
     }
   });
 });

@@ -1,7 +1,6 @@
 import { assertEquals } from "@std/assert";
 import { assertSnapshot } from "@std/testing/snapshot";
-import { assertType } from "@std/testing/types";
-import type { Equal } from "../_testutil.ts";
+import { assertType, type IsExact } from "@std/testing/types";
 import { is } from "./mod.ts";
 import { isRecordOf } from "./record_of.ts";
 
@@ -27,7 +26,7 @@ Deno.test("isRecordOf<T>", async (t) => {
   await t.step("predicated type is correct", () => {
     const a: unknown = { a: 0 };
     if (isRecordOf(is.Number)(a)) {
-      assertType<Equal<typeof a, Record<PropertyKey, number>>>(true);
+      assertType<IsExact<typeof a, Record<PropertyKey, number>>>(true);
     }
   });
 
@@ -101,7 +100,7 @@ Deno.test("isRecordOf<T, K>", async (t) => {
   await t.step("predicated type is correct", () => {
     const a: unknown = { a: 0 };
     if (isRecordOf(is.Number, is.String)(a)) {
-      assertType<Equal<typeof a, Record<string, number>>>(true);
+      assertType<IsExact<typeof a, Record<string, number>>>(true);
     }
   });
 
@@ -179,7 +178,7 @@ Deno.test("isRecordOf<T, K>", async (t) => {
     await t.step("predicated type is correct", () => {
       const a: unknown = { a: 0 };
       if (isRecordOf(is.Number, is.Symbol)(a)) {
-        assertType<Equal<typeof a, Record<symbol, number>>>(true);
+        assertType<IsExact<typeof a, Record<symbol, number>>>(true);
       }
     });
   });

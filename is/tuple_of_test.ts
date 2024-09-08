@@ -1,7 +1,6 @@
 import { assertEquals } from "@std/assert";
 import { assertSnapshot } from "@std/testing/snapshot";
-import { assertType } from "@std/testing/types";
-import type { Equal } from "../_testutil.ts";
+import { assertType, type IsExact } from "@std/testing/types";
 import { is } from "./mod.ts";
 import { isTupleOf } from "./tuple_of.ts";
 
@@ -41,7 +40,7 @@ Deno.test("isTupleOf<T>", async (t) => {
     const predTup = [is.Number, is.String, is.Boolean] as const;
     const a: unknown = [0, "a", true];
     if (isTupleOf(predTup)(a)) {
-      assertType<Equal<typeof a, [number, string, boolean]>>(true);
+      assertType<IsExact<typeof a, [number, string, boolean]>>(true);
     }
   });
 });
@@ -118,7 +117,7 @@ Deno.test("isTupleOf<T, R>", async (t) => {
     const predRest = is.ArrayOf(is.Number);
     const a: unknown = [0, "a", true, 0, 1, 2];
     if (isTupleOf(predTup, predRest)(a)) {
-      assertType<Equal<typeof a, [number, string, boolean, ...number[]]>>(
+      assertType<IsExact<typeof a, [number, string, boolean, ...number[]]>>(
         true,
       );
     }
@@ -197,7 +196,7 @@ Deno.test("isTupleOf<R, T>", async (t) => {
     const predTup = [is.Number, is.String, is.Boolean] as const;
     const a: unknown = [0, 1, 2, 0, "a", true];
     if (isTupleOf(predRest, predTup)(a)) {
-      assertType<Equal<typeof a, [...number[], number, string, boolean]>>(
+      assertType<IsExact<typeof a, [...number[], number, string, boolean]>>(
         true,
       );
     }
@@ -321,7 +320,7 @@ Deno.test("isTupleOf<T, R, L>", async (t) => {
     const a: unknown = [0, "a", true, 0, 1, 2, 0, true];
     if (isTupleOf(predTup, predRest, predTrail)(a)) {
       assertType<
-        Equal<
+        IsExact<
           typeof a,
           [number, string, boolean, ...number[], number, boolean]
         >

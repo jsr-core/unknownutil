@@ -1,7 +1,6 @@
 import { assertEquals } from "@std/assert";
 import { assertSnapshot } from "@std/testing/snapshot";
-import { assertType } from "@std/testing/types";
-import type { Equal } from "../_testutil.ts";
+import { assertType, type IsExact } from "@std/testing/types";
 import { as } from "../as/mod.ts";
 import { is } from "../is/mod.ts";
 import { isReadonlyOf } from "./readonly_of.ts";
@@ -38,7 +37,7 @@ Deno.test("isReadonlyOf<T>", async (t) => {
       const a: unknown = { a: 0, b: "a", c: true };
       if (isReadonlyOf(pred)(a)) {
         assertType<
-          Equal<
+          IsExact<
             typeof a,
             Readonly<Record<PropertyKey, unknown>>
           >
@@ -82,7 +81,7 @@ Deno.test("isReadonlyOf<T>", async (t) => {
       const a: unknown = { a: 0, b: "a", c: true };
       if (isReadonlyOf(pred)(a)) {
         assertType<
-          Equal<
+          IsExact<
             typeof a,
             Readonly<{ a: number; b: string | undefined; c: boolean }>
           >
@@ -122,7 +121,7 @@ Deno.test("isReadonlyOf<T>", async (t) => {
       const a: unknown = [];
       if (isReadonlyOf(pred)(a)) {
         assertType<
-          Equal<
+          IsExact<
             typeof a,
             Readonly<[number, string, boolean]>
           >
@@ -162,7 +161,7 @@ Deno.test("isReadonlyOf<T>", async (t) => {
       const a: unknown = [];
       if (isReadonlyOf(pred)(a)) {
         assertType<
-          Equal<
+          IsExact<
             typeof a,
             Readonly<[number, number, number]>
           >
@@ -209,7 +208,7 @@ Deno.test("isReadonlyOf<T>", async (t) => {
         const a: unknown = { a: 0, [b]: "a", [c]: true };
         if (isReadonlyOf(pred)(a)) {
           assertType<
-            Equal<
+            IsExact<
               typeof a,
               Readonly<{ a: number; [b]: string | undefined; [c]: boolean }>
             >

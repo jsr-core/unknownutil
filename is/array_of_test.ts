@@ -1,6 +1,5 @@
 import { assertEquals } from "@std/assert";
-import { assertType } from "@std/testing/types";
-import type { Equal } from "../_testutil.ts";
+import { assertType, type IsExact } from "@std/testing/types";
 import { is } from "./mod.ts";
 import { isArrayOf } from "./array_of.ts";
 
@@ -30,7 +29,7 @@ Deno.test("isArrayOf<T>", async (t) => {
     const a: unknown = undefined;
 
     if (isArrayOf(is.Number)(a)) {
-      assertType<Equal<typeof a, number[]>>(true);
+      assertType<IsExact<typeof a, number[]>>(true);
     }
   });
 });

@@ -1,6 +1,5 @@
 import { assertEquals } from "@std/assert";
-import { assertType } from "@std/testing/types";
-import type { Equal } from "../_testutil.ts";
+import { assertType, type IsExact } from "@std/testing/types";
 import { isInstanceOf } from "./instance_of.ts";
 
 Deno.test("isInstanceOf<T>", async (t) => {
@@ -29,15 +28,15 @@ Deno.test("isInstanceOf<T>", async (t) => {
     const a: unknown = undefined;
 
     if (isInstanceOf(Cls)(a)) {
-      assertType<Equal<typeof a, Cls>>(true);
+      assertType<IsExact<typeof a, Cls>>(true);
     }
 
     if (isInstanceOf(Date)(a)) {
-      assertType<Equal<typeof a, Date>>(true);
+      assertType<IsExact<typeof a, Date>>(true);
     }
 
     if (isInstanceOf(Promise)(a)) {
-      assertType<Equal<typeof a, Promise<unknown>>>(true);
+      assertType<IsExact<typeof a, Promise<unknown>>>(true);
     }
   });
 });

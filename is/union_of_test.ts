@@ -1,7 +1,7 @@
 import { assertEquals } from "@std/assert";
 import { assertSnapshot } from "@std/testing/snapshot";
-import { assertType } from "@std/testing/types";
-import { type Equal, testWithExamples } from "../_testutil.ts";
+import { assertType, type IsExact } from "@std/testing/types";
+import { testWithExamples } from "../_testutil.ts";
 import type { PredicateType } from "../type.ts";
 import { is } from "./mod.ts";
 import { isUnionOf } from "./union_of.ts";
@@ -29,7 +29,7 @@ Deno.test("isUnionOf<T>", async (t) => {
     const preds = [is.Number, is.String, is.Boolean] as const;
     const a: unknown = [0, "a", true];
     if (isUnionOf(preds)(a)) {
-      assertType<Equal<typeof a, number | string | boolean>>(true);
+      assertType<IsExact<typeof a, number | string | boolean>>(true);
     }
   });
 
@@ -41,7 +41,7 @@ Deno.test("isUnionOf<T>", async (t) => {
     const preds = [isFoo, isBar] as const;
     const a: unknown = [0, "a", true];
     if (isUnionOf(preds)(a)) {
-      assertType<Equal<typeof a, Foo | Bar>>(true);
+      assertType<IsExact<typeof a, Foo | Bar>>(true);
     }
   });
 });
