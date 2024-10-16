@@ -75,6 +75,7 @@
     "@core/iterutil": "jsr:@core/iterutil@^0.3.0",
     "@core/unknownutil": "./mod.ts",
     "@deno/dnt": "jsr:@deno/dnt@^0.41.1",
+    "@deno/doc": "jsr:@deno/doc@^0.153.0",
     "@std/assert": "jsr:@std/assert@^1.0.4",
     "@std/jsonc": "jsr:@std/jsonc@^1.0.0",
     "@std/path": "jsr:@std/path@^1.0.2",
@@ -85,7 +86,7 @@
     "test": "deno test -A --doc --parallel --shuffle",
     "test:coverage": "deno task test --coverage=.coverage",
     "coverage": "deno coverage .coverage",
-    "gen": "deno run --allow-run=deno --allow-read --allow-write=. .scripts/gen-mod.ts",
+    "gen": "deno run --allow-net=jsr.io --allow-env --allow-read --allow-write=. .scripts/gen-mod.ts",
     "update": "deno run --allow-env --allow-read --allow-write=. --allow-run=git,deno --allow-net=jsr.io,registry.npmjs.org jsr:@molt/cli ./*.ts",
     "update:commit": "deno task -q update --commit --prefix deps: --pre-commit=fmt,lint"
   }
