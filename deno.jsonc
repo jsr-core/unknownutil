@@ -7,11 +7,13 @@
   "exports": {
     ".": "./mod.ts",
     "./as": "./as/mod.ts",
+    "./as/as": "./as/as.ts",
     "./as/optional": "./as/optional.ts",
     "./as/readonly": "./as/readonly.ts",
     "./assert": "./assert.ts",
     "./ensure": "./ensure.ts",
     "./is": "./is/mod.ts",
+    "./is/is": "./is/is.ts",
     "./is/any": "./is/any.ts",
     "./is/array": "./is/array.ts",
     "./is/array-of": "./is/array_of.ts",

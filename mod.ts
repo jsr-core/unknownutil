@@ -1,6 +1,7 @@
 export type * from "./type.ts";
 
 export * from "./as/mod.ts";
+
 export * from "./is/mod.ts";
 
 export * from "./assert.ts";
