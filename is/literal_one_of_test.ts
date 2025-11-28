@@ -28,4 +28,16 @@ Deno.test("isLiteralOneOf<T>", async (t) => {
       assertType<IsExact<typeof a, "hello" | "world">>(true);
     }
   });
+
+  await t.step("works without as const assertion", () => {
+    const predicate = isLiteralOneOf(["foo", "bar"]);
+    assertEquals(predicate("foo"), true);
+    assertEquals(predicate("bar"), true);
+    assertEquals(predicate("baz"), false);
+
+    const b: unknown = "foo";
+    if (predicate(b)) {
+      assertType<IsExact<typeof b, "foo" | "bar">>(true);
+    }
+  });
 });
