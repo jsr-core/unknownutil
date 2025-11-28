@@ -69,6 +69,7 @@
     ]
   },
   "imports": {
+    "@core/errorutil": "jsr:@core/errorutil@^1.2.0",
     "@core/iterutil": "jsr:@core/iterutil@^0.3.0",
     "@core/unknownutil": "./mod.ts",
     "@deno/dnt": "jsr:@deno/dnt@^0.41.1",
