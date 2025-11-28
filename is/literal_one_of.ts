@@ -12,14 +12,14 @@ import type { Predicate, Primitive } from "../type.ts";
  * ```ts
  * import { is } from "@core/unknownutil";
  *
- * const isMyType = is.LiteralOneOf(["hello", "world"] as const);
+ * const isMyType = is.LiteralOneOf(["hello", "world"]);
  * const a: unknown = "hello";
  * if (isMyType(a)) {
  *   const _: "hello" | "world" = a;
  * }
  * ```
  */
-export function isLiteralOneOf<T extends readonly Primitive[]>(
+export function isLiteralOneOf<const T extends readonly Primitive[]>(
   literals: T,
 ): Predicate<T[number]> {
   const s = new Set(literals);
